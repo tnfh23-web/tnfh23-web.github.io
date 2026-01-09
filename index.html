@@ -3,11 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Yoon Suro portfolio</title>
+    <!-- aos -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <!-- 베리어블 -->
+    <link rel="stylesheet" href="variable.css" />
+    <!-- 스타일 css -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- 스와이퍼 라이브러리 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- 폰트어썸 불러오기 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
   </head>
   <body>
+    <header class="top-bar">
+      <div class="container">
+        <div class="link-box">
+          <a href="index.html">Yoon Suro</a>
+        </div>
+        <div class="text-box">
+          <a href="#sec-hero">HOME</a>
+          <a href="#sec-about">ABOUT ME</a>
+          <a href="#sec-project">PROJECT</a>
+          <a href="#sec-contact">CONTACT</a>
+        </div>
+      </div>
+    </header>
     <main>
-      <div><p>안녕하세요</p></div>
+      <!------------------------------------------------ 섹션 1 --------------------------------------------------->
+      <section id="sec-hero" class="sec-hero">
+        <div class="sec-hero-grid">
+          <div class="text-box">
+            <h1>Yoon Suro</h1>
+            <h2>Portfolio</h2>
+            <p>
+              안녕하세요.<br />
+              사용자 경험을 고민하여 퍼블리싱하는 신입 퍼블리셔 윤수로입니다.<br />
+              직관적이고 편리한 웹 페이지를 구현하는 것을 목표로 하고 있습니다.
+            </p>
+          </div>
+        </div>
+      </section>
+      <!------------------------------------------------ 디바이더 --------------------------------------------------->
+      <div class="divider"></div>
+      <!------------------------------------------------ 섹션 2 --------------------------------------------------->
+      <section id="sec-about" class="sec-about"></section>
+      <!------------------------------------------------ 섹션 3 --------------------------------------------------->
+      <section id="sec-project" class="sec-project"></section>
+      <!------------------------------------------------ 섹션 4 --------------------------------------------------->
+      <section id="sec-contact" class="sec-contact"></section>
     </main>
+    <!-- aos -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- aos script -->
+    <script>
+      AOS.init();
+    </script>
+    <!-- 제이쿼리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- gsap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
+    <!-- 스와이퍼 js -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- 스크립트 -->
+    <script src="script.js"></script>
   </body>
 </html>

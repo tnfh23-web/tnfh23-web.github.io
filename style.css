@@ -1,0 +1,268 @@
+/* 프리텐다드 폰트  */
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Thin.woff2") format("woff2");
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraLight.woff2") format("woff2");
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-display: swap;
+}
+
+/* 사토시 폰트 */
+
+@font-face {
+  font-family: "Satoshi Regular";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Regular"), url("Satoshi-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Italic"), url("Satoshi-Italic.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Light";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Light"), url("Satoshi-Light.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Light Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Light Italic"), url("Satoshi-LightItalic.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Medium";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Medium"), url("Satoshi-Medium.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Medium Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Medium Italic"), url("Satoshi-MediumItalic.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Bold";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Bold"), url("Satoshi-Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Bold Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Bold Italic"), url("Satoshi-BoldItalic.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Black";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Black"), url("Satoshi-Black.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Black Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Satoshi Black Italic"), url("Satoshi-BlackItalic.woff") format("woff");
+}
+
+/* 노멀라이즈 시작 */
+
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+li,
+p {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 노멀라이즈 끝 */
+img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* html 기본 설정 */
+html {
+  font-family: "pretendard", sans-serif;
+  font-size: max(0.52083333vw, 10px);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+body {
+  color: var(--black-100);
+}
+
+/* 헤더 시작 */
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100%;
+  height: 8rem;
+  border-bottom: 1px solid var(--black-100);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.top-bar .container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--maxwidth);
+  margin: 0 auto;
+}
+.top-bar .container .link-box a {
+  font-size: 2.6rem;
+  font-weight: 500;
+  letter-spacing: -0.02rem;
+}
+.top-bar .container .text-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11rem;
+}
+.top-bar .container .text-box a {
+  position: relative;
+  font-size: 2em;
+  font-weight: 500;
+  letter-spacing: -0.02rem;
+  padding-bottom: 0.6rem;
+  box-sizing: border-box;
+}
+.top-bar .container .text-box a::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0.15rem;
+  background-color: var(--black-100);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: all 0.3s;
+}
+.top-bar .container .text-box a:hover::before {
+  transform: scaleX(1);
+}
+/* 헤더 끝 */
+
+/* 섹션1 시작 */
+
+.sec-hero {
+  padding: 15rem 0;
+}
+.sec-hero-grid {
+  max-width: var(--maxwidth);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+}
+.sec-hero-grid .text-box {
+  width: fit-content;
+  height: fit-content;
+}
+.sec-hero-grid .text-box h1 {
+  font-size: 12rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.sec-hero-grid .text-box h2 {
+  font-family: "Satoshi Bold", sans-serif;
+  font-size: 24rem;
+  line-height: 1;
+}
+.sec-hero-grid .text-box p {
+  font-size: 2.4rem;
+  font-weight: 500;
+  margin-top: 6rem;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+
+/* 섹션1 끝 */

@@ -1,0 +1,17 @@
+:root {
+  /* color */
+  --black-100: #111;
+  --black-80: #333333;
+  --black-60: #666666;
+  --black-40: #888888;
+  --black-20: #bdbdbd;
+  --white-100: #fff;
+  --white-95: #f7f7f7;
+  --white-90: #eeeeee;
+  --white-85: #e0e0e0;
+  --white-80: #fefefe;
+
+  /* grid */
+
+  --maxwidth: 164rem;
+}
