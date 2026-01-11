@@ -186,6 +186,11 @@ body {
   border-bottom: 1px solid var(--black-100);
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(2rem);
+  transition: transform 0.35s ease;
+  will-change: transform;
+}
+.top-bar.is-hide {
+  transform: translateY(-100%);
 }
 .top-bar .container {
   width: 100%;
@@ -442,6 +447,116 @@ body {
   font-weight: 400;
 }
 /* 섹션 2 끝 */
+
+/* 섹션 3 시작 */
+.sec-project {
+  padding: 12rem 0;
+  height: fit-content;
+}
+.sec-project-grid {
+  max-width: var(--maxwidth);
+  margin: 0 auto;
+}
+.sec-project-grid .title-box {
+  padding-bottom: 7.6rem;
+}
+.sec-project-grid .title-box h2 {
+  font-family: "Satoshi Bold", sans-serif;
+  font-size: 9.6rem;
+  line-height: 1.5;
+}
+.sec-project-grid .con-box .project-list-item {
+  border-bottom: 1px solid var(--black-40);
+}
+.sec-project-grid .con-box .item-title {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--black-40);
+}
+.sec-project-grid .con-box .item-title span {
+  font-size: 2.4rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.sec-project-grid .con-box .item-title span:nth-child(2) {
+  letter-spacing: -0.02rem;
+}
+.sec-project-grid .con-box .item-title span:nth-child(3) {
+  font-size: 3.6rem;
+  font-weight: 600;
+}
+.sec-project-grid .con-box .item-body {
+  padding: 4rem 0;
+}
+.sec-project-grid .con-box .item-body .item-body-inner {
+  display: flex;
+  gap: 6rem;
+}
+.sec-project-grid .con-box .item-body img {
+  width: 70.2rem;
+  height: 39.5rem;
+}
+.sec-project-grid .con-box .item-body .right-box {
+  width: 100%;
+}
+.sec-project-grid .con-box .item-body .right-box .text-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 4rem;
+}
+.sec-project-grid .con-box .item-body .right-box .text-box * {
+  line-height: 1.5;
+}
+.sec-project-grid .con-box .item-body .right-box .text-box span {
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--black-60);
+}
+.sec-project-grid .con-box .item-body .right-box .text-box h2 {
+  font-size: 3.2rem;
+  font-weight: 600;
+}
+.sec-project-grid .con-box .item-body .right-box .text-box p {
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.02rem;
+}
+.sec-project-grid .con-box .item-body .right-box .button-box {
+  display: flex;
+  gap: 2.4rem;
+}
+.sec-project-grid .con-box .item-body .right-box .button-box .button a {
+  display: flex;
+  align-items: center;
+  position: relative;
+  font-size: 2rem;
+  font-weight: 400;
+  padding: 1.8rem 4rem;
+  border: 1px solid var(--black-80);
+  transition: all 0.5s ease;
+}
+.sec-project-grid .con-box .item-body .right-box .button-box .button a::before {
+  content: "";
+  background-color: var(--black-80);
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: all 0.5s ease;
+  z-index: -1;
+}
+.sec-project-grid .con-box .item-body .right-box .button-box .button a:hover::before {
+  transform: scaleX(1);
+  border-radius: 1rem;
+}
+.sec-project-grid .con-box .item-body .right-box .button-box .button a:hover {
+  color: var(--white-100);
+  border-radius: 1rem;
+}
+/* 섹션 3 끝 */
 
 /* 섹션 4 시작 */
 
