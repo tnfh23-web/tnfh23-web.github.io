@@ -118,7 +118,8 @@ function setupAutoHideHeader() {
     }
 
     if (Math.abs(diff) > delta) {
-      if (diff > 0) header.classList.add("is-hide"); // 아래로 -> 숨김
+      if (diff > 0)
+        header.classList.add("is-hide"); // 아래로 -> 숨김
       else header.classList.remove("is-hide"); // 위로 -> 보임
       lastY = y;
     }

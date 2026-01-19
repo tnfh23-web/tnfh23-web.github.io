@@ -69,70 +69,90 @@
   font-family: "Satoshi Regular";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Regular"), url("Satoshi-Regular.woff") format("woff");
+  src:
+    local("Satoshi Regular"),
+    url("Satoshi-Regular.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Italic";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Italic"), url("Satoshi-Italic.woff") format("woff");
+  src:
+    local("Satoshi Italic"),
+    url("Satoshi-Italic.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Light";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Light"), url("Satoshi-Light.woff") format("woff");
+  src:
+    local("Satoshi Light"),
+    url("Satoshi-Light.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Light Italic";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Light Italic"), url("Satoshi-LightItalic.woff") format("woff");
+  src:
+    local("Satoshi Light Italic"),
+    url("Satoshi-LightItalic.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Medium";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Medium"), url("Satoshi-Medium.woff") format("woff");
+  src:
+    local("Satoshi Medium"),
+    url("Satoshi-Medium.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Medium Italic";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Medium Italic"), url("Satoshi-MediumItalic.woff") format("woff");
+  src:
+    local("Satoshi Medium Italic"),
+    url("Satoshi-MediumItalic.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Bold";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Bold"), url("Satoshi-Bold.woff") format("woff");
+  src:
+    local("Satoshi Bold"),
+    url("Satoshi-Bold.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Bold Italic";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Bold Italic"), url("Satoshi-BoldItalic.woff") format("woff");
+  src:
+    local("Satoshi Bold Italic"),
+    url("Satoshi-BoldItalic.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Black";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Black"), url("Satoshi-Black.woff") format("woff");
+  src:
+    local("Satoshi Black"),
+    url("Satoshi-Black.woff") format("woff");
 }
 
 @font-face {
   font-family: "Satoshi Black Italic";
   font-style: normal;
   font-weight: normal;
-  src: local("Satoshi Black Italic"), url("Satoshi-BlackItalic.woff") format("woff");
+  src:
+    local("Satoshi Black Italic"),
+    url("Satoshi-BlackItalic.woff") format("woff");
 }
 
 /* 노멀라이즈 시작 */
@@ -166,7 +186,7 @@ img {
 
 /* html 기본 설정 */
 html {
-  font-family: "pretendard", sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-size: max(0.52083333vw, 10px);
   overflow-x: hidden;
   scroll-behavior: smooth;
@@ -506,6 +526,11 @@ body {
 .sec-project-grid .con-box .project-list-item {
   border-bottom: 1px solid var(--black-40);
 }
+.sec-project-grid .con-box .project-list-item .item-title span:nth-child(1),
+.sec-project-grid .con-box .project-list-item .item-title span:nth-child(2) {
+  display: block;
+  width: 11.8rem;
+}
 .sec-project-grid .con-box .item-title {
   display: flex;
   align-items: center;
@@ -532,9 +557,14 @@ body {
   display: flex;
   gap: 6rem;
 }
+.sec-project-grid .con-box .item-body .left-box {
+  border-radius: 1.6rem;
+  overflow: hidden;
+}
 .sec-project-grid .con-box .item-body img {
   width: 70.2rem;
   height: 39.5rem;
+  object-fit: cover;
 }
 .sec-project-grid .con-box .item-body .right-box {
   width: 100%;
@@ -570,6 +600,8 @@ body {
   display: flex;
   align-items: center;
   position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
   font-size: 2rem;
   font-weight: 400;
   padding: 1.8rem 4rem;
@@ -588,11 +620,9 @@ body {
 }
 .sec-project-grid .con-box .item-body .right-box .button-box .button a:hover::before {
   transform: scaleX(1);
-  border-radius: 1rem;
 }
 .sec-project-grid .con-box .item-body .right-box .button-box .button a:hover {
   color: var(--white-100);
-  border-radius: 1rem;
 }
 /* 섹션 3 끝 */
 
@@ -654,6 +684,7 @@ body {
   padding: 1rem;
   box-sizing: border-box;
   border-radius: 1rem;
+  text-align: center;
   transition: all 0.3s;
 }
 .sec-contact-grid .contact-con .text-box-2 .contact-text-2 a:hover {
