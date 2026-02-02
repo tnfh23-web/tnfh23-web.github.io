@@ -103,7 +103,7 @@ body.is-loading footer {
 .loading {
   position: fixed;
   inset: 0;
-  background: var(--black-80);
+  background: var(--black-100);
   z-index: 9999;
 
   display: flex;
@@ -490,6 +490,7 @@ body.is-loading footer {
   line-height: 1.5;
 }
 .sec-project-grid .con-box .project-list-item {
+  will-change: height;
   border-bottom: 1px solid var(--black-40);
 }
 .sec-project-grid .con-box .project-list-item .item-title span:nth-child(1),
@@ -517,10 +518,8 @@ body.is-loading footer {
   font-weight: 600;
 }
 .sec-project-grid .con-box .item-body {
+  background-color: #fff;
   padding: 4rem 0;
-}
-#sec-project .project-list-item.is-active .item-body {
-  background-color: #f7f6f5;
 }
 .sec-project-grid .con-box .item-body .item-body-inner {
   display: flex;
@@ -530,13 +529,14 @@ body.is-loading footer {
   border-radius: 1.6rem;
   overflow: hidden;
 }
-.sec-project-grid .con-box .item-body img {
+.sec-project-grid .con-box .item-body .left-box a:hover img {
   width: 70.2rem;
-  height: 39.5rem;
-  object-fit: cover;
 }
-.sec-project-grid .con-box .item-body .right-box {
-  width: 100%;
+.sec-project-grid .con-box .item-body img {
+  width: 46rem;
+  height: 39.5rem;
+  transition: all 0.3s;
+  object-fit: cover;
 }
 .sec-project-grid .con-box .item-body .right-box .text-box {
   display: flex;
@@ -605,8 +605,7 @@ body.is-loading footer {
 }
 .sec-contact-grid .title-box {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding-top: 12rem;
 }
 .sec-contact-grid .title-box h2 {
@@ -617,7 +616,7 @@ body.is-loading footer {
 }
 .sec-contact-grid .title-box .title-2 {
   display: flex;
-  gap: 2rem;
+  gap: 3rem;
 }
 .sec-contact-grid .title-box .title-2 .contact-title-text {
   display: flex;
@@ -638,9 +637,10 @@ body.is-loading footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 1rem 2rem;
   box-sizing: border-box;
   border-radius: 1rem;
+  border: 1px solid #999;
   font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: 1.5;
@@ -652,7 +652,7 @@ body.is-loading footer {
 }
 .sec-contact-grid .contact-con {
   display: flex;
-  padding: 12rem 0;
+  padding: 6rem 0 12rem;
 }
 .sec-contact-grid .contact-con .text-box-1 {
   width: 100%;
@@ -661,7 +661,7 @@ body.is-loading footer {
   font-size: 2.4rem;
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: 0.02rem;
+  letter-spacing: -0.02rem;
   color: var(--black-80);
 }
 /* 섹션 4 끝 */

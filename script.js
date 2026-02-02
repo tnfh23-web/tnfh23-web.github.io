@@ -239,6 +239,7 @@ function setupProjectPinAccordion() {
   const itemList = document.querySelectorAll("#sec-project .project-list-item");
   const items = gsap.utils.toArray("#sec-project .project-list-item");
   if (!section || !items.length) return;
+  items.splice(items.length - 1, 1);
 
   const getHeight = () => {
     let totalHeight = 0;
@@ -262,27 +263,30 @@ function setupProjectPinAccordion() {
       pin: section,
       scrub: 1,
       invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        const idx = Math.min(items.length - 1, Math.floor(self.progress * items.length));
-        items.forEach((li, i) => li.classList.toggle("is-active", i === idx));
-      },
-      onLeave: () => items.forEach((li) => li.classList.remove("is-active")),
-      onLeaveBack: () => items.forEach((li) => li.classList.remove("is-active")),
+      // 타임라인 애니메이션으로 대체 < 아래 함수는 1초에 60번 불러옴 이거때문에 윌체인지 200번적어도 렉걸리는거 안없어짐
+      // onUpdate: (self) => {
+      //   const idx = Math.min(items.length - 1, Math.floor(self.progress * items.length));
+      //   items.forEach((li, i) => li.classList.toggle("is-active", i === idx));
+      // },
+      // onLeave: () => items.forEach((li) => li.classList.remove("is-active")),
+      // onLeaveBack: () => items.forEach((li) => li.classList.remove("is-active")),
     },
   });
 
+  let masterStagger = 0.5;
+  tl.to(items, {
+    height: 0,
+    stagger: masterStagger,
+    ease: "none",
+  });
   tl.to(
-    items,
+    "#sec-project .project-list-item .item-body",
     {
-      height: 0,
-      paddingTop: 0,
-      paddingBottom: 0,
-      marginTop: 0,
-      marginBottom: 0,
-      stagger: 0.5,
-      ease: "none",
+      backgroundColor: "#f7f6f5",
+      stagger: masterStagger,
+      duration: 0.1,
     },
-    0,
+    "<",
   );
 }
 
