@@ -77,10 +77,127 @@ html {
 body {
   color: var(--black-100);
 }
-.char {
+.split-title {
+  overflow: hidden;
+}
+.split-title .char {
   display: inline-block;
+  will-change: transform, opacity;
+}
+/* 로딩 시작 */
+html.is-loading,
+body.is-loading {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+body.is-loading main,
+body.is-loading header,
+body.is-loading footer {
+  pointer-events: none;
+  user-select: none;
 }
 
+/* 배경 */
+.loading {
+  position: fixed;
+  inset: 0;
+  background: var(--black-80);
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.6s ease,
+    visibility 0.6s ease;
+}
+
+/* 텍스트 */
+.loading-text {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: var(--white-100);
+}
+
+.loading-text span {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ===============================
+   Split Animation
+================================ */
+.loading.is-out .left {
+  animation: splitLeft 1.2s ease forwards;
+}
+.loading.is-out .right {
+  animation: splitRight 1.2s ease forwards;
+}
+
+@keyframes splitLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(-8vw);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-18vw);
+    opacity: 0;
+  }
+}
+
+@keyframes splitRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(8vw);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(18vw);
+    opacity: 0;
+  }
+}
+
+/* ===============================
+   Fade Out (배경)
+================================ */
+.loading.is-fade {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* 로딩 끝 */
+
+/* 섹션 타이틀 애니메이션 */
+
+.title-box h2 {
+  display: inline-block;
+  line-height: 1.1;
+}
+
+.title-box .title-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.title-box .title-inner {
+  display: inline-block;
+  will-change: transform;
+}
 /* 헤더 시작 */
 
 .top-bar {
@@ -128,6 +245,7 @@ body {
   transform: scaleX(0);
   transform-origin: left;
   transition: all 0.3s;
+  will-change: transform;
 }
 .top-bar .container .link-box a:hover::before {
   transform: scaleX(1);
@@ -402,7 +520,7 @@ body {
   padding: 4rem 0;
 }
 #sec-project .project-list-item.is-active .item-body {
-  background-color: #e5e3e1;
+  background-color: #f7f6f5;
 }
 .sec-project-grid .con-box .item-body .item-body-inner {
   display: flex;
@@ -451,6 +569,7 @@ body {
   display: flex;
   align-items: center;
   position: relative;
+  z-index: 0;
   border-radius: 1rem;
   overflow: hidden;
   font-size: 2rem;
