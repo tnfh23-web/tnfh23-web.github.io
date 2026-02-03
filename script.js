@@ -341,7 +341,7 @@ function setupSectionTitleAnimation() {
     });
 
     gsap.from(split.chars, {
-      x: 150,
+      x: -150,
       opacity: 0,
       duration: 0.7,
       ease: "power3.out",
