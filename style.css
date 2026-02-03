@@ -119,14 +119,32 @@ body.is-loading footer {
 
 /* 텍스트 */
 .loading-text {
+  position: relative;
   display: flex;
+  width: fit-content;
   gap: 1.2rem;
+  padding-bottom: 0.8rem;
+}
+.loading-text::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background-color: #999;
+  transform: translateX(-50%) scaleX(1);
+  transform-origin: center;
+  transition: transform 1.8s ease;
+  will-change: transform;
+}
+.loading.is-out .loading-text::after {
+  transform: translateX(-50%) scaleX(3);
+}
+.loading-text span {
   font-size: 3.2rem;
   font-weight: 700;
   color: var(--white-100);
-}
-
-.loading-text span {
   display: inline-block;
   will-change: transform, opacity;
 }
@@ -135,10 +153,10 @@ body.is-loading footer {
    Split Animation
 ================================ */
 .loading.is-out .left {
-  animation: splitLeft 1.2s ease forwards;
+  animation: splitLeft 1.8s ease forwards;
 }
 .loading.is-out .right {
-  animation: splitRight 1.2s ease forwards;
+  animation: splitRight 1.8s ease forwards;
 }
 
 @keyframes splitLeft {
@@ -151,7 +169,7 @@ body.is-loading footer {
     opacity: 1;
   }
   100% {
-    transform: translateX(-18vw);
+    transform: translateX(-16vw);
     opacity: 0;
   }
 }
@@ -166,7 +184,7 @@ body.is-loading footer {
     opacity: 1;
   }
   100% {
-    transform: translateX(18vw);
+    transform: translateX(16vw);
     opacity: 0;
   }
 }
@@ -210,8 +228,23 @@ body.is-loading footer {
   border-bottom: 1px solid var(--black-100);
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(2rem);
-  transition: transform 0.35s ease;
+  transform: translateY(-120%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.6s ease,
+    opacity 0.6s ease;
   will-change: transform;
+}
+.top-bar:not(.is-show) {
+  transform: translateY(-120%);
+  opacity: 0;
+  pointer-events: none;
+}
+.top-bar.is-show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 .top-bar.is-hide {
   transform: translateY(-100%);
@@ -633,20 +666,24 @@ body.is-loading footer {
   font-weight: 500;
   letter-spacing: 1.5;
 }
-.sec-contact-grid .title-box .title-2 .contact-title-text a {
+.sec-contact-grid .title-box .title-3 .contact-title-text {
+  display: flex;
+  gap: 1rem;
+}
+.sec-contact-grid .title-box .title-3 .contact-title-text a {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 1rem 2rem;
   box-sizing: border-box;
   border-radius: 1rem;
-  border: 1px solid #999;
+  border: 1px solid var(--black-80);
   font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: 1.5;
   transition: all 0.3s;
 }
-.sec-contact-grid .title-box .title-2 .contact-title-text a:hover {
+.sec-contact-grid .title-box .contact-title-text a:hover {
   background-color: var(--black-80);
   color: var(--white-100);
 }

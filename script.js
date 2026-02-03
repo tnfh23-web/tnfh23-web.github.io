@@ -84,18 +84,52 @@ function endLoading() {
   }, 1200);
 
   // 3) 완전 제거 + 스크롤 해제
+}
+function showHeaderAfterHeroAOS() {
+  const header = document.querySelector(".top-bar");
+  if (!header) return;
+
+  const HERO_AOS_TOTAL = 0;
+
+  setTimeout(() => {
+    header.classList.add("is-show");
+    setupAutoHideHeader();
+  }, HERO_AOS_TOTAL);
+}
+
+function endLoading() {
+  const loading = document.querySelector(".loading");
+
+  // 로딩 DOM이 없으면 그냥 풀고 AOS + 헤더 처리
+  if (!loading) {
+    endLoadingUnlock();
+    initAOSAfterLoading();
+    showHeaderAfterHeroAOS();
+    return;
+  }
+
+  loading.classList.add("is-out");
+
+  // 1) split 끝난 뒤 배경 페이드 + AOS 미리 시작
+  setTimeout(() => {
+    loading.classList.add("is-fade");
+    initAOSAfterLoading();
+  }, 1200);
+
+  // 2) 완전 제거 + 스크롤 해제
   setTimeout(() => {
     loading.remove();
     endLoadingUnlock();
 
     requestAnimationFrame(() => {
       ScrollTrigger.refresh(true);
-      // AOS는 이미 init 했으니 refresh만 한번 더
       if (window.AOS) AOS.refreshHard();
     });
+
+    // ✅ 여기서 헤더 등장 예약
+    showHeaderAfterHeroAOS();
   }, 1800);
 }
-
 /* =========================================================
    header
 ========================================================= */
@@ -199,32 +233,36 @@ function dividerMarquee() {
 
   topTween?.kill();
   bottomTween?.kill();
+  ScrollTrigger.getById("divider-top")?.kill();
+  ScrollTrigger.getById("divider-bottom")?.kill();
 
-  const distTop = top.scrollWidth - window.innerWidth;
-  const distBottom = bottom.scrollWidth - window.innerWidth;
+  const getDistTop = () => Math.max(0, top.scrollWidth - window.innerWidth);
+  const getDistBottom = () => Math.max(0, bottom.scrollWidth - window.innerWidth);
 
   topTween = gsap.to(top, {
-    x: -distTop,
+    x: () => -getDistTop(),
     ease: "none",
     scrollTrigger: {
+      id: "divider-top",
       trigger: ".divider",
       scrub: true,
       invalidateOnRefresh: true,
-      end: `+=${distTop}`,
+      end: () => `+=${getDistTop() || 1}`,
     },
   });
 
   bottomTween = gsap.fromTo(
     bottom,
-    { x: -distBottom },
+    { x: () => -getDistBottom() },
     {
       x: 0,
       ease: "none",
       scrollTrigger: {
+        id: "divider-bottom",
         trigger: ".divider",
         scrub: true,
         invalidateOnRefresh: true,
-        end: `+=${distBottom}`,
+        end: () => `+=${getDistBottom() || 1}`,
       },
     },
   );
@@ -323,7 +361,6 @@ function setupSectionTitleAnimation() {
 startLoadingLock();
 
 window.addEventListener("load", () => {
-  setupAutoHideHeader();
   dividerMarquee();
   setupProjectPinAccordion();
   setupSectionTitleAnimation();
