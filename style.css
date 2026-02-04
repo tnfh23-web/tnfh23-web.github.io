@@ -129,18 +129,29 @@ body.is-loading footer {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: 0;
-  height: 1px;
+  bottom: 50%;
+  height: 0.2rem;
   width: 100%;
   background-color: #999;
-  transform: translateX(-50%) scaleX(1);
+  transform: translateX(-50%) scaleX(0);
   transform-origin: center;
-  transition: transform 1.8s ease;
   will-change: transform;
 }
+
 .loading.is-out .loading-text::after {
-  transform: translateX(-50%) scaleX(3);
+  animation: line 2s ease forwards;
+  animation-delay: 0.9s;
 }
+
+@keyframes line {
+  from {
+    transform: translateX(-50%) scaleX(0);
+  }
+  to {
+    transform: translateX(-50%) scaleX(3);
+  }
+}
+
 .loading-text span {
   font-size: 3.2rem;
   font-weight: 700;
@@ -153,57 +164,46 @@ body.is-loading footer {
    Split Animation
 ================================ */
 .loading.is-out .left {
-  animation:
-    up 1.8s ease forwards 1.2s,
-    splitLeft 1.2s ease forwards;
+  animation: splitLeft 2s ease forwards;
 }
 .loading.is-out .right {
-  animation:
-    up 1.8s ease forwards 1.2s,
-    splitRight 1.2s ease forwards;
-}
-
-@keyframes up {
-  0% {
-    transform: translateY(10rem);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateY(5rem);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  animation: splitRight 2s ease forwards;
 }
 
 @keyframes splitLeft {
   0% {
-    transform: translateX(0);
+    transform: translate(0, 16rem);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(0, 0);
     opacity: 1;
   }
-  70% {
-    transform: translateX(-8vw);
+  90% {
+    transform: translate(-8vw, 0);
     opacity: 1;
   }
   100% {
-    transform: translateX(-16vw);
+    transform: translate(-16vw, 0);
     opacity: 0;
   }
 }
 
 @keyframes splitRight {
   0% {
-    transform: translateX(0);
+    transform: translate(0, 16rem);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(0, 0);
     opacity: 1;
   }
-  70% {
-    transform: translateX(8vw);
+  90% {
+    transform: translate(8vw, 0);
     opacity: 1;
   }
   100% {
-    transform: translateX(16vw);
+    transform: translate(16vw, 0);
     opacity: 0;
   }
 }
@@ -669,6 +669,7 @@ body.is-loading footer {
 .sec-contact-grid .title-box .title-2 {
   display: flex;
   gap: 3rem;
+  padding-bottom: 0.8rem;
 }
 .sec-contact-grid .title-box .title-2 .contact-title-text {
   display: flex;

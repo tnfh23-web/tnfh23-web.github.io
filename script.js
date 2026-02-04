@@ -126,7 +126,7 @@ function endLoading() {
       if (window.AOS) AOS.refreshHard();
     });
 
-    // ✅ 여기서 헤더 등장 예약
+    //  여기서 헤더 등장 예약
     showHeaderAfterHeroAOS();
   }, 1800);
 }
