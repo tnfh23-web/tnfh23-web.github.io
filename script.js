@@ -229,44 +229,74 @@ let topTween, bottomTween;
 function dividerMarquee() {
   const top = document.querySelector(".text-gsap-box-top");
   const bottom = document.querySelector(".text-gsap-box-bottom");
-  if (!top || !bottom) return;
+  const triggerEl = document.querySelector(".divider");
+  if (!top || !bottom || !triggerEl) return;
 
+  // 기존꺼 정리
   topTween?.kill();
   bottomTween?.kill();
   ScrollTrigger.getById("divider-top")?.kill();
   ScrollTrigger.getById("divider-bottom")?.kill();
 
-  const getDistTop = () => Math.max(0, top.scrollWidth - window.innerWidth);
-  const getDistBottom = () => Math.max(0, bottom.scrollWidth - window.innerWidth);
+  //  리사이즈/디바이스툴 토글 때 남아있는 transform 초기화 (이게 핵심)
+  gsap.set([top, bottom], { clearProps: "transform" });
 
-  topTween = gsap.to(top, {
-    x: () => -getDistTop(),
-    ease: "none",
-    scrollTrigger: {
-      id: "divider-top",
-      trigger: ".divider",
-      scrub: true,
-      invalidateOnRefresh: true,
-      end: () => `+=${getDistTop() || 1}`,
-    },
-  });
+  const distTop = Math.max(0, top.scrollWidth - window.innerWidth);
+  const distBottom = Math.max(0, bottom.scrollWidth - window.innerWidth);
 
-  bottomTween = gsap.fromTo(
-    bottom,
-    { x: () => -getDistBottom() },
-    {
-      x: 0,
+  //  움직일 거리 없으면 트리거 만들지 않음 (계산 꼬임 방지)
+  if (distTop === 0 && distBottom === 0) return;
+
+  if (distTop > 0) {
+    topTween = gsap.to(top, {
+      x: -distTop,
       ease: "none",
       scrollTrigger: {
-        id: "divider-bottom",
-        trigger: ".divider",
+        id: "divider-top",
+        trigger: triggerEl,
         scrub: true,
         invalidateOnRefresh: true,
-        end: () => `+=${getDistBottom() || 1}`,
+        end: `+=${distTop}`,
       },
-    },
-  );
+    });
+  }
+
+  if (distBottom > 0) {
+    bottomTween = gsap.fromTo(
+      bottom,
+      { x: -distBottom },
+      {
+        x: 0,
+        ease: "none",
+        scrollTrigger: {
+          id: "divider-bottom",
+          trigger: triggerEl,
+          scrub: true,
+          invalidateOnRefresh: true,
+          end: `+=${distBottom}`,
+        },
+      },
+    );
+  }
 }
+
+/* =========================================================
+   Resize (레이아웃 확정 후 재계산)
+========================================================= */
+let resizeTimer2;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer2);
+
+  resizeTimer = setTimeout(() => {
+    //  레이아웃/폰트/스크롤바 폭 반영 기다렸다가 재생성
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        dividerMarquee();
+        ScrollTrigger.refresh(true);
+      });
+    });
+  }, 150);
+});
 
 /* =========================================================
    Section 3 - Project Pin Accordion
