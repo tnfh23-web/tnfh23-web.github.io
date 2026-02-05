@@ -121,13 +121,12 @@ body.is-loading footer {
   display: flex;
   width: fit-content;
   gap: 1.2rem;
-  padding-bottom: 0.8rem;
 }
 .loading-text::after {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: 0;
+  bottom: 20%;
   height: 0.2rem;
   width: 100%;
   background-color: #999;
@@ -137,7 +136,7 @@ body.is-loading footer {
 }
 
 .loading.is-out .loading-text::after {
-  animation: line 1.6s ease forwards;
+  animation: line 2s ease forwards;
   animation-delay: 0.8s;
 }
 
@@ -146,7 +145,7 @@ body.is-loading footer {
     transform: translateX(-50%) scaleX(0);
   }
   to {
-    transform: translateX(-50%) scaleX(3);
+    transform: translateX(-50%) scaleX(2);
   }
 }
 
@@ -171,7 +170,7 @@ body.is-loading footer {
 @keyframes splitLeft {
   0% {
     transform: translate(0, 6rem);
-    opacity: 0.5;
+    opacity: 0.2;
   }
   50% {
     transform: translate(0, 0);
@@ -190,7 +189,7 @@ body.is-loading footer {
 @keyframes splitRight {
   0% {
     transform: translate(0, 6rem);
-    opacity: 0.5;
+    opacity: 0.2;
   }
   50% {
     transform: translate(0, 0);
@@ -521,10 +520,11 @@ body.is-loading footer {
 
 /* 섹션 3 시작 */
 .sec-project {
-  padding-top: 8rem;
   padding-bottom: 12rem;
   height: 100vh;
-  /* box-sizing: border-box; */
+}
+#sec-project {
+  padding-top: 4rem;
 }
 .sec-project-grid {
   max-width: var(--maxwidth);

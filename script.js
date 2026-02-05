@@ -295,7 +295,7 @@ function setupProjectPinAccordion() {
   const tl = gsap.timeline({
     scrollTrigger: {
       id: "proj-pin",
-      trigger: list,
+      trigger: section,
       start: "top top",
       end: () => `+=${getHeight()}`,
       pin: section,
