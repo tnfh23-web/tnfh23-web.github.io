@@ -169,8 +169,8 @@ body.is-loading footer {
 
 @keyframes splitLeft {
   0% {
-    transform: translate(0, 6rem);
-    opacity: 0.2;
+    transform: translate(0, 0);
+    opacity: 0;
   }
   50% {
     transform: translate(0, 0);
@@ -188,8 +188,8 @@ body.is-loading footer {
 
 @keyframes splitRight {
   0% {
-    transform: translate(0, 6rem);
-    opacity: 0.2;
+    transform: translate(0, 0);
+    opacity: 0;
   }
   50% {
     transform: translate(0, 0);
