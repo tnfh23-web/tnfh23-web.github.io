@@ -307,7 +307,7 @@ body.is-loading footer {
 }
 .top-bar .container .text-box a {
   position: relative;
-  font-size: 2em;
+  font-size: 2rem;
   font-weight: 500;
   letter-spacing: -0.02rem;
   padding-bottom: 0.6rem;
