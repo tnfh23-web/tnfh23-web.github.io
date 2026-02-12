@@ -2,8 +2,6 @@
    GSAP / ScrollTrigger
 ========================================================= */
 gsap.registerPlugin(ScrollTrigger);
-
-// 스플릿 텍스트
 gsap.registerPlugin(SplitText);
 
 /* =========================================================
@@ -47,7 +45,6 @@ function startLoadingLock() {
   document.documentElement.classList.add("is-loading");
   document.body.classList.add("is-loading");
 
-  // Lenis 쓰는 경우도 휠 입력 막아두는 게 안정적
   if (lenis) lenis.stop();
 }
 
@@ -63,106 +60,66 @@ window.addEventListener("wheel", _preventScroll, { passive: false, capture: true
 window.addEventListener("touchmove", _preventScroll, { passive: false, capture: true });
 
 /* =========================================================
-   로딩
+   AOS
 ========================================================= */
-function endLoading() {
-  const loading = document.querySelector(".loading");
-  if (!loading) {
-    endLoadingUnlock();
-    initAOSAfterLoading();
-    return;
-  }
+function initAOSAfterLoading() {
+  if (!window.AOS) return;
 
-  loading.classList.add("is-out");
+  AOS.init({
+    once: true,
+    offset: 0,
+    duration: 0,
+  });
 
-  // 2) split 끝난 뒤 배경 페이드 + AOS 미리 시작
-  setTimeout(() => {
-    loading.classList.add("is-fade");
-
-    //  로딩이 아직 덮고 있을 때 AOS 시작 (빈 화면 방지)
-    initAOSAfterLoading();
-  }, 1200);
-
-  // 3) 완전 제거 + 스크롤 해제
-}
-function showHeaderAfterHeroAOS() {
-  const header = document.querySelector(".top-bar");
-  if (!header) return;
-
-  const HERO_AOS_TOTAL = 0;
-
-  setTimeout(() => {
-    header.classList.add("is-show");
-    setupAutoHideHeader();
-  }, HERO_AOS_TOTAL);
+  AOS.refreshHard();
 }
 
-function endLoading() {
-  const loading = document.querySelector(".loading");
-
-  // 로딩 DOM이 없으면 그냥 풀고 AOS + 헤더 처리
-  if (!loading) {
-    endLoadingUnlock();
-    initAOSAfterLoading();
-    showHeaderAfterHeroAOS();
-    return;
-  }
-
-  loading.classList.add("is-out");
-
-  // 1) split 끝난 뒤 배경 페이드 + AOS 미리 시작
-  setTimeout(() => {
-    loading.classList.add("is-fade");
-    initAOSAfterLoading();
-  }, 1200);
-
-  // 2) 완전 제거 + 스크롤 해제
-  setTimeout(() => {
-    loading.remove();
-    endLoadingUnlock();
-
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh(true);
-      if (window.AOS) AOS.refreshHard();
-    });
-
-    //  여기서 헤더 등장 예약
-    showHeaderAfterHeroAOS();
-  }, 1800);
-}
 /* =========================================================
-   header
+   header (PC 자동 숨김)
 ========================================================= */
 function setupAutoHideHeader() {
-  const header = document.querySelector(".top-bar");
-  if (!header) return;
+  // ✅ PC만 적용 (네가 바꿔둔 그대로 유지)
+  const headers = document.querySelectorAll(".pc-top-bar");
+  if (!headers.length) return;
 
   let lastY = 0;
   const delta = 8;
-  const headerH = header.offsetHeight || 0;
+  const headerH = headers[0].offsetHeight || 0;
 
   function update(y) {
-    if (y <= 0) {
-      header.classList.remove("is-hide");
-      lastY = y;
-      return;
-    }
+    headers.forEach((header) => {
+      if (y <= 0) {
+        header.classList.remove("is-hide");
+        return;
+      }
 
-    const diff = y - lastY;
-    if (Math.abs(diff) < delta) return;
+      const diff = y - lastY;
+      if (Math.abs(diff) < delta) return;
 
-    if (diff > 0 && y > headerH) header.classList.add("is-hide");
-    if (diff < 0) header.classList.remove("is-hide");
+      if (diff > 0 && y > headerH) header.classList.add("is-hide");
+      if (diff < 0) header.classList.remove("is-hide");
+    });
 
     lastY = y;
   }
 
-  // Lenis 사용 시
   if (window.Lenis && lenis) {
+    // ✅ Lenis 스크롤 이벤트로 제어
     lenis.on("scroll", ({ scroll }) => update(scroll));
   } else {
     window.addEventListener("scroll", () => update(window.scrollY || 0), { passive: true });
   }
+}
+
+/* =========================================================
+   Header show
+========================================================= */
+function showHeaderAfterHeroAOS() {
+  document.querySelectorAll(".top-bar").forEach((header) => {
+    header.classList.add("is-show");
+  });
+
+  setupAutoHideHeader();
 }
 
 /* =========================================================
@@ -180,7 +137,8 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 
     e.preventDefault();
 
-    const headerH = document.querySelector(".top-bar")?.offsetHeight || 0;
+    const header = document.querySelector(".top-bar.is-show");
+    const headerH = header ? header.offsetHeight : 0;
 
     if (lenis) {
       lenis.scrollTo(target, {
@@ -195,36 +153,80 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 });
 
 /* =========================================================
-   AOS
+   Mobile Menu
 ========================================================= */
-function initAOSAfterLoading() {
-  if (!window.AOS) return;
+function setupMobileMenu() {
+  const header = document.querySelector(".mo-top-bar");
+  if (!header) return;
 
-  // 혹시 기존 init돼있으면 리프레시
-  AOS.init({
-    once: true,
-    // 로딩 끝난 뒤 첫 화면에서 바로 트리거되게 하고 싶으면 0~200 조절
-    offset: 0,
-    duration: 0,
+  const btn = header.querySelector(".sidebar-menu-box");
+  const menu = header.querySelector(".mo-menu");
+  if (!btn || !menu) return;
+
+  const links = menu.querySelectorAll('a[href^="#"]');
+
+  if (!btn.hasAttribute("aria-expanded")) btn.setAttribute("aria-expanded", "false");
+  if (!btn.hasAttribute("aria-label")) btn.setAttribute("aria-label", "메뉴 열기");
+
+  function setExpanded(v) {
+    btn.setAttribute("aria-expanded", String(v));
+    btn.setAttribute("aria-label", v ? "메뉴 닫기" : "메뉴 열기");
+  }
+
+  function openMenu() {
+    header.classList.add("is-menu-open");
+    setExpanded(true);
+  }
+
+  function closeMenu() {
+    header.classList.remove("is-menu-open");
+    setExpanded(false);
+  }
+
+  function toggleMenu() {
+    header.classList.contains("is-menu-open") ? closeMenu() : openMenu();
+  }
+
+  btn.addEventListener("click", (e) => {
+    if (_lockScroll) return;
+    e.preventDefault();
+    toggleMenu();
   });
 
-  // 레이아웃 완전히 잡힌 다음 트리거 재계산
-  AOS.refreshHard();
+  links.forEach((a) => a.addEventListener("click", () => closeMenu()));
+
+  document.addEventListener("click", (e) => {
+    if (!header.classList.contains("is-menu-open")) return;
+    if (header.contains(e.target)) return;
+    closeMenu();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (header.classList.contains("is-menu-open")) closeMenu();
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768 && header.classList.contains("is-menu-open")) closeMenu();
+  });
 }
 
 /* =========================================================
    Divider (복사 + ScrollTrigger Marquee)
 ========================================================= */
-document.querySelectorAll(".text-gsap-box-top,.text-gsap-box-bottom").forEach((track) => {
-  const copy = 3;
-  const original = track.innerHTML;
-
-  for (let i = 0; i < copy; i++) {
-    track.innerHTML += original;
-  }
-});
-
+let _dividerCopied = false;
 let topTween, bottomTween;
+
+function copyDividerTextOnce() {
+  if (_dividerCopied) return;
+  _dividerCopied = true;
+
+  document.querySelectorAll(".text-gsap-box-top,.text-gsap-box-bottom").forEach((track) => {
+    const copy = 3;
+    const original = track.innerHTML;
+    for (let i = 0; i < copy; i++) track.innerHTML += original;
+  });
+}
 
 function dividerMarquee() {
   const top = document.querySelector(".text-gsap-box-top");
@@ -238,13 +240,12 @@ function dividerMarquee() {
   ScrollTrigger.getById("divider-top")?.kill();
   ScrollTrigger.getById("divider-bottom")?.kill();
 
-  //  리사이즈/디바이스툴 토글 때 남아있는 transform 초기화 (이게 핵심)
+  // transform 초기화
   gsap.set([top, bottom], { clearProps: "transform" });
 
   const distTop = Math.max(0, top.scrollWidth - window.innerWidth);
   const distBottom = Math.max(0, bottom.scrollWidth - window.innerWidth);
 
-  //  움직일 거리 없으면 트리거 만들지 않음 (계산 꼬임 방지)
   if (distTop === 0 && distBottom === 0) return;
 
   if (distTop > 0) {
@@ -281,32 +282,15 @@ function dividerMarquee() {
 }
 
 /* =========================================================
-   Resize (레이아웃 확정 후 재계산)
-========================================================= */
-let resizeTimer2;
-window.addEventListener("resize", () => {
-  clearTimeout(resizeTimer2);
-
-  resizeTimer = setTimeout(() => {
-    //  레이아웃/폰트/스크롤바 폭 반영 기다렸다가 재생성
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        dividerMarquee();
-        ScrollTrigger.refresh(true);
-      });
-    });
-  }, 150);
-});
-
-/* =========================================================
    Section 3 - Project Pin Accordion
 ========================================================= */
 function setupProjectPinAccordion() {
   const section = document.querySelector("#sec-project");
-  const list = document.querySelector("#sec-project .project-list");
   const itemList = document.querySelectorAll("#sec-project .project-list-item");
   const items = gsap.utils.toArray("#sec-project .project-list-item");
   if (!section || !items.length) return;
+
+  // ✅ 마지막 아이템 제외(네 로직 유지)
   items.splice(items.length - 1, 1);
 
   const getHeight = () => {
@@ -318,9 +302,7 @@ function setupProjectPinAccordion() {
   ScrollTrigger.getById("proj-pin")?.kill();
   gsap.killTweensOf(items);
 
-  items.forEach((li) => {
-    li.style.overflow = "hidden";
-  });
+  items.forEach((li) => (li.style.overflow = "hidden"));
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -331,22 +313,17 @@ function setupProjectPinAccordion() {
       pin: section,
       scrub: 1,
       invalidateOnRefresh: true,
-      // 타임라인 애니메이션으로 대체 < 아래 함수는 1초에 60번 불러옴 이거때문에 윌체인지 200번적어도 렉걸리는거 안없어짐
-      // onUpdate: (self) => {
-      //   const idx = Math.min(items.length - 1, Math.floor(self.progress * items.length));
-      //   items.forEach((li, i) => li.classList.toggle("is-active", i === idx));
-      // },
-      // onLeave: () => items.forEach((li) => li.classList.remove("is-active")),
-      // onLeaveBack: () => items.forEach((li) => li.classList.remove("is-active")),
     },
   });
 
-  let masterStagger = 0.5;
+  const masterStagger = 0.5;
+
   tl.to(items, {
     height: 0,
     stagger: masterStagger,
     ease: "none",
   });
+
   tl.to(
     "#sec-project .project-list-item .item-body",
     {
@@ -358,17 +335,15 @@ function setupProjectPinAccordion() {
   );
 }
 
-// // 타이틀 애니메이션
-
+/* =========================================================
+   Title Split Animation
+========================================================= */
 function setupSectionTitleAnimation() {
   document.querySelectorAll(".split-title").forEach((title) => {
-    // 이미 split된 경우 방지
     if (title.classList.contains("is-split")) return;
     title.classList.add("is-split");
 
-    const split = new SplitText(title, {
-      type: "chars",
-    });
+    const split = new SplitText(title, { type: "chars" });
 
     gsap.from(split.chars, {
       x: -150,
@@ -386,24 +361,77 @@ function setupSectionTitleAnimation() {
 }
 
 /* =========================================================
-   Init / Resize
+   Loading End (단일 함수로 정리)
+========================================================= */
+function endLoading() {
+  const loading = document.querySelector(".loading");
+
+  // 로딩 DOM이 없으면 그냥 풀고 AOS + 헤더 처리
+  if (!loading) {
+    endLoadingUnlock();
+    initAOSAfterLoading();
+    showHeaderAfterHeroAOS();
+    return;
+  }
+
+  loading.classList.add("is-out");
+
+  // split 끝난 뒤 배경 페이드 + AOS 시작
+  setTimeout(() => {
+    loading.classList.add("is-fade");
+    initAOSAfterLoading();
+  }, 1200);
+
+  // 완전 제거 + 스크롤 해제
+  setTimeout(() => {
+    loading.remove();
+    endLoadingUnlock();
+
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh(true);
+      if (window.AOS) AOS.refreshHard();
+    });
+
+    showHeaderAfterHeroAOS();
+  }, 1800);
+}
+
+/* =========================================================
+   Resize (✅ 하나로 통합 / 디바운스)
+========================================================= */
+let resizeTimer;
+let lastW = window.innerWidth;
+
+function handleResize() {
+  // devtools/모바일 주소창 등으로 height만 흔들릴 때는 무시(렉 방지)
+  const w = window.innerWidth;
+  if (w === lastW) return;
+  lastW = w;
+
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    requestAnimationFrame(() => {
+      dividerMarquee();
+      setupProjectPinAccordion();
+      ScrollTrigger.refresh(true);
+    });
+  }, 200);
+}
+
+window.addEventListener("resize", handleResize, { passive: true });
+
+/* =========================================================
+   Init
 ========================================================= */
 startLoadingLock();
 
 window.addEventListener("load", () => {
+  copyDividerTextOnce();
   dividerMarquee();
   setupProjectPinAccordion();
   setupSectionTitleAnimation();
-  ScrollTrigger.refresh();
-  endLoading();
-});
+  setupMobileMenu();
 
-let resizeTimer;
-window.addEventListener("resize", () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    dividerMarquee();
-    setupProjectPinAccordion();
-    ScrollTrigger.refresh();
-  }, 150);
+  ScrollTrigger.refresh(true);
+  endLoading();
 });
