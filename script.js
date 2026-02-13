@@ -281,16 +281,47 @@ function dividerMarquee() {
   }
 }
 
+async function waitProjectAssets() {
+  if (document.fonts?.ready) {
+    try {
+      await document.fonts.ready;
+    } catch (e) {}
+  }
+
+  const imgs = Array.from(document.querySelectorAll("#sec-project img"));
+  await Promise.all(
+    imgs.map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((res) => {
+        img.addEventListener("load", res, { once: true });
+        img.addEventListener("error", res, { once: true });
+      });
+    }),
+  );
+
+  await Promise.all(imgs.map((img) => img.decode?.().catch(() => {}) ?? Promise.resolve()));
+}
+
 /* =========================================================
    Section 3 - Project Pin Accordion
 ========================================================= */
 function setupProjectPinAccordion() {
   const section = document.querySelector("#sec-project");
+  const allItems = gsap.utils.toArray("#sec-project .project-list-item");
+  if (!section || !allItems.length) return;
+
+  ScrollTrigger.getById("proj-pin")?.kill(true);
+  gsap.killTweensOf(allItems);
+
+  allItems.forEach((el) => {
+    el.style.height = "";
+    el.style.overflow = "";
+  });
+
   const itemList = document.querySelectorAll("#sec-project .project-list-item");
   const items = gsap.utils.toArray("#sec-project .project-list-item");
-  if (!section || !items.length) return;
 
-  // ✅ 마지막 아이템 제외(네 로직 유지)
+  //  마지막 아이템 제외(네 로직 유지)
   items.splice(items.length - 1, 1);
 
   const getHeight = () => {
@@ -298,9 +329,6 @@ function setupProjectPinAccordion() {
     itemList.forEach((el) => (totalHeight += el.offsetHeight));
     return totalHeight;
   };
-
-  ScrollTrigger.getById("proj-pin")?.kill();
-  gsap.killTweensOf(items);
 
   items.forEach((li) => (li.style.overflow = "hidden"));
 
@@ -410,8 +438,9 @@ function handleResize() {
 
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    requestAnimationFrame(() => {
+    requestAnimationFrame(async () => {
       dividerMarquee();
+      await waitProjectAssets();
       setupProjectPinAccordion();
       ScrollTrigger.refresh(true);
     });
@@ -425,13 +454,18 @@ window.addEventListener("resize", handleResize, { passive: true });
 ========================================================= */
 startLoadingLock();
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   copyDividerTextOnce();
   dividerMarquee();
-  setupProjectPinAccordion();
   setupSectionTitleAnimation();
   setupMobileMenu();
 
   ScrollTrigger.refresh(true);
+
+  await waitProjectAssets();
+  setupProjectPinAccordion();
+
+  requestAnimationFrame(() => ScrollTrigger.refresh(true));
+
   endLoading();
 });
