@@ -111,8 +111,8 @@ body.is-loading footer {
   opacity: 1;
   visibility: visible;
   transition:
-    opacity 1s ease,
-    visibility 1s ease;
+    opacity 2s ease,
+    visibility 2s ease;
 }
 
 /* 텍스트 */
@@ -128,24 +128,29 @@ body.is-loading footer {
   left: 50%;
   bottom: 20%;
   height: 0.2rem;
-  width: 100%;
+  width: 90%;
   background-color: #999;
   transform: translateX(-50%) scaleX(0);
   transform-origin: center;
   will-change: transform;
 }
 
-.loading.is-out .loading-text::after {
-  animation: line 2s ease forwards;
-  animation-delay: 0.8s;
+.loading .loading-text::after {
+  animation: line 1.3s ease forwards;
+  animation-delay: 1.3s;
 }
 
 @keyframes line {
-  from {
+  0% {
     transform: translateX(-50%) scaleX(0);
   }
-  to {
+  80% {
     transform: translateX(-50%) scaleX(2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scaleX(2);
+    opacity: 0;
   }
 }
 
@@ -160,11 +165,11 @@ body.is-loading footer {
 /* ===============================
    Split Animation
 ================================ */
-.loading.is-out .left {
-  animation: splitLeft 2s ease forwards;
+.loading .left {
+  animation: splitLeft 2.5s ease forwards;
 }
-.loading.is-out .right {
-  animation: splitRight 2s ease forwards;
+.loading .right {
+  animation: splitRight 2.5s ease forwards;
 }
 
 @keyframes splitLeft {
@@ -181,7 +186,7 @@ body.is-loading footer {
     opacity: 1;
   }
   100% {
-    transform: translate(-16vw, 0);
+    transform: translate(-8vw, 0);
     opacity: 0;
   }
 }
@@ -200,7 +205,7 @@ body.is-loading footer {
     opacity: 1;
   }
   100% {
-    transform: translate(16vw, 0);
+    transform: translate(8vw, 0);
     opacity: 0;
   }
 }
@@ -248,8 +253,8 @@ body.is-loading footer {
   opacity: 0;
   pointer-events: none;
   transition:
-    transform 0.6s ease,
-    opacity 0.6s ease;
+    transform 0.6s 0.8s ease,
+    opacity 0.6s 0.8s ease;
   will-change: transform;
 }
 .pc-top-bar:not(.is-show) {

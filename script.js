@@ -78,7 +78,6 @@ function initAOSAfterLoading() {
    header (PC 자동 숨김)
 ========================================================= */
 function setupAutoHideHeader() {
-  // ✅ PC만 적용 (네가 바꿔둔 그대로 유지)
   const headers = document.querySelectorAll(".pc-top-bar");
   if (!headers.length) return;
 
@@ -104,7 +103,7 @@ function setupAutoHideHeader() {
   }
 
   if (window.Lenis && lenis) {
-    // ✅ Lenis 스크롤 이벤트로 제어
+    //  Lenis 스크롤 이벤트로 제어
     lenis.on("scroll", ({ scroll }) => update(scroll));
   } else {
     window.addEventListener("scroll", () => update(window.scrollY || 0), { passive: true });
@@ -402,13 +401,11 @@ function endLoading() {
     return;
   }
 
-  loading.classList.add("is-out");
-
   // split 끝난 뒤 배경 페이드 + AOS 시작
   setTimeout(() => {
     loading.classList.add("is-fade");
     initAOSAfterLoading();
-  }, 1200);
+  }, 2000);
 
   // 완전 제거 + 스크롤 해제
   setTimeout(() => {
@@ -421,7 +418,7 @@ function endLoading() {
     });
 
     showHeaderAfterHeroAOS();
-  }, 1800);
+  }, 3000);
 }
 
 /* =========================================================
