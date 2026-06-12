@@ -405,7 +405,7 @@ function endLoading() {
   setTimeout(() => {
     loading.classList.add("is-fade");
     initAOSAfterLoading();
-  }, 2000);
+  }, 1000);
 
   // 완전 제거 + 스크롤 해제
   setTimeout(() => {
@@ -418,7 +418,7 @@ function endLoading() {
     });
 
     showHeaderAfterHeroAOS();
-  }, 3000);
+  }, 2000);
 }
 
 /* =========================================================
