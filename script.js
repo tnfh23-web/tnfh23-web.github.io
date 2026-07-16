@@ -317,6 +317,13 @@ function setupProjectPinAccordion() {
     el.style.overflow = "";
   });
 
+  if (window.matchMedia("(max-width: 768px)").matches) {
+    section.style.height = "auto";
+    return;
+  }
+
+  section.style.height = "";
+
   const itemList = document.querySelectorAll("#sec-project .project-list-item");
   const items = gsap.utils.toArray("#sec-project .project-list-item");
 
@@ -339,6 +346,7 @@ function setupProjectPinAccordion() {
       end: () => `+=${getHeight()}`,
       pin: section,
       scrub: 1,
+      refreshPriority: 1,
       invalidateOnRefresh: true,
     },
   });
@@ -447,6 +455,160 @@ function handleResize() {
 window.addEventListener("resize", handleResize, { passive: true });
 
 /* =========================================================
+   Hero Circle Text
+========================================================= */
+function setupCircleTextRotation() {
+  const circleBox = document.querySelector(".circle-box");
+  const circleText = circleBox?.querySelector(".circle-text");
+  const circleCenter = circleBox?.querySelector(".circle-center");
+
+  if (!circleBox || !circleText || !circleCenter || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  let isSpeedLocked = false;
+
+  const rotationTween = gsap.to(circleText, {
+    rotation: 360,
+    duration: 10,
+    ease: "none",
+    repeat: -1,
+    transformOrigin: "50% 50%",
+  });
+
+  const changeSpeed = (timeScale) => {
+    gsap.to(rotationTween, {
+      timeScale,
+      duration: 0.9,
+      ease: "power2.out",
+      overwrite: true,
+    });
+  };
+
+  circleCenter.addEventListener("mouseenter", () => {
+    if (!isSpeedLocked) changeSpeed(0.4);
+  });
+
+  circleCenter.addEventListener("mouseleave", () => {
+    if (!isSpeedLocked) changeSpeed(1);
+  });
+
+  circleCenter.addEventListener("click", () => {
+    isSpeedLocked = !isSpeedLocked;
+    circleBox.classList.toggle("is-speed-locked", isSpeedLocked);
+    circleCenter.setAttribute("aria-pressed", String(isSpeedLocked));
+    circleCenter.setAttribute("aria-label", isSpeedLocked ? "원형 텍스트 기본 속도로 전환" : "원형 텍스트 느린 속도로 고정");
+    circleCenter.textContent = isSpeedLocked ? "slow" : "click";
+    changeSpeed(isSpeedLocked ? 0.4 : 1);
+  });
+}
+
+/* =========================================================
+   Frontend Project Reveal
+========================================================= */
+function setupFrontendProjectAnimation() {
+  const section = document.querySelector("#sec-frontend");
+  const projectItems = gsap.utils.toArray("#sec-frontend .front-project-item");
+  if (!section) return;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    gsap.set(section.querySelectorAll(".front-project-visual, .front-project-info, .front-project-watermark"), { clearProps: "all" });
+    return;
+  }
+
+  ScrollTrigger.getAll().forEach((trigger) => {
+    if (trigger.vars.id?.startsWith("frontend-")) trigger.kill();
+  });
+
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+  projectItems.forEach((item, index) => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        id: `frontend-item-${index}`,
+        trigger: item,
+        start: "top 78%",
+        end: "top 28%",
+        scrub: 1,
+        invalidateOnRefresh: true,
+      },
+    });
+
+    tl.fromTo(
+      item.querySelector(".front-project-visual"),
+      { y: 12 * rem, rotation: -2.5, opacity: 0 },
+      { y: 0, rotation: 0, opacity: 1, ease: "power2.out" },
+    ).fromTo(item.querySelector(".front-project-info"), { x: 100, opacity: 0 }, { x: 0, opacity: 1, ease: "power2.out" }, "<0.15");
+  });
+
+  gsap.fromTo(
+    section.querySelector(".front-project-watermark"),
+    { x: 140 },
+    {
+      x: -80,
+      ease: "none",
+      scrollTrigger: {
+        id: "frontend-watermark",
+        trigger: section,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: 1,
+        invalidateOnRefresh: true,
+      },
+    },
+  );
+}
+
+/* =========================================================
+   Frontend Preview - Parent Scroll Isolation
+========================================================= */
+function setupFrontendPreviewScrollIsolation() {
+  const previews = document.querySelectorAll("#sec-frontend iframe");
+
+  previews.forEach((preview) => {
+    let isPreviewActive = false;
+    let lockedScrollY = 0;
+    let isRestoring = false;
+
+    const restoreParentScroll = () => {
+      if (!isPreviewActive || isRestoring) return;
+      if (Math.abs(window.scrollY - lockedScrollY) < 1) return;
+
+      isRestoring = true;
+
+      if (lenis) {
+        lenis.scrollTo(lockedScrollY, { immediate: true, force: true });
+      } else {
+        window.scrollTo({ top: lockedScrollY, behavior: "auto" });
+      }
+
+      requestAnimationFrame(() => {
+        isRestoring = false;
+      });
+    };
+
+    const lockParentScroll = () => {
+      if (isPreviewActive) return;
+      lockedScrollY = window.scrollY;
+      isPreviewActive = true;
+      if (lenis) lenis.stop();
+    };
+
+    const unlockParentScroll = () => {
+      if (!isPreviewActive) return;
+      restoreParentScroll();
+      isPreviewActive = false;
+      if (lenis) lenis.start();
+      ScrollTrigger.update();
+    };
+
+    preview.addEventListener("pointerenter", lockParentScroll);
+    preview.addEventListener("pointerleave", unlockParentScroll);
+    preview.addEventListener("focus", lockParentScroll);
+    preview.addEventListener("blur", unlockParentScroll);
+    window.addEventListener("scroll", restoreParentScroll, { passive: true });
+  });
+}
+
+/* =========================================================
    Init
 ========================================================= */
 startLoadingLock();
@@ -456,11 +618,12 @@ window.addEventListener("load", async () => {
   dividerMarquee();
   setupSectionTitleAnimation();
   setupMobileMenu();
-
-  ScrollTrigger.refresh(true);
+  setupCircleTextRotation();
+  setupFrontendPreviewScrollIsolation();
 
   await waitProjectAssets();
   setupProjectPinAccordion();
+  setupFrontendProjectAnimation();
 
   requestAnimationFrame(() => ScrollTrigger.refresh(true));
 
