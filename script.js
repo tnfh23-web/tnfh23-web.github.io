@@ -609,6 +609,58 @@ function setupFrontendPreviewScrollIsolation() {
 }
 
 /* =========================================================
+   Vibe Project - Pinned Section Transition
+========================================================= */
+function setupVibeAccordion() {
+  const section = document.querySelector("#sec-vibe");
+  const stage = section?.querySelector(".vibe-stage");
+  const slides = gsap.utils.toArray("#sec-vibe .vibe-slide");
+  if (!section || !stage || slides.length < 2) return;
+
+  ScrollTrigger.getById("vibe-pin")?.kill(true);
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    slides[0].classList.add("is-active");
+    return;
+  }
+
+  const next = slides[1];
+  const outer = next.querySelector(".vibe-outer");
+  const inner = next.querySelector(".vibe-inner");
+  const background = next.querySelector(".vibe-background");
+  const content = next.querySelector(".vibe-content");
+
+  gsap.set(next, { autoAlpha: 1, zIndex: 2 });
+  gsap.set(outer, { yPercent: 100 });
+  gsap.set(inner, { yPercent: -100 });
+  gsap.set(background, { yPercent: 15 });
+
+  const timeline = gsap.timeline({
+    scrollTrigger: {
+      id: "vibe-pin",
+      trigger: stage,
+      start: "top top",
+      end: "+=120%",
+      pin: stage,
+      scrub: 1,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const showNext = self.progress >= 0.5;
+        slides[0].classList.toggle("is-interactive", !showNext);
+        slides[1].classList.toggle("is-interactive", showNext);
+      },
+    },
+  });
+
+  timeline
+    .to(slides[0].querySelector(".vibe-background"), { yPercent: -15, ease: "none" }, 0)
+    .to([outer, inner], { yPercent: 0, ease: "power1.inOut" }, 0)
+    .to(background, { yPercent: 0, ease: "power1.inOut" }, 0)
+    .fromTo(content, { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, ease: "power2.out" }, 0.25);
+}
+
+/* =========================================================
    Init
 ========================================================= */
 startLoadingLock();
@@ -620,6 +672,7 @@ window.addEventListener("load", async () => {
   setupMobileMenu();
   setupCircleTextRotation();
   setupFrontendPreviewScrollIsolation();
+  setupVibeAccordion();
 
   await waitProjectAssets();
   setupProjectPinAccordion();

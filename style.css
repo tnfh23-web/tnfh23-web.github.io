@@ -76,6 +76,8 @@ html {
 }
 body {
   color: var(--black-100);
+  max-width: 100%;
+  overflow-x: clip;
 }
 .split-title {
   overflow: hidden;
@@ -1201,6 +1203,233 @@ body.is-loading footer {
 
 /* 섹션 5 시작 */
 
+/* VIBE PROJECT */
+.sec-vibe {
+  position: relative;
+  color: var(--white-100);
+  background: var(--black-100);
+}
+.vibe-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 72rem;
+  overflow: hidden;
+}
+.vibe-stage-head {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 3rem 4rem;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  font-family: "Satoshi", sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+.vibe-stage-head h2 {
+  font-family: "Satoshi", sans-serif;
+  font-size: 3.2rem;
+  font-weight: 700;
+}
+.vibe-slide,
+.vibe-outer,
+.vibe-inner,
+.vibe-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.vibe-slide {
+  visibility: hidden;
+}
+.vibe-slide {
+  pointer-events: none;
+}
+.vibe-slide.is-active {
+  visibility: visible;
+}
+.vibe-slide.is-interactive {
+  pointer-events: auto;
+}
+.vibe-outer,
+.vibe-inner {
+  overflow: hidden;
+}
+.vibe-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.vibe-background > img {
+  filter: blur(24px) saturate(0.55);
+  transform: scale(1.08);
+}
+.vibe-shade {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.78);
+}
+.vibe-content {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12rem 4rem 4rem;
+  box-sizing: border-box;
+}
+.vibe-main {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(34rem, 0.72fr) minmax(0, 1.28fr);
+  align-items: center;
+  gap: clamp(4rem, 6vw, 12rem);
+  flex: 1;
+  max-width: var(--maxwidth);
+  width: 100%;
+  margin: 0 auto;
+}
+.vibe-copy {
+  position: relative;
+  z-index: 2;
+}
+.vibe-kicker {
+  margin-bottom: 2rem;
+  font-family: "Satoshi", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.vibe-content h3 {
+  font-family: "Satoshi", sans-serif;
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.vibe-description {
+  margin-top: 3rem;
+  color: var(--white-85);
+  font-size: 1.6rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.vibe-preview {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: var(--black-100);
+  box-shadow: 0 3rem 8rem rgba(0, 0, 0, 0.55);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.vibe-preview::before {
+  content: "";
+  display: block;
+  padding-top: 52.7%;
+}
+.vibe-preview img {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.vibe-preview:hover {
+  transform: translateY(-0.8rem);
+}
+.vibe-preview:hover img {
+  transform: scale(1.025);
+}
+.vibe-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-top: 3rem;
+  font-family: "Satoshi", sans-serif;
+  font-size: 1.3rem;
+}
+.vibe-actions p {
+  font-size: 1.6rem;
+}
+.vibe-description {
+  font-size: 1.8rem;
+}
+.vibe-actions a {
+  min-width: 16rem;
+  padding: 1.6rem 1.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  font-weight: 700;
+  box-sizing: border-box;
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease;
+}
+.vibe-actions a span {
+  display: inline-block;
+  margin-left: 2rem;
+  transition: transform 0.3s ease;
+}
+.vibe-actions a:hover {
+  color: var(--black-100);
+  background: var(--white-100);
+}
+.vibe-actions a:hover span {
+  transform: translate(0.4rem, -0.4rem);
+}
+@media (max-width: 768px) {
+  .vibe-stage {
+    height: 100svh;
+    min-height: 0;
+  }
+  .vibe-stage-head {
+    padding: max(2.2rem, env(safe-area-inset-top)) max(2rem, env(safe-area-inset-right)) 2.2rem max(2rem, env(safe-area-inset-left));
+  }
+  .vibe-stage-head h2 {
+    font-size: 2.4rem;
+  }
+  .vibe-content {
+    padding: max(8rem, calc(env(safe-area-inset-top) + 6rem)) max(2rem, env(safe-area-inset-right)) max(2.5rem, env(safe-area-inset-bottom))
+      max(2rem, env(safe-area-inset-left));
+  }
+  .vibe-main {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 3rem;
+  }
+  .vibe-copy {
+    order: 2;
+  }
+  .vibe-preview {
+    order: 1;
+    width: 100%;
+    transform: none;
+  }
+  .vibe-kicker {
+    margin-bottom: 1rem;
+  }
+  .vibe-content h3 {
+    font-size: 28px;
+    line-height: 1.05;
+  }
+  .vibe-description {
+    display: none;
+  }
+  .vibe-actions {
+    margin-top: 2rem;
+    gap: 1.5rem;
+  }
+  .vibe-background img {
+    object-position: center;
+  }
+}
+
 .sec-contact-grid {
   max-width: var(--maxwidth);
   margin: 0 auto;
@@ -1449,7 +1678,14 @@ footer .text-box p:nth-child(2) {
 /* =========================================================
    Responsive - Mobile (375px)
 ========================================================= */
-@media (max-width: 375px) {
+@media (max-width: 430px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   .sec-hero-grid,
   .sec-about-grid,
   .sec-project-grid,
@@ -1482,13 +1718,15 @@ footer .text-box p:nth-child(2) {
     font-size: 4.4rem;
   }
   .sec-hero-grid .text-box h2 {
-    font-size: 7.2rem;
+    font-size: clamp(5.6rem, 18vw, 7rem);
     letter-spacing: -0.04em;
   }
   .sec-hero-grid .text-box p {
+    max-width: 100%;
     margin-top: 3rem;
     font-size: 1.5rem;
-    word-break: keep-all;
+    word-break: normal;
+    overflow-wrap: anywhere;
   }
   .sec-hero-grid .text-box p br {
     display: none;
@@ -1569,8 +1807,8 @@ footer .text-box p:nth-child(2) {
   }
   .sec-project-grid .con-box .item-title {
     display: grid;
-    grid-template-columns: 6.5rem 7.5rem minmax(0, 1fr);
-    gap: 0.8rem;
+    grid-template-columns: 5.8rem 6.4rem minmax(0, 1fr);
+    gap: 0.6rem;
     padding: 1.2rem 0;
   }
   .sec-project-grid .con-box .project-list-item .item-title span:nth-child(1),
@@ -1578,11 +1816,17 @@ footer .text-box p:nth-child(2) {
     width: auto;
   }
   .sec-project-grid .con-box .item-title span {
-    font-size: 1.4rem;
+    min-width: 0;
+    font-size: 1.2rem;
+    white-space: nowrap;
   }
   .sec-project-grid .con-box .item-title span:nth-child(3) {
     overflow: hidden;
-    font-size: 1.8rem;
+    width: auto;
+    margin-top: 0;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -1601,8 +1845,11 @@ footer .text-box p:nth-child(2) {
     font-size: 2.2rem;
   }
   .sec-project-grid .con-box .item-body .right-box .text-box p {
+    width: 100%;
+    max-width: 100%;
     font-size: 1.5rem;
-    word-break: keep-all;
+    word-break: normal;
+    overflow-wrap: anywhere;
   }
   .sec-project-grid .con-box .item-body .right-box .text-box p br {
     display: none;
@@ -1665,6 +1912,7 @@ footer .text-box p:nth-child(2) {
     gap: 1rem;
   }
   .sec-contact-grid .title-box .title-2 .contact-title-text {
+    width: 100%;
     flex-wrap: wrap;
   }
   .sec-contact-grid .title-box .title-2 .contact-title-text span:nth-child(1),
@@ -1679,8 +1927,10 @@ footer .text-box p:nth-child(2) {
     padding: 3rem 0 7rem;
   }
   .sec-contact-grid .contact-con .text-box-1 p {
+    max-width: 100%;
     font-size: 1.5rem;
-    word-break: keep-all;
+    word-break: normal;
+    overflow-wrap: anywhere;
   }
   .sec-contact-grid .contact-con .text-box-1 p br {
     display: none;
@@ -1691,7 +1941,12 @@ footer .text-box p:nth-child(2) {
   }
   footer .text-box p:nth-child(1),
   footer .text-box p:nth-child(2) {
+    max-width: 32rem;
     font-size: 1.2rem;
+    line-height: 1.6;
+    text-align: center;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
 }
 /* 풋터 끝 */
