@@ -103,6 +103,8 @@ body.is-loading footer {
 
 /* 배경 */
 .loading {
+  --loading-split: 8vw;
+  --loading-line-scale: 2;
   position: fixed;
   inset: 0;
   background: var(--black-100);
@@ -147,11 +149,11 @@ body.is-loading footer {
     transform: translateX(-50%) scaleX(0);
   }
   80% {
-    transform: translateX(-50%) scaleX(2);
+    transform: translateX(-50%) scaleX(var(--loading-line-scale));
     opacity: 1;
   }
   100% {
-    transform: translateX(-50%) scaleX(2);
+    transform: translateX(-50%) scaleX(var(--loading-line-scale));
     opacity: 0;
   }
 }
@@ -162,6 +164,30 @@ body.is-loading footer {
   color: var(--white-100);
   display: inline-block;
   will-change: transform, opacity;
+}
+
+@media (max-width: 768px) {
+  .loading {
+    --loading-line-scale: 1;
+    min-height: 100svh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    box-sizing: border-box;
+  }
+  .loading-text {
+    gap: 0.8rem;
+  }
+  .loading-text span {
+    flex: 0 0 auto;
+    font-size: 22px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .loading-text span {
+    font-size: 2.6rem;
+  }
 }
 
 /* ===============================
@@ -184,11 +210,11 @@ body.is-loading footer {
     opacity: 1;
   }
   90% {
-    transform: translate(-8vw, 0);
+    transform: translate(calc(var(--loading-split) * -1), 0);
     opacity: 1;
   }
   100% {
-    transform: translate(-8vw, 0);
+    transform: translate(calc(var(--loading-split) * -1), 0);
     opacity: 0;
   }
 }
@@ -203,11 +229,11 @@ body.is-loading footer {
     opacity: 1;
   }
   90% {
-    transform: translate(8vw, 0);
+    transform: translate(var(--loading-split), 0);
     opacity: 1;
   }
   100% {
-    transform: translate(8vw, 0);
+    transform: translate(var(--loading-split), 0);
     opacity: 0;
   }
 }
@@ -1268,7 +1294,7 @@ body.is-loading footer {
   object-position: center;
 }
 .vibe-background > img {
-  filter: blur(24px) saturate(0.55);
+  filter: blur(10px) saturate(0.55);
   transform: scale(1.08);
 }
 .vibe-shade {
@@ -1395,8 +1421,7 @@ body.is-loading footer {
     font-size: 2.4rem;
   }
   .vibe-content {
-    padding: max(8rem, calc(env(safe-area-inset-top) + 6rem)) max(2rem, env(safe-area-inset-right)) max(2.5rem, env(safe-area-inset-bottom))
-      max(2rem, env(safe-area-inset-left));
+    padding: max(8rem, calc(env(safe-area-inset-top) + 6rem)) max(2rem, env(safe-area-inset-right)) max(2.5rem, env(safe-area-inset-bottom)) max(2rem, env(safe-area-inset-left));
   }
   .vibe-main {
     grid-template-columns: 1fr;
