@@ -1444,7 +1444,10 @@ body.is-loading footer {
     line-height: 1.05;
   }
   .vibe-description {
-    display: none;
+    display: block;
+    margin-top: 1.5rem;
+    font-size: 1.4rem;
+    line-height: 1.5;
   }
   .vibe-actions {
     margin-top: 2rem;
