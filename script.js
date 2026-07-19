@@ -462,7 +462,7 @@ function setupCircleTextRotation() {
   const circleText = circleBox?.querySelector(".circle-text");
   const circleCenter = circleBox?.querySelector(".circle-center");
 
-  if (!circleBox || !circleText || !circleCenter || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!circleBox || !circleText || !circleCenter) return;
 
   let isSpeedLocked = false;
 
@@ -620,7 +620,10 @@ function setupVibeAccordion() {
   ScrollTrigger.getById("vibe-pin")?.kill(true);
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    slides[0].classList.add("is-active");
+    slides.forEach((slide) => {
+      slide.classList.add("is-active", "is-interactive");
+      gsap.set(slide.querySelectorAll(".vibe-outer, .vibe-inner, .vibe-background, .vibe-content"), { clearProps: "all" });
+    });
     return;
   }
 

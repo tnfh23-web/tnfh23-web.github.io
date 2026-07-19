@@ -1458,6 +1458,38 @@ body.is-loading footer {
   }
 }
 
+/* 동작 감소 환경에서는 전환 대신 모든 프로젝트를 정적으로 표시 */
+@media (prefers-reduced-motion: reduce) {
+  .vibe-stage {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+  .vibe-stage-head {
+    position: sticky;
+  }
+  .vibe-slide,
+  .vibe-slide.is-active {
+    position: relative;
+    inset: auto;
+    height: 100vh;
+    min-height: 72rem;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .vibe-slide + .vibe-slide {
+    border-top: 1px solid rgba(255, 255, 255, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+  .vibe-slide,
+  .vibe-slide.is-active {
+    height: 100svh;
+    min-height: 0;
+  }
+}
+
 .sec-contact-grid {
   max-width: var(--maxwidth);
   margin: 0 auto;
