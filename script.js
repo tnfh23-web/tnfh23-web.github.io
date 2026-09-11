@@ -304,18 +304,30 @@ async function waitProjectAssets() {
 /* =========================================================
    Section 3 - Project Pin Accordion
 ========================================================= */
+let projectAccordionTimeline = null;
+
 function setupProjectPinAccordion() {
   const section = document.querySelector("#sec-project");
   const allItems = gsap.utils.toArray("#sec-project .project-list-item");
   if (!section || !allItems.length) return;
 
-  ScrollTrigger.getById("proj-pin")?.kill(true);
+  if (projectAccordionTimeline) {
+    projectAccordionTimeline.scrollTrigger?.kill(true);
+    projectAccordionTimeline.kill();
+    projectAccordionTimeline = null;
+  } else {
+    ScrollTrigger.getById("proj-pin")?.kill(true);
+  }
+
   gsap.killTweensOf(allItems);
+  gsap.killTweensOf("#sec-project .project-list-item .item-body");
 
   allItems.forEach((el) => {
     el.style.height = "";
     el.style.overflow = "";
+    el.style.borderBottomWidth = "";
   });
+  gsap.set("#sec-project .project-list-item .item-body", { clearProps: "backgroundColor" });
 
   if (window.matchMedia("(max-width: 768px)").matches) {
     section.style.height = "auto";
@@ -326,19 +338,18 @@ function setupProjectPinAccordion() {
 
   const itemList = document.querySelectorAll("#sec-project .project-list-item");
   const items = gsap.utils.toArray("#sec-project .project-list-item");
+  const expandedBorderHeight = Array.from(itemList).reduce((total, el) => total + (parseFloat(getComputedStyle(el).borderBottomWidth) || 0), 0);
 
   //  마지막 아이템 제외(네 로직 유지)
   items.splice(items.length - 1, 1);
 
-  const getHeight = () => {
-    let totalHeight = 0;
-    itemList.forEach((el) => (totalHeight += el.offsetHeight));
-    return totalHeight;
-  };
+  // scrollHeight는 카드가 접힌 뒤에도 원래 콘텐츠 높이를 유지한다.
+  // 따라서 resize refresh 중에도 프로젝트 스크롤 길이가 줄어들지 않는다.
+  const getHeight = () => Array.from(itemList).reduce((total, el) => total + el.scrollHeight, expandedBorderHeight);
 
   items.forEach((li) => (li.style.overflow = "hidden"));
 
-  const tl = gsap.timeline({
+  projectAccordionTimeline = gsap.timeline({
     scrollTrigger: {
       id: "proj-pin",
       trigger: section,
@@ -353,13 +364,14 @@ function setupProjectPinAccordion() {
 
   const masterStagger = 0.5;
 
-  tl.to(items, {
+  projectAccordionTimeline.to(items, {
     height: 0,
+    borderBottomWidth: 0,
     stagger: masterStagger,
     ease: "none",
   });
 
-  tl.to(
+  projectAccordionTimeline.to(
     "#sec-project .project-list-item .item-body",
     {
       backgroundColor: "#f7f6f5",
@@ -434,20 +446,49 @@ function endLoading() {
 ========================================================= */
 let resizeTimer;
 let lastW = window.innerWidth;
+let lastH = window.innerHeight;
+let resizeRevision = 0;
+let projectUsesMobileLayout = window.matchMedia("(max-width: 768px)").matches;
 
 function handleResize() {
-  // devtools/모바일 주소창 등으로 height만 흔들릴 때는 무시(렉 방지)
   const w = window.innerWidth;
-  if (w === lastW) return;
+  const h = window.innerHeight;
+  const widthChanged = w !== lastW;
+  const heightChanged = h !== lastH;
+
   lastW = w;
+  lastH = h;
+
+  // 모바일 주소창으로 인한 높이 변화는 무시하고, 데스크톱의 F12 리사이즈는 반영한다.
+  if (!widthChanged && (!heightChanged || w <= 768)) return;
 
   clearTimeout(resizeTimer);
+  const revision = ++resizeRevision;
+
   resizeTimer = setTimeout(() => {
     requestAnimationFrame(async () => {
+      const usesMobileLayout = window.matchMedia("(max-width: 768px)").matches;
+      const projectBreakpointChanged = usesMobileLayout !== projectUsesMobileLayout;
+
+      if (projectBreakpointChanged) await waitProjectAssets();
+      if (revision !== resizeRevision) return;
+
       dividerMarquee();
-      await waitProjectAssets();
-      setupProjectPinAccordion();
+
+      // F12처럼 데스크톱 안에서 크기만 바뀌면 기존 핀을 유지한다.
+      // 레이아웃 기준점을 넘을 때만 타임라인을 다시 만든다.
+      if (projectBreakpointChanged) {
+        projectUsesMobileLayout = usesMobileLayout;
+        setupProjectPinAccordion();
+        setupFrontendProjectAnimation();
+      }
+
       ScrollTrigger.refresh(true);
+      requestAnimationFrame(() => {
+        if (revision !== resizeRevision) return;
+        ScrollTrigger.refresh(true);
+        ScrollTrigger.update();
+      });
     });
   }, 200);
 }
