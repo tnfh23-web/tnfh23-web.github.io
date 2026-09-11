@@ -336,10 +336,11 @@ body.is-loading footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 11rem;
+  gap: clamp(1.6rem, 3vw, 6rem);
 }
 .pc-top-bar .container .text-box a {
   position: relative;
+  white-space: nowrap;
   font-size: 2rem;
   font-weight: 500;
   letter-spacing: -0.02rem;
@@ -464,6 +465,8 @@ body.is-loading footer {
   left: 0;
   top: 8rem;
   width: 100%;
+  max-height: calc(100svh - 8rem);
+  overflow-y: auto;
   background: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid var(--black-100);
   opacity: 0;
@@ -936,6 +939,9 @@ body.is-loading footer {
   transition: all 0.3s;
   object-fit: cover;
 }
+.project-thumbnail--top {
+  object-position: left top;
+}
 .sec-project-grid .con-box .item-body .right-box .text-box {
   display: flex;
   flex-direction: column;
@@ -963,34 +969,49 @@ body.is-loading footer {
   display: flex;
   gap: 2.4rem;
 }
-.sec-project-grid .con-box .item-body .right-box .button-box .button a {
-  display: flex;
+/* 프로젝트 공통 버튼 */
+.project-button {
+  --button-border: var(--black-80);
+  --button-text: var(--black-100);
+  --button-hover-text: var(--white-100);
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: fit-content;
   position: relative;
   z-index: 0;
   border-radius: 1rem;
   overflow: hidden;
+  box-sizing: border-box;
+  font-family: "Pretendard", sans-serif;
   font-size: 2rem;
   font-weight: 400;
+  line-height: normal;
+  color: var(--button-text);
   padding: 1.8rem 4rem;
-  border: 1px solid var(--black-80);
-  transition: all 0.5s ease;
+  border: 1px solid var(--button-border);
+  transition: color 0.5s ease;
 }
-.sec-project-grid .con-box .item-body .right-box .button-box .button a::before {
+.project-button::before {
   content: "";
-  background-color: var(--black-80);
+  background-color: var(--button-border);
   position: absolute;
   inset: 0;
   transform: scaleX(0);
   transform-origin: left;
-  transition: all 0.5s ease;
+  transition: transform 0.5s ease;
   z-index: -1;
 }
-.sec-project-grid .con-box .item-body .right-box .button-box .button a:hover::before {
+.project-button:hover::before {
   transform: scaleX(1);
 }
-.sec-project-grid .con-box .item-body .right-box .button-box .button a:hover {
-  color: var(--white-100);
+.project-button:hover {
+  color: var(--button-hover-text);
+}
+.project-button--light {
+  --button-border: var(--white-100);
+  --button-text: var(--white-100);
+  --button-hover-text: var(--black-100);
 }
 
 @media (max-width: 768px) {
@@ -1172,29 +1193,6 @@ body.is-loading footer {
   color: var(--white-90);
   font-size: 1.4rem;
 }
-.front-project-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2rem 0;
-  border-top: 1px solid var(--white-100);
-  border-bottom: 1px solid var(--white-100);
-  font-family: "Satoshi", sans-serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  transition: padding 0.3s ease;
-}
-.front-project-link span:last-child {
-  font-size: 2.4rem;
-  transition: transform 0.3s ease;
-}
-.front-project-link:hover {
-  padding-inline: 1.2rem;
-}
-.front-project-link:hover span:last-child {
-  transform: translate(0.4rem, -0.4rem);
-}
-
 @media (max-width: 768px) {
   .sec-frontend {
     padding: 8rem 0;
@@ -1386,28 +1384,6 @@ body.is-loading footer {
 }
 .vibe-description {
   font-size: 1.8rem;
-}
-.vibe-actions a {
-  min-width: 16rem;
-  padding: 1.6rem 1.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  font-weight: 700;
-  box-sizing: border-box;
-  transition:
-    color 0.25s ease,
-    background-color 0.25s ease;
-}
-.vibe-actions a span {
-  display: inline-block;
-  margin-left: 2rem;
-  transition: transform 0.3s ease;
-}
-.vibe-actions a:hover {
-  color: var(--black-100);
-  background: var(--white-100);
-}
-.vibe-actions a:hover span {
-  transform: translate(0.4rem, -0.4rem);
 }
 @media (max-width: 768px) {
   .vibe-stage {
@@ -1760,6 +1736,7 @@ footer .text-box p:nth-child(2) {
   }
   .mo-top-bar .mo-menu {
     top: 6.4rem;
+    max-height: calc(100svh - 6.4rem);
   }
   .mo-top-bar .container .link-box a {
     font-size: 2rem;
@@ -1918,7 +1895,7 @@ footer .text-box p:nth-child(2) {
     flex-wrap: wrap;
     gap: 1rem;
   }
-  .sec-project-grid .con-box .item-body .right-box .button-box .button a {
+  .project-button {
     padding: 1.2rem 2.4rem;
     font-size: 1.5rem;
   }
@@ -1961,9 +1938,6 @@ footer .text-box p:nth-child(2) {
   }
   .front-project-tags {
     margin-bottom: 3rem;
-  }
-  .front-project-link {
-    font-size: 1.6rem;
   }
 
   .sec-contact-grid .title-box .title-2 {
