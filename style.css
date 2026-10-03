@@ -1985,3 +1985,5 @@ footer .text-box p:nth-child(2) {
   }
 }
 /* 풋터 끝 */
+
+.vibe-project-links{display:flex;flex-wrap:wrap;align-items:center;gap:1.2rem}
