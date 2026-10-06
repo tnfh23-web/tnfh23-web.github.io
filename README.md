@@ -39,7 +39,7 @@
 | 프로젝트 | 만든 목적 | 링크 |
 | --- | --- | --- |
 | AFTERIMAGE · 잔상 | 공간을 직접 이동하며 조각을 회전하고 회화를 가까이 감상하는 가상의 3D 전시 | [Web](https://tnfh23-web.github.io/afterimage/) · [Process](https://tnfh23-web.github.io/afterimage/#about) |
-| Codex · ChatGPT 업데이트 소식 | 두 제품의 공식 업데이트를 읽기 쉬운 한국어로 정리하고 한곳에서 확인하기 | [Web](https://tnfh23-web.github.io/codexup/) |
+| Codex · ChatGPT 업데이트 소식 | 두 제품의 공식 업데이트를 읽기 쉬운 한국어로 정리하고 한곳에서 확인하기 | [Web](https://tnfh23-web.github.io/codexup/) · [Process](https://tnfh23-web.github.io/codexup/about.html) |
 | Japan Travel Checklist | 첫 해외여행을 준비하며 챙겨야 할 항목을 한눈에 확인하기 | [Web](https://tnfh23-web.github.io/japan-travel-checklist/) |
 | Web Production Guide | 웹페이지를 만들면서 놓치기 쉬운 내용을 모아 확인하기 | [Web](https://tnfh23-web.github.io/codex-web-test/) |
 
