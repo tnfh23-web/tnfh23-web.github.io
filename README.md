@@ -14,7 +14,7 @@
 | ABOUT ME | 프로필, 웹·인터랙션 기술, 교육 및 실무·프로젝트 경험 |
 | PROJECT | 팀 브랜딩 프로젝트와 개인 웹사이트 리디자인 |
 | FRONT PROJECT | React로 제작한 MODOO 프로젝트와 실제 사이트 미리보기 |
-| VIBE PROJECT | AFTERIMAGE 3D 전시, 업데이트 아카이브, 여행 체크리스트, 웹페이지 제작 가이드 |
+| VIBE PROJECT | AFTERIMAGE 3D 전시, REFLOW 레퍼런스 서비스, 업데이트 아카이브, 여행 체크리스트, 웹페이지 제작 가이드 |
 | CONTACT | 연락처와 GitHub·개발 블로그 링크 |
 
 ## 수록 프로젝트
@@ -39,6 +39,7 @@
 | 프로젝트 | 만든 목적 | 링크 |
 | --- | --- | --- |
 | AFTERIMAGE · 잔상 | 공간을 직접 이동하며 조각을 회전하고 회화를 가까이 감상하는 가상의 3D 전시 | [Web](https://tnfh23-web.github.io/afterimage/) · [Process](https://tnfh23-web.github.io/afterimage/#about) |
+| REFLOW · 리플로우 | 웹사이트와 이미지 레퍼런스를 수집하고 구간·메모·프로젝트별로 정리하기 | [Web](https://reflow.tnfh23.workers.dev/) |
 | Codex · ChatGPT 업데이트 소식 | 두 제품의 공식 업데이트를 읽기 쉬운 한국어로 정리하고 한곳에서 확인하기 | [Web](https://tnfh23-web.github.io/codexup/) · [Process](https://tnfh23-web.github.io/codexup/about.html) |
 | Japan Travel Checklist | 첫 해외여행을 준비하며 챙겨야 할 항목을 한눈에 확인하기 | [Web](https://tnfh23-web.github.io/japan-travel-checklist/) |
 | Web Production Guide | 웹페이지를 만들면서 놓치기 쉬운 내용을 모아 확인하기 | [Web](https://tnfh23-web.github.io/codex-web-test/) |
@@ -47,12 +48,14 @@
 
 React로 관람 화면과 상태를 구성하고, Three.js로 전시 공간과 작품을 렌더링했으며, Vite로 개발·빌드했습니다. 전시 프로젝트는 [별도 저장소](https://github.com/tnfh23-web/afterimage)에서 관리하며, 이 포트폴리오에는 최신 실제 화면과 관람 링크를 연결했습니다.
 
+**REFLOW · 리플로우**는 웹사이트 주소와 이미지를 저장하고, 필요한 구간에 메모를 남겨 프로젝트별로 정리하는 개인 레퍼런스 서비스입니다. React와 GSAP으로 화면과 인터랙션을 구성하고, Supabase의 Google 로그인·개인 자료 저장과 Cloudflare 공개 서버를 연결했습니다. 이 포트폴리오에는 실제 라이브러리 화면과 공개 서비스 링크를 담았습니다.
+
 ## 구현 특징
 
 - **반응형 화면 구성**: 데스크톱과 모바일에 맞춰 레이아웃과 내비게이션을 전환합니다. 메인 프로젝트 목록은 데스크톱에서 스크롤에 따라 접히고, 모바일에서는 펼쳐진 상태로 표시됩니다.
 - **스크롤에 반응하는 모션**: GSAP과 ScrollTrigger로 프로젝트 전환, 제목 등장, 흐르는 텍스트를 구현하고 Lenis를 연결해 스크롤 흐름을 조정했습니다.
 - **프로젝트 미리보기**: React 프로젝트는 실제 사이트를 삽입하고, 바이브 프로젝트는 배경 이미지와 썸네일을 함께 배치해 작업 화면을 보여줍니다.
-- **바이브 프로젝트 순차 전환**: AFTERIMAGE → 업데이트 소식 → 여행 체크리스트 → 제작 가이드 순으로 전환하며, 프로젝트 개수에 맞춰 스크롤 구간을 계산합니다.
+- **바이브 프로젝트 순차 전환**: AFTERIMAGE → REFLOW → 업데이트 소식 → 여행 체크리스트 → 제작 가이드 순으로 전환하며, 프로젝트 개수에 맞춰 스크롤 구간을 계산합니다.
 - **동작 감소 설정 반영**: `prefers-reduced-motion` 설정 시 프론트엔드 프로젝트의 등장 모션을 생략하고, 바이브 프로젝트는 전환 없이 모두 표시합니다.
 
 ## 사용 기술
