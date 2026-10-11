@@ -1383,6 +1383,27 @@ body.is-loading footer {
 .vibe-actions p {
   font-size: 1.6rem;
 }
+.vibe-stack {
+  display: grid;
+  gap: 1.2rem;
+  margin: 0;
+  font-family: Pretendard, sans-serif;
+  font-size: 1.4rem;
+  line-height: 1.5;
+}
+.vibe-stack > div {
+  display: grid;
+  gap: 0.2rem;
+}
+.vibe-stack dt {
+  font-weight: 600;
+  color: #fff;
+}
+.vibe-stack dd {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+}
+
 .vibe-description {
   font-size: 1.8rem;
 }
