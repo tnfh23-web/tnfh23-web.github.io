@@ -1385,15 +1385,15 @@ body.is-loading footer {
 }
 .vibe-stack {
   display: grid;
-  gap: 1.2rem;
+  grid-template-columns: max-content 1fr;
+  gap: 0.8rem 1.8rem;
   margin: 0;
   font-family: Pretendard, sans-serif;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   line-height: 1.5;
 }
 .vibe-stack > div {
-  display: grid;
-  gap: 0.2rem;
+  display: contents;
 }
 .vibe-stack dt {
   font-weight: 600;
