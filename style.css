@@ -69,6 +69,7 @@ img {
 
 /* html 기본 설정 */
 html {
+  --motion-duration-scale: 1;
   font-family: "Pretendard", sans-serif;
   font-size: max(0.52083333vw, 10px);
   overflow-x: hidden;
@@ -115,8 +116,8 @@ body.is-loading footer {
   opacity: 1;
   visibility: visible;
   transition:
-    opacity 2s ease,
-    visibility 2s ease;
+    opacity calc(2s * var(--motion-duration-scale)) ease,
+    visibility calc(2s * var(--motion-duration-scale)) ease;
 }
 
 /* 텍스트 */
@@ -140,8 +141,8 @@ body.is-loading footer {
 }
 
 .loading .loading-text::after {
-  animation: line 1.3s ease forwards;
-  animation-delay: 1.3s;
+  animation: line calc(1.3s * var(--motion-duration-scale)) ease forwards;
+  animation-delay: calc(1.3s * var(--motion-duration-scale));
 }
 
 @keyframes line {
@@ -194,10 +195,10 @@ body.is-loading footer {
    Split Animation
 ================================ */
 .loading .left {
-  animation: splitLeft 2.5s ease forwards;
+  animation: splitLeft calc(2.5s * var(--motion-duration-scale)) ease forwards;
 }
 .loading .right {
-  animation: splitRight 2.5s ease forwards;
+  animation: splitRight calc(2.5s * var(--motion-duration-scale)) ease forwards;
 }
 
 @keyframes splitLeft {
@@ -281,8 +282,8 @@ body.is-loading footer {
   opacity: 0;
   pointer-events: none;
   transition:
-    transform 0.6s 0.8s ease,
-    opacity 0.6s 0.8s ease;
+    transform calc(0.6s * var(--motion-duration-scale)) calc(0.8s * var(--motion-duration-scale)) ease,
+    opacity calc(0.6s * var(--motion-duration-scale)) calc(0.8s * var(--motion-duration-scale)) ease;
   will-change: transform;
 }
 .pc-top-bar:not(.is-show) {
@@ -326,7 +327,7 @@ body.is-loading footer {
   background-color: var(--black-100);
   transform: scaleX(0);
   transform-origin: left;
-  transition: all 0.3s;
+  transition: all calc(0.3s * var(--motion-duration-scale));
   will-change: transform;
 }
 .pc-top-bar .container .link-box a:hover::before {
@@ -357,7 +358,7 @@ body.is-loading footer {
   background-color: var(--black-100);
   transform: scaleX(0);
   transform-origin: left;
-  transition: all 0.3s;
+  transition: all calc(0.3s * var(--motion-duration-scale));
   will-change: transform;
 }
 .pc-top-bar .container .text-box a:hover::before {
@@ -379,8 +380,8 @@ body.is-loading footer {
   opacity: 0;
   pointer-events: none;
   transition:
-    transform 0.6s ease,
-    opacity 0.6s ease;
+    transform calc(0.6s * var(--motion-duration-scale)) ease,
+    opacity calc(0.6s * var(--motion-duration-scale)) ease;
   will-change: transform;
 }
 .mo-top-bar:not(.is-show) {
@@ -422,7 +423,7 @@ body.is-loading footer {
   background-color: var(--black-100);
   transform: scaleX(0);
   transform-origin: left;
-  transition: all 0.3s;
+  transition: all calc(0.3s * var(--motion-duration-scale));
   will-change: transform;
 }
 .mo-top-bar .container .link-box a:hover::before {
@@ -440,7 +441,7 @@ body.is-loading footer {
   background-color: var(--black-100);
   width: 3rem;
   height: 0.2rem;
-  transition: all 0.3s;
+  transition: all calc(0.3s * var(--motion-duration-scale));
 }
 .mo-top-bar .container .sidebar-menu-box:hover span {
   transform: scale(110%);
@@ -471,7 +472,7 @@ body.is-loading footer {
   border-bottom: 1px solid var(--black-100);
   opacity: 0;
   visibility: hidden;
-  transition: 0.3s ease;
+  transition: calc(0.3s * var(--motion-duration-scale)) ease;
   z-index: 998;
 }
 .mo-top-bar.is-menu-open .mo-menu {
@@ -499,7 +500,7 @@ body.is-loading footer {
   background-color: var(--black-100);
   transform: scaleX(0);
   transform-origin: left;
-  transition: all 0.3s;
+  transition: all calc(0.3s * var(--motion-duration-scale));
   will-change: transform;
 }
 .mo-top-bar .mo-menu li a:hover::after {
@@ -602,10 +603,10 @@ body.is-loading footer {
   font-weight: 700;
   cursor: pointer;
   transition:
-    color 0.35s ease,
-    background-color 0.35s ease,
-    box-shadow 0.35s ease,
-    transform 0.35s ease;
+    color calc(0.35s * var(--motion-duration-scale)) ease,
+    background-color calc(0.35s * var(--motion-duration-scale)) ease,
+    box-shadow calc(0.35s * var(--motion-duration-scale)) ease,
+    transform calc(0.35s * var(--motion-duration-scale)) ease;
 }
 .sec-hero-grid .circle-center:hover {
   transform: scale(1.06);
@@ -937,7 +938,7 @@ body.is-loading footer {
   border-radius: 1.6rem;
   width: 46rem;
   height: 39.5rem;
-  transition: all 0.3s;
+  transition: all calc(0.3s * var(--motion-duration-scale));
   object-fit: cover;
 }
 .project-thumbnail--top {
@@ -991,7 +992,7 @@ body.is-loading footer {
   color: var(--button-text);
   padding: 1.8rem 4rem;
   border: 1px solid var(--button-border);
-  transition: color 0.5s ease;
+  transition: color calc(0.5s * var(--motion-duration-scale)) ease;
 }
 .project-button::before {
   content: "";
@@ -1000,7 +1001,7 @@ body.is-loading footer {
   inset: 0;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.5s ease;
+  transition: transform calc(0.5s * var(--motion-duration-scale)) ease;
   z-index: -1;
 }
 .project-button:hover::before {
@@ -1353,7 +1354,7 @@ body.is-loading footer {
   border: 1px solid rgba(255, 255, 255, 0.55);
   background: var(--black-100);
   box-shadow: 0 3rem 8rem rgba(0, 0, 0, 0.55);
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform calc(0.5s * var(--motion-duration-scale)) cubic-bezier(0.22, 1, 0.36, 1);
 }
 .vibe-preview::before {
   content: "";
@@ -1363,7 +1364,7 @@ body.is-loading footer {
 .vibe-preview img {
   position: absolute;
   inset: 0;
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform calc(0.7s * var(--motion-duration-scale)) cubic-bezier(0.22, 1, 0.36, 1);
 }
 .vibe-preview:hover {
   transform: translateY(-0.8rem);
@@ -1517,7 +1518,7 @@ body.is-loading footer {
   font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: 1.5;
-  transition: all 0.3s;
+  transition: all calc(0.3s * var(--motion-duration-scale));
 }
 .sec-contact-grid .title-box .contact-title-text a:hover {
   background-color: var(--black-80);
@@ -1988,3 +1989,148 @@ footer .text-box p:nth-child(2) {
 
 .vibe-project-links{display:flex;flex-wrap:nowrap;align-items:center;gap:1.2rem;max-width:100%}
 .vibe-project-links .project-button{white-space:nowrap;min-width:0;padding-inline:clamp(1.6rem,1.9vw,4rem)}
+
+/* Elastic hero and the shared motion-speed control. */
+.sec-hero {
+  padding: clamp(17rem, 22.8vh, 23rem) 0 12rem;
+  min-height: 100svh;
+  box-sizing: border-box;
+  position: relative;
+}
+.sec-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(22rem, 23vw, 34rem);
+  width: calc(100% - 9.6rem);
+  max-width: var(--maxwidth);
+  gap: clamp(3.2rem, 4vw, 6.4rem);
+  align-items: center;
+}
+.sec-hero-grid .text-box {
+  min-width: 0;
+  width: 100%;
+}
+.sec-hero-grid .text-box h1 {
+  font-size: clamp(6.4rem, 7.8vw, 12rem);
+}
+.sec-hero-grid .text-box h2 {
+  font-size: clamp(9rem, 16.9vw, 26rem);
+  line-height: 1.15;
+  letter-spacing: 0;
+  margin-top: 0.6rem;
+  overflow: visible;
+  touch-action: pan-y;
+}
+.hero-word {
+  display: inline-flex;
+  white-space: nowrap;
+  user-select: none;
+}
+.hero-title {
+  position: relative;
+  touch-action: pan-y;
+}
+.hero-gap { width: 0.24em; }
+.hero-glyph,
+.hero-letter {
+  display: inline-block;
+}
+.hero-letter {
+  position: relative;
+  transform-origin: 50% 85%;
+  will-change: transform;
+  cursor: grab;
+  touch-action: none;
+}
+.hero-letter.is-dragging { cursor: grabbing; }
+.sec-hero-grid .text-box p {
+  margin-top: 6rem;
+  max-width: 90rem;
+  font-size: clamp(1.6rem, 1.4vw, 2.2rem);
+  line-height: 1.65;
+  word-break: keep-all;
+}
+.sec-hero-grid .circle-box {
+  width: 100%;
+  align-self: start;
+  margin-top: 2rem;
+  margin-bottom: 20rem;
+}
+.hero-motion-caption {
+  position: absolute;
+  top: calc(100% + 2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% + 2rem);
+  text-align: center;
+  line-height: 1.6;
+}
+.hero-motion-status {
+  display: block;
+  margin-bottom: 1.6rem;
+  font-family: "Satoshi", sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.08em;
+}
+.hero-motion-caption p,
+.hero-motion-help {
+  font-size: 1.5rem;
+  color: var(--black-60);
+  word-break: keep-all;
+}
+.hero-motion-help {
+  display: block;
+  margin-top: 0.4rem;
+}
+.sec-hero-grid .hero-circle-meta {
+  top: calc(100% + 20rem);
+}
+/* AOS keeps the original per-element durations, scaled with the same switch. */
+html body [data-aos] {
+  transition-duration: calc(var(--aos-duration, 1000ms) * var(--motion-duration-scale)) !important;
+}
+html body [data-aos].aos-animate {
+  transition-delay: calc(var(--aos-delay, 0ms) * var(--motion-duration-scale)) !important;
+}
+@media (max-width: 1100px) and (min-width: 769px) {
+  .sec-hero-grid {
+    width: calc(100% - 6.4rem);
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    gap: 3.2rem;
+  }
+  .sec-hero-grid .text-box h2 { font-size: 12.5vw; }
+  .sec-hero-grid .circle-center { width: 9rem; font-size: 2.2rem; }
+  .hero-motion-caption { max-width: 25rem; width: 25rem; }
+  .hero-motion-caption p, .hero-motion-help { font-size: 1.25rem; }
+}
+@media (max-width: 768px) {
+  .sec-hero { padding: 12rem 0 6rem; min-height: auto; }
+  .sec-hero-grid {
+    width: 100%;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    padding-inline: 3rem;
+  }
+  .sec-hero-grid .text-box h1 { font-size: clamp(4.4rem, 9vw, 7rem); }
+  .sec-hero-grid .text-box h2 { font-size: 18.2vw; }
+  .sec-hero-grid .text-box p { margin-top: 3rem; font-size: 1.6rem; }
+  .sec-hero-grid .circle-box {
+    width: 19rem;
+    justify-self: end;
+    margin: 0 1rem 13rem 0;
+  }
+  .sec-hero-grid .circle-center { width: 7.6rem; font-size: 2rem; }
+  .hero-motion-caption { width: 28rem; max-width: none; left: auto; right: -1rem; transform: none; text-align: right; }
+  .hero-motion-status { font-size: 1.15rem; margin-bottom: 1rem; }
+  .hero-motion-caption p, .hero-motion-help { font-size: 1.3rem; }
+}
+@media (max-width: 480px) {
+  .sec-hero { padding-top: 10rem; }
+  .sec-hero-grid { padding-inline: 2rem; }
+  .sec-hero-grid .text-box p { font-size: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-letter { will-change: auto; }
+  html body [data-aos] { transition-duration: 0.01ms !important; transition-delay: 0ms !important; }
+  .circle-center { transition-duration: 0.01ms !important; }
+}

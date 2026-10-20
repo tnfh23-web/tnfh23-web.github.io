@@ -4,6 +4,28 @@
 gsap.registerPlugin(ScrollTrigger);
 gsap.registerPlugin(SplitText);
 
+/* One clock for the portfolio's GSAP animations and CSS motion. */
+const motionState = { isSlow: false, durationScale: 1 };
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function setSiteSlowMotion(isSlow) {
+  motionState.isSlow = isSlow;
+  motionState.durationScale = isSlow ? 2.5 : 1;
+  document.documentElement.style.setProperty("--motion-duration-scale", motionState.durationScale);
+  document.documentElement.dataset.motion = isSlow ? "slow" : "normal";
+  gsap.globalTimeline.timeScale(1 / motionState.durationScale);
+
+  const button = document.querySelector(".circle-center");
+  button?.setAttribute("aria-pressed", String(isSlow));
+  button?.setAttribute("aria-label", isSlow ? "사이트 슬로모션 끄기" : "사이트 슬로모션 켜기");
+  if (button) button.textContent = isSlow ? "slow" : "click";
+  document.querySelector(".circle-box")?.classList.toggle("is-speed-locked", isSlow);
+  const status = document.querySelector(".hero-motion-status");
+  if (status) status.textContent = isSlow ? "SLOW MOTION ON · 0.4×" : "NORMAL SPEED · 1×";
+  const description = document.querySelector("#motion-description");
+  if (description) description.textContent = isSlow ? "슬로모션 ON · 다시 클릭하면 원래 속도" : "클릭하면 사이트의 움직임이 느려져요";
+}
+
 /* =========================================================
    Lenis (Smooth Scroll)
 ========================================================= */
@@ -64,6 +86,11 @@ window.addEventListener("touchmove", _preventScroll, { passive: false, capture: 
 ========================================================= */
 function initAOSAfterLoading() {
   if (!window.AOS) return;
+
+  document.querySelectorAll("[data-aos]").forEach((element) => {
+    element.style.setProperty("--aos-duration", `${Number(element.dataset.aosDuration) || 0}ms`);
+    element.style.setProperty("--aos-delay", `${Number(element.dataset.aosDelay) || 0}ms`);
+  });
 
   AOS.init({
     once: true,
@@ -142,7 +169,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     if (lenis) {
       lenis.scrollTo(target, {
         offset: -headerH,
-        duration: 2,
+        duration: 2 * motionState.durationScale,
         easing: (t) => 1 - Math.pow(1 - t, 3),
       });
     } else {
@@ -254,7 +281,7 @@ function dividerMarquee() {
       scrollTrigger: {
         id: "divider-top",
         trigger: triggerEl,
-        scrub: true,
+        scrub: 0.2,
         invalidateOnRefresh: true,
         end: `+=${distTop}`,
       },
@@ -271,7 +298,7 @@ function dividerMarquee() {
         scrollTrigger: {
           id: "divider-bottom",
           trigger: triggerEl,
-          scrub: true,
+          scrub: 0.2,
           invalidateOnRefresh: true,
           end: `+=${distBottom}`,
         },
@@ -505,8 +532,6 @@ function setupCircleTextRotation() {
 
   if (!circleBox || !circleText || !circleCenter) return;
 
-  let isSpeedLocked = false;
-
   const rotationTween = gsap.to(circleText, {
     rotation: 360,
     duration: 10,
@@ -514,32 +539,158 @@ function setupCircleTextRotation() {
     repeat: -1,
     transformOrigin: "50% 50%",
   });
-
-  const changeSpeed = (timeScale) => {
-    gsap.to(rotationTween, {
-      timeScale,
-      duration: 0.9,
-      ease: "power2.out",
-      overwrite: true,
-    });
-  };
-
-  circleCenter.addEventListener("mouseenter", () => {
-    if (!isSpeedLocked) changeSpeed(0.4);
-  });
-
-  circleCenter.addEventListener("mouseleave", () => {
-    if (!isSpeedLocked) changeSpeed(1);
-  });
+  const syncReducedMotion = () => rotationTween.paused(reducedMotion.matches);
+  syncReducedMotion();
+  reducedMotion.addEventListener("change", syncReducedMotion);
 
   circleCenter.addEventListener("click", () => {
-    isSpeedLocked = !isSpeedLocked;
-    circleBox.classList.toggle("is-speed-locked", isSpeedLocked);
-    circleCenter.setAttribute("aria-pressed", String(isSpeedLocked));
-    circleCenter.setAttribute("aria-label", isSpeedLocked ? "원형 텍스트 기본 속도로 전환" : "원형 텍스트 느린 속도로 고정");
-    circleCenter.textContent = isSpeedLocked ? "slow" : "click";
-    changeSpeed(isSpeedLocked ? 0.4 : 1);
+    setSiteSlowMotion(!motionState.isSlow);
   });
+}
+
+/* Elastic type: measure the unmoving glyph slots, animate only their contents. */
+function setupElasticHero() {
+  const hero = document.querySelector("#sec-hero");
+  if (!hero) return;
+  const allLetters = [];
+  const resetHovers = [];
+  let drag = null;
+  let frontLayer = 1;
+  const rest = { x: 0, y: 0, rotation: 0, skewX: 0, scaleX: 1, scaleY: 1 };
+
+  const setDetached = (item, detached) => {
+    item.detached = detached;
+    item.letter.dataset.detached = String(detached);
+  };
+  const finishDrag = (cancel = false) => {
+    if (!drag) return;
+    const { item, pointerId, moved, wasDetached, startX, startY, targetX, targetY, slot } = drag;
+    drag = null;
+    item.letter.classList.remove("is-dragging");
+    if (item.letter.hasPointerCapture(pointerId)) item.letter.releasePointerCapture(pointerId);
+    if (moved) {
+      if (cancel) setDetached(item, wasDetached);
+      else if (Math.hypot(targetX, targetY) < Math.max(20, slot.height * 0.12)) setDetached(item, false);
+      gsap.to(item.letter, {
+        ...(cancel ? { x: wasDetached ? startX : 0, y: wasDetached ? startY : 0 } : { x: targetX, y: targetY }),
+        rotation: 0, skewX: 0, scaleX: 1, scaleY: 1,
+        duration: reducedMotion.matches ? 0 : 0.65,
+        ease: "power3.out", overwrite: true,
+      });
+    }
+    resetHovers.forEach((reset) => reset());
+  };
+
+  hero.querySelectorAll(".hero-title").forEach((title) => {
+    const items = Array.from(title.querySelectorAll(".hero-glyph")).map((slot) => ({
+      slot, letter: slot.querySelector(".hero-letter"), detached: false,
+    }));
+    allLetters.push(...items);
+    const pointer = { x: 0, y: 0 };
+    let frame = 0;
+    const reset = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      const attached = items.filter((item) => !item.detached && item !== drag?.item).map((item) => item.letter);
+      if (attached.length) gsap.to(attached, { ...rest, duration: reducedMotion.matches ? 0 : 1.15, ease: "elastic.out(1, 0.42)", overwrite: true });
+    };
+    resetHovers.push(reset);
+    const render = () => {
+      frame = 0;
+      if (drag || reducedMotion.matches) return;
+      const rect = title.getBoundingClientRect();
+      const radius = rect.height * 1.15;
+      const pullY = gsap.utils.clamp(-rect.height * 0.3, rect.height * 0.3, (pointer.y - rect.top - rect.height * 0.7) * 0.6);
+      items.forEach((item) => {
+        if (item.detached) return;
+        const box = item.slot.getBoundingClientRect();
+        const distance = pointer.x - (box.left + box.width / 2);
+        const influence = Math.pow(Math.max(0, 1 - Math.abs(distance) / radius), 2);
+        gsap.to(item.letter, {
+          x: distance * influence * 0.12,
+          y: pullY * influence,
+          rotation: gsap.utils.clamp(-9, 9, distance * influence * 0.065),
+          skewX: gsap.utils.clamp(-12, 12, distance * influence * -0.08),
+          scaleY: 1 + influence * Math.abs(pullY) / rect.height * 0.6,
+          duration: 0.5, ease: "power3.out", overwrite: true,
+        });
+      });
+    };
+    title.addEventListener("pointermove", (event) => {
+      if (drag || reducedMotion.matches) return;
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      if (!frame) frame = requestAnimationFrame(render);
+    }, { passive: true });
+    title.addEventListener("pointerleave", reset);
+    items.forEach((item) => {
+      item.letter.addEventListener("pointerdown", (event) => {
+        if (!event.isPrimary || event.button !== 0 || drag) return;
+        event.preventDefault();
+        cancelAnimationFrame(frame);
+        frame = 0;
+        gsap.killTweensOf(item.letter);
+        drag = {
+          item, pointerId: event.pointerId, moved: false, wasDetached: item.detached,
+          pointerX: event.clientX, pointerY: event.clientY,
+          startX: Number(gsap.getProperty(item.letter, "x")) || 0,
+          startY: Number(gsap.getProperty(item.letter, "y")) || 0,
+          targetX: 0, targetY: 0,
+          slot: item.slot.getBoundingClientRect(),
+        };
+        title.style.zIndex = String(++frontLayer);
+        item.letter.setPointerCapture(event.pointerId);
+      });
+      item.letter.addEventListener("lostpointercapture", () => {
+        if (drag?.item === item) finishDrag(true);
+      });
+    });
+  });
+
+  window.addEventListener("pointermove", (event) => {
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    const dx = event.clientX - drag.pointerX;
+    const dy = event.clientY - drag.pointerY;
+    // A click alone leaves the word intact; only a deliberate drag detaches it.
+    const distance = Math.hypot(dx, dy);
+    if (!drag.moved && distance < 6) return;
+    drag.moved = true;
+    const peelDistance = gsap.utils.clamp(18, 38, drag.slot.height * 0.16);
+    if (distance >= peelDistance) setDetached(drag.item, true);
+    drag.item.letter.classList.add("is-dragging");
+    const bounds = hero.getBoundingClientRect();
+    const peel = Math.min(1, distance / peelDistance);
+    const resistance = drag.item.detached ? 1 : 0.3 + 0.7 * peel * peel * (3 - 2 * peel);
+    drag.targetX = gsap.utils.clamp(bounds.left + 12 - drag.slot.left, bounds.right - 12 - drag.slot.right, drag.startX + dx * resistance);
+    drag.targetY = gsap.utils.clamp(bounds.top + 90 - drag.slot.top, bounds.bottom - 24 - drag.slot.bottom, drag.startY + dy * resistance);
+    const stretch = reducedMotion.matches ? 0 : Math.min(0.09, distance / drag.slot.height * 0.1);
+    // A little resistance and eased follow-through make the glyph feel soft.
+    gsap.to(drag.item.letter, {
+      x: drag.targetX, y: drag.targetY,
+      rotation: reducedMotion.matches ? 0 : gsap.utils.clamp(-8, 8, dx * 0.035),
+      skewX: 0,
+      scaleX: Math.abs(dx) > Math.abs(dy) ? 1 + stretch : 1 - stretch * 0.3,
+      scaleY: Math.abs(dy) >= Math.abs(dx) ? 1 + stretch : 1 - stretch * 0.3,
+      duration: reducedMotion.matches ? 0 : 0.24,
+      ease: "power3.out", overwrite: true,
+    });
+  }, { passive: true });
+  window.addEventListener("pointerup", (event) => {
+    if (event.pointerId === drag?.pointerId) finishDrag();
+  }, { passive: true });
+  window.addEventListener("pointercancel", (event) => {
+    if (event.pointerId === drag?.pointerId) finishDrag(true);
+  }, { passive: true });
+  window.addEventListener("blur", () => finishDrag(true));
+  const restoreAll = () => {
+    finishDrag(true);
+    allLetters.forEach((item) => setDetached(item, false));
+    resetHovers.forEach((reset) => reset());
+  };
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") restoreAll();
+  });
+  reducedMotion.addEventListener("change", restoreAll);
 }
 
 /* =========================================================
@@ -720,6 +871,7 @@ window.addEventListener("load", async () => {
   setupSectionTitleAnimation();
   setupMobileMenu();
   setupCircleTextRotation();
+  setupElasticHero();
   setupFrontendPreviewScrollIsolation();
   setupVibeAccordion();
 

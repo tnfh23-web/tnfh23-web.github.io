@@ -19,7 +19,7 @@
     <!-- 베리어블 -->
     <link rel="stylesheet" href="variable.css" />
     <!-- 스타일 css -->
-    <link rel="stylesheet" href="style.css?v=20261012-reflow-simple" />
+    <link rel="stylesheet" href="style.css?v=20261020-soft-drag" />
   </head>
 
   <body class="is-loading">
@@ -69,8 +69,8 @@
       <section id="sec-hero" class="sec-hero">
         <div class="sec-hero-grid">
           <div class="text-box">
-            <h1 data-aos="fade-right" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="500">Yoon Suro</h1>
-            <h2 data-aos="fade-right" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="800">Portfolio</h2>
+            <h1 class="hero-title hero-name" aria-label="Yoon Suro" data-aos="fade-right" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="500"><span class="hero-word" aria-hidden="true"><span class="hero-glyph"><span class="hero-letter">Y</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span><span class="hero-glyph"><span class="hero-letter">n</span></span><span class="hero-gap"></span><span class="hero-glyph"><span class="hero-letter">S</span></span><span class="hero-glyph"><span class="hero-letter">u</span></span><span class="hero-glyph"><span class="hero-letter">r</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span></span></h1>
+            <h2 class="hero-title" aria-label="Portfolio" data-aos="fade-right" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="800"><span class="hero-word" aria-hidden="true"><span class="hero-glyph"><span class="hero-letter">P</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span><span class="hero-glyph"><span class="hero-letter">r</span></span><span class="hero-glyph"><span class="hero-letter">t</span></span><span class="hero-glyph"><span class="hero-letter">f</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span><span class="hero-glyph"><span class="hero-letter">l</span></span><span class="hero-glyph"><span class="hero-letter">i</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span></span></h2>
             <p data-aos="fade-right" data-aos-offset="100" data-aos-duration="1000" data-aos-delay="1100">
               안녕하세요.<br />
               시안의 완성도를 넘어, 실제 사용 경험까지 구현하는 웹 퍼블리셔 윤수로입니다.<br />
@@ -86,7 +86,12 @@
                 <textPath href="#hero-circle-path" textLength="472" lengthAdjust="spacing">WEB PUBLISHER · UI MARKUP · INTERACTION ·</textPath>
               </text>
             </svg>
-            <button type="button" class="circle-center" aria-label="원형 텍스트 느린 속도로 고정" aria-pressed="false">click</button>
+            <button type="button" class="circle-center" aria-label="사이트 슬로모션 켜기" aria-describedby="motion-description" aria-pressed="false">click</button>
+            <div class="hero-motion-caption">
+              <span class="hero-motion-status" role="status" aria-live="polite" aria-atomic="true">NORMAL SPEED · 1×</span>
+              <p id="motion-description">클릭하면 사이트의 움직임이 느려져요</p>
+              <span class="hero-motion-help">한 번 더 클릭하면 원래 속도로 돌아와요</span>
+            </div>
             <span class="hero-circle-meta" aria-hidden="true">
               <span>WEB PUBLISHER</span>
               <span>DAEJEON · 2026</span>
@@ -601,6 +606,6 @@
     <!-- 스플릿 텍스트 -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/SplitText.min.js"></script>
     <!-- 스크립트 -->
-    <script src="script.js"></script>
+    <script src="script.js?v=20261020-soft-drag"></script>
   </body>
 </html>
