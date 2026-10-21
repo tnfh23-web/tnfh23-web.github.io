@@ -2,7 +2,8 @@
    GSAP / ScrollTrigger
 ========================================================= */
 gsap.registerPlugin(ScrollTrigger);
-gsap.registerPlugin(SplitText);
+// Resize is handled once below, after both pinned sections have been rebuilt.
+ScrollTrigger.config({ autoRefreshEvents: "visibilitychange,DOMContentLoaded,load" });
 
 /* One clock for the portfolio's GSAP animations and CSS motion. */
 const motionState = { isSlow: false, durationScale: 1 };
@@ -82,26 +83,6 @@ window.addEventListener("wheel", _preventScroll, { passive: false, capture: true
 window.addEventListener("touchmove", _preventScroll, { passive: false, capture: true });
 
 /* =========================================================
-   AOS
-========================================================= */
-function initAOSAfterLoading() {
-  if (!window.AOS) return;
-
-  document.querySelectorAll("[data-aos]").forEach((element) => {
-    element.style.setProperty("--aos-duration", `${Number(element.dataset.aosDuration) || 0}ms`);
-    element.style.setProperty("--aos-delay", `${Number(element.dataset.aosDelay) || 0}ms`);
-  });
-
-  AOS.init({
-    once: true,
-    offset: 0,
-    duration: 0,
-  });
-
-  AOS.refreshHard();
-}
-
-/* =========================================================
    header (PC 자동 숨김)
 ========================================================= */
 function setupAutoHideHeader() {
@@ -140,7 +121,7 @@ function setupAutoHideHeader() {
 /* =========================================================
    Header show
 ========================================================= */
-function showHeaderAfterHeroAOS() {
+function showHeader() {
   document.querySelectorAll(".top-bar").forEach((header) => {
     header.classList.add("is-show");
   });
@@ -151,6 +132,7 @@ function showHeaderAfterHeroAOS() {
 /* =========================================================
    Anchor Click (Header 메뉴 클릭 시 Lenis로 이동)
 ========================================================= */
+let sectionNavigationUntil = 0;
 document.querySelectorAll('a[href^="#"]').forEach((a) => {
   a.addEventListener("click", (e) => {
     if (_lockScroll) return;
@@ -162,18 +144,26 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     if (!target) return;
 
     e.preventDefault();
+    sectionNavigationUntil = performance.now() + (2 * motionState.durationScale + 0.2) * 1000;
+    window.dispatchEvent(new Event("portfolio:section-navigation"));
 
     const header = document.querySelector(".top-bar.is-show");
     const headerH = header ? header.offsetHeight : 0;
+    const projectPin = href === "#sec-project" ? ScrollTrigger.getById("proj-pin") : null;
 
     if (lenis) {
-      lenis.scrollTo(target, {
-        offset: -headerH,
+      lenis.start();
+      lenis.scrollTo(projectPin ? projectPin.start : target, {
+        offset: href === "#sec-contact" ? 0 : -headerH,
         duration: 2 * motionState.durationScale,
         easing: (t) => 1 - Math.pow(1 - t, 3),
+        onComplete: () => {
+          sectionNavigationUntil = 0;
+        },
       });
     } else {
-      target.scrollIntoView({ behavior: "smooth" });
+      if (projectPin) window.scrollTo({ top: projectPin.start - headerH, behavior: "smooth" });
+      else target.scrollIntoView({ behavior: "smooth" });
     }
   });
 });
@@ -328,144 +318,20 @@ async function waitProjectAssets() {
   await Promise.all(imgs.map((img) => img.decode?.().catch(() => {}) ?? Promise.resolve()));
 }
 
-/* =========================================================
-   Section 3 - Project Pin Accordion
-========================================================= */
-let projectAccordionTimeline = null;
-
-function setupProjectPinAccordion() {
-  const section = document.querySelector("#sec-project");
-  const allItems = gsap.utils.toArray("#sec-project .project-list-item");
-  if (!section || !allItems.length) return;
-
-  if (projectAccordionTimeline) {
-    projectAccordionTimeline.scrollTrigger?.kill(true);
-    projectAccordionTimeline.kill();
-    projectAccordionTimeline = null;
-  } else {
-    ScrollTrigger.getById("proj-pin")?.kill(true);
-  }
-
-  gsap.killTweensOf(allItems);
-  gsap.killTweensOf("#sec-project .project-list-item .item-body");
-
-  allItems.forEach((el) => {
-    el.style.height = "";
-    el.style.overflow = "";
-    el.style.borderBottomWidth = "";
-  });
-  gsap.set("#sec-project .project-list-item .item-body", { clearProps: "backgroundColor" });
-
-  if (window.matchMedia("(max-width: 768px)").matches) {
-    section.style.height = "auto";
-    return;
-  }
-
-  section.style.height = "";
-
-  const itemList = document.querySelectorAll("#sec-project .project-list-item");
-  const items = gsap.utils.toArray("#sec-project .project-list-item");
-  const expandedBorderHeight = Array.from(itemList).reduce((total, el) => total + (parseFloat(getComputedStyle(el).borderBottomWidth) || 0), 0);
-
-  //  마지막 아이템 제외(네 로직 유지)
-  items.splice(items.length - 1, 1);
-
-  // scrollHeight는 카드가 접힌 뒤에도 원래 콘텐츠 높이를 유지한다.
-  // 따라서 resize refresh 중에도 프로젝트 스크롤 길이가 줄어들지 않는다.
-  const getHeight = () => Array.from(itemList).reduce((total, el) => total + el.scrollHeight, expandedBorderHeight);
-
-  items.forEach((li) => (li.style.overflow = "hidden"));
-
-  projectAccordionTimeline = gsap.timeline({
-    scrollTrigger: {
-      id: "proj-pin",
-      trigger: section,
-      start: "top top",
-      end: () => `+=${getHeight()}`,
-      pin: section,
-      scrub: 1,
-      refreshPriority: 1,
-      invalidateOnRefresh: true,
-    },
-  });
-
-  const masterStagger = 0.5;
-
-  projectAccordionTimeline.to(items, {
-    height: 0,
-    borderBottomWidth: 0,
-    stagger: masterStagger,
-    ease: "none",
-  });
-
-  projectAccordionTimeline.to(
-    "#sec-project .project-list-item .item-body",
-    {
-      backgroundColor: "#f7f6f5",
-      stagger: masterStagger,
-      duration: 0.1,
-    },
-    "<",
-  );
+/* One scene owns the project deck, including its entry masks and cleanup. */
+let projectScene = null;
+function setupProjectScene() {
+  projectScene?.destroy();
+  projectScene = setupProjectDeck({ reducedMotion });
 }
 
-/* =========================================================
-   Title Split Animation
-========================================================= */
-function setupSectionTitleAnimation() {
-  document.querySelectorAll(".split-title").forEach((title) => {
-    if (title.classList.contains("is-split")) return;
-    title.classList.add("is-split");
-
-    const split = new SplitText(title, { type: "chars" });
-
-    gsap.from(split.chars, {
-      x: -150,
-      opacity: 0,
-      duration: 0.7,
-      ease: "power3.out",
-      stagger: 0.05,
-      scrollTrigger: {
-        trigger: title,
-        start: "top 80%",
-        once: true,
-      },
-    });
+function endLoading(playHeroEntrance) {
+  loadingScene.reveal(playHeroEntrance, () => {
+    endLoadingUnlock();
+    document.body.setAttribute("aria-busy", "false");
+    showHeader();
+    ScrollTrigger.refresh();
   });
-}
-
-/* =========================================================
-   Loading End (단일 함수로 정리)
-========================================================= */
-function endLoading() {
-  const loading = document.querySelector(".loading");
-
-  // 로딩 DOM이 없으면 그냥 풀고 AOS + 헤더 처리
-  if (!loading) {
-    endLoadingUnlock();
-    initAOSAfterLoading();
-    showHeaderAfterHeroAOS();
-    return;
-  }
-
-  // split 끝난 뒤 배경 페이드 + AOS 시작
-  setTimeout(() => {
-    loading.classList.add("is-fade");
-    initAOSAfterLoading();
-  }, 1000);
-
-  // 완전 제거 + 스크롤 해제
-  setTimeout(() => {
-    loading.remove();
-    endLoadingUnlock();
-
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh(true);
-      if (window.AOS) AOS.refreshHard();
-    });
-
-    showHeaderAfterHeroAOS();
-  }, 2000);
 }
 
 /* =========================================================
@@ -475,52 +341,120 @@ let resizeTimer;
 let lastW = window.innerWidth;
 let lastH = window.innerHeight;
 let resizeRevision = 0;
-let projectUsesMobileLayout = window.matchMedia("(max-width: 768px)").matches;
+let resizeAnchor = null;
+let pageMotionReady = false;
+
+function captureResizeAnchor() {
+  const y = window.scrollY;
+  if (y < 2) return { type: "top" };
+  for (const [selector, cardSelector, type] of [["#sec-vibe.is-static", ".vibe-slide", "vibe-slide"], ["#sec-project.is-project-flow", ".project-list-item", "project-card"]]) {
+    const flow = document.querySelector(selector);
+    if (!flow) continue;
+    const projectCardIndex = type === "project-card" ? projectScene?.flowCardIndex() : null;
+    if (projectCardIndex != null) return { type, index: projectCardIndex };
+    const cards = Array.from(flow.querySelectorAll(cardSelector));
+    const visible = cards
+      .map((card, index) => {
+        const rect = card.getBoundingClientRect();
+        return { index, pixels: Math.max(0, Math.min(innerHeight, rect.bottom) - Math.max(0, rect.top)) };
+      })
+      .sort((a, b) => b.pixels - a.pixels)[0];
+    if (visible?.pixels > 0) return { type, index: visible.index };
+  }
+  for (const id of ["vibe-pin", "proj-pin"]) {
+    const pin = ScrollTrigger.getById(id);
+    if (pin && y >= pin.start - 1 && y <= pin.end + 1) {
+      // Responsive reflow can move the browser's scroll anchor before this event.
+      // Preserve the visible fold rather than that already-shifted scroll position.
+      const progress = id === "proj-pin" ? pin.animation.totalProgress() : (y - pin.start) / (pin.end - pin.start);
+      return { type: "pin", id, progress: gsap.utils.clamp(0, 1, progress), cardIndex: id === "proj-pin" ? Math.max(0, Number(document.querySelector("#sec-project").dataset.activeProject) - 1) : null };
+    }
+  }
+  if (Math.abs(y - ScrollTrigger.maxScroll(window)) < 3) return { type: "end" };
+  const sections = Array.from(document.querySelectorAll("main > section, #sec-contact"));
+  const section = sections.find((element) => {
+    const rect = element.getBoundingClientRect();
+    return rect.top <= window.innerHeight * 0.2 && rect.bottom > window.innerHeight * 0.2;
+  });
+  if (!section) return { type: "absolute", y };
+  const rect = section.getBoundingClientRect();
+  return { type: "section", section, progress: gsap.utils.clamp(0, 1, -rect.top / rect.height) };
+}
+
+function restoreResizeAnchor(anchor) {
+  let y = 0;
+  const headerHeight = Math.max(0, ...Array.from(document.querySelectorAll(".top-bar")).map((header) => header.offsetHeight));
+  if (anchor?.type === "project-card") {
+    const pin = ScrollTrigger.getById("proj-pin");
+    if (pin) y = pin.start + projectScene.progressForCard(anchor.index) * (pin.end - pin.start);
+    else y = window.scrollY + document.querySelectorAll("#sec-project .project-list-item")[anchor.index].getBoundingClientRect().top - headerHeight;
+  } else if (anchor?.type === "vibe-slide") {
+    const pin = ScrollTrigger.getById("vibe-pin");
+    const cards = document.querySelectorAll(".vibe-slide");
+    if (pin) y = pin.start + (anchor.index / (cards.length - 1)) * (pin.end - pin.start);
+    else y = window.scrollY + cards[anchor.index].getBoundingClientRect().top - headerHeight;
+  } else if (anchor?.type === "pin") {
+    const pin = ScrollTrigger.getById(anchor.id);
+    if (pin) y = pin.start + anchor.progress * (pin.end - pin.start);
+    else {
+      const section = document.querySelector(anchor.id === "vibe-pin" ? "#sec-vibe" : "#sec-project");
+      const cards = section.querySelectorAll(anchor.id === "vibe-pin" ? ".vibe-slide" : ".project-list-item");
+      const card = cards[anchor.cardIndex ?? Math.round(anchor.progress * (cards.length - 1))] || section;
+      y = window.scrollY + card.getBoundingClientRect().top - headerHeight;
+    }
+  } else if (anchor?.type === "section") {
+    const rect = anchor.section.getBoundingClientRect();
+    y = window.scrollY + rect.top + rect.height * anchor.progress;
+  } else if (anchor?.type === "end") y = ScrollTrigger.maxScroll(window);
+  else if (anchor?.type === "absolute") y = anchor.y;
+  y = gsap.utils.clamp(0, ScrollTrigger.maxScroll(window), y);
+  if (lenis) {
+    lenis.resize();
+    lenis.scrollTo(y, { immediate: true, force: true });
+  } else window.scrollTo({ top: y, behavior: "auto" });
+  ScrollTrigger.update();
+  for (const id of ["hero-playground-exit", "proj-pin", "vibe-pin"]) {
+    const pin = ScrollTrigger.getById(id);
+    pin?.animation?.totalProgress(pin.progress, false);
+  }
+}
 
 function handleResize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const widthChanged = w !== lastW;
-  const heightChanged = h !== lastH;
-
+  if (w === lastW && h === lastH) return;
+  const smallMobileChromeChange = w === lastW && w <= 768 && Math.abs(h - lastH) < 100;
   lastW = w;
   lastH = h;
-
-  // 모바일 주소창으로 인한 높이 변화는 무시하고, 데스크톱의 F12 리사이즈는 반영한다.
-  if (!widthChanged && (!heightChanged || w <= 768)) return;
-
+  if (!pageMotionReady || smallMobileChromeChange) return;
+  resizeAnchor ||= captureResizeAnchor();
   clearTimeout(resizeTimer);
   const revision = ++resizeRevision;
-
-  resizeTimer = setTimeout(() => {
-    requestAnimationFrame(async () => {
-      const usesMobileLayout = window.matchMedia("(max-width: 768px)").matches;
-      const projectBreakpointChanged = usesMobileLayout !== projectUsesMobileLayout;
-
-      if (projectBreakpointChanged) await waitProjectAssets();
-      if (revision !== resizeRevision) return;
-
-      dividerMarquee();
-
-      // F12처럼 데스크톱 안에서 크기만 바뀌면 기존 핀을 유지한다.
-      // 레이아웃 기준점을 넘을 때만 타임라인을 다시 만든다.
-      if (projectBreakpointChanged) {
-        projectUsesMobileLayout = usesMobileLayout;
-        setupProjectPinAccordion();
-        setupFrontendProjectAnimation();
-      }
-
-      ScrollTrigger.refresh(true);
-      requestAnimationFrame(() => {
-        if (revision !== resizeRevision) return;
-        ScrollTrigger.refresh(true);
-        ScrollTrigger.update();
-      });
-    });
-  }, 200);
+  resizeTimer = setTimeout(async () => {
+    await waitProjectAssets();
+    if (revision !== resizeRevision) return;
+    const anchor = resizeAnchor;
+    window.dispatchEvent(new Event("portfolio:section-navigation"));
+    dividerMarquee();
+    setupProjectScene();
+    setupFrontendProjectAnimation();
+    setupVibeAccordion();
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh();
+    restoreResizeAnchor(anchor);
+    resizeAnchor = null;
+  }, 160);
 }
 
 window.addEventListener("resize", handleResize, { passive: true });
+reducedMotion.addEventListener("change", () => {
+  if (!pageMotionReady) return;
+  const anchor = captureResizeAnchor();
+  setupProjectScene();
+  setupVibeAccordion();
+  ScrollTrigger.refresh();
+  restoreResizeAnchor(anchor);
+});
 
 /* =========================================================
    Hero Circle Text
@@ -546,151 +480,6 @@ function setupCircleTextRotation() {
   circleCenter.addEventListener("click", () => {
     setSiteSlowMotion(!motionState.isSlow);
   });
-}
-
-/* Elastic type: measure the unmoving glyph slots, animate only their contents. */
-function setupElasticHero() {
-  const hero = document.querySelector("#sec-hero");
-  if (!hero) return;
-  const allLetters = [];
-  const resetHovers = [];
-  let drag = null;
-  let frontLayer = 1;
-  const rest = { x: 0, y: 0, rotation: 0, skewX: 0, scaleX: 1, scaleY: 1 };
-
-  const setDetached = (item, detached) => {
-    item.detached = detached;
-    item.letter.dataset.detached = String(detached);
-  };
-  const finishDrag = (cancel = false) => {
-    if (!drag) return;
-    const { item, pointerId, moved, wasDetached, startX, startY, targetX, targetY, slot } = drag;
-    drag = null;
-    item.letter.classList.remove("is-dragging");
-    if (item.letter.hasPointerCapture(pointerId)) item.letter.releasePointerCapture(pointerId);
-    if (moved) {
-      if (cancel) setDetached(item, wasDetached);
-      else if (Math.hypot(targetX, targetY) < Math.max(20, slot.height * 0.12)) setDetached(item, false);
-      gsap.to(item.letter, {
-        ...(cancel ? { x: wasDetached ? startX : 0, y: wasDetached ? startY : 0 } : { x: targetX, y: targetY }),
-        rotation: 0, skewX: 0, scaleX: 1, scaleY: 1,
-        duration: reducedMotion.matches ? 0 : 0.65,
-        ease: "power3.out", overwrite: true,
-      });
-    }
-    resetHovers.forEach((reset) => reset());
-  };
-
-  hero.querySelectorAll(".hero-title").forEach((title) => {
-    const items = Array.from(title.querySelectorAll(".hero-glyph")).map((slot) => ({
-      slot, letter: slot.querySelector(".hero-letter"), detached: false,
-    }));
-    allLetters.push(...items);
-    const pointer = { x: 0, y: 0 };
-    let frame = 0;
-    const reset = () => {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      const attached = items.filter((item) => !item.detached && item !== drag?.item).map((item) => item.letter);
-      if (attached.length) gsap.to(attached, { ...rest, duration: reducedMotion.matches ? 0 : 1.15, ease: "elastic.out(1, 0.42)", overwrite: true });
-    };
-    resetHovers.push(reset);
-    const render = () => {
-      frame = 0;
-      if (drag || reducedMotion.matches) return;
-      const rect = title.getBoundingClientRect();
-      const radius = rect.height * 1.15;
-      const pullY = gsap.utils.clamp(-rect.height * 0.3, rect.height * 0.3, (pointer.y - rect.top - rect.height * 0.7) * 0.6);
-      items.forEach((item) => {
-        if (item.detached) return;
-        const box = item.slot.getBoundingClientRect();
-        const distance = pointer.x - (box.left + box.width / 2);
-        const influence = Math.pow(Math.max(0, 1 - Math.abs(distance) / radius), 2);
-        gsap.to(item.letter, {
-          x: distance * influence * 0.12,
-          y: pullY * influence,
-          rotation: gsap.utils.clamp(-9, 9, distance * influence * 0.065),
-          skewX: gsap.utils.clamp(-12, 12, distance * influence * -0.08),
-          scaleY: 1 + influence * Math.abs(pullY) / rect.height * 0.6,
-          duration: 0.5, ease: "power3.out", overwrite: true,
-        });
-      });
-    };
-    title.addEventListener("pointermove", (event) => {
-      if (drag || reducedMotion.matches) return;
-      pointer.x = event.clientX;
-      pointer.y = event.clientY;
-      if (!frame) frame = requestAnimationFrame(render);
-    }, { passive: true });
-    title.addEventListener("pointerleave", reset);
-    items.forEach((item) => {
-      item.letter.addEventListener("pointerdown", (event) => {
-        if (!event.isPrimary || event.button !== 0 || drag) return;
-        event.preventDefault();
-        cancelAnimationFrame(frame);
-        frame = 0;
-        gsap.killTweensOf(item.letter);
-        drag = {
-          item, pointerId: event.pointerId, moved: false, wasDetached: item.detached,
-          pointerX: event.clientX, pointerY: event.clientY,
-          startX: Number(gsap.getProperty(item.letter, "x")) || 0,
-          startY: Number(gsap.getProperty(item.letter, "y")) || 0,
-          targetX: 0, targetY: 0,
-          slot: item.slot.getBoundingClientRect(),
-        };
-        title.style.zIndex = String(++frontLayer);
-        item.letter.setPointerCapture(event.pointerId);
-      });
-      item.letter.addEventListener("lostpointercapture", () => {
-        if (drag?.item === item) finishDrag(true);
-      });
-    });
-  });
-
-  window.addEventListener("pointermove", (event) => {
-    if (!drag || event.pointerId !== drag.pointerId) return;
-    const dx = event.clientX - drag.pointerX;
-    const dy = event.clientY - drag.pointerY;
-    // A click alone leaves the word intact; only a deliberate drag detaches it.
-    const distance = Math.hypot(dx, dy);
-    if (!drag.moved && distance < 6) return;
-    drag.moved = true;
-    const peelDistance = gsap.utils.clamp(18, 38, drag.slot.height * 0.16);
-    if (distance >= peelDistance) setDetached(drag.item, true);
-    drag.item.letter.classList.add("is-dragging");
-    const bounds = hero.getBoundingClientRect();
-    const peel = Math.min(1, distance / peelDistance);
-    const resistance = drag.item.detached ? 1 : 0.3 + 0.7 * peel * peel * (3 - 2 * peel);
-    drag.targetX = gsap.utils.clamp(bounds.left + 12 - drag.slot.left, bounds.right - 12 - drag.slot.right, drag.startX + dx * resistance);
-    drag.targetY = gsap.utils.clamp(bounds.top + 90 - drag.slot.top, bounds.bottom - 24 - drag.slot.bottom, drag.startY + dy * resistance);
-    const stretch = reducedMotion.matches ? 0 : Math.min(0.09, distance / drag.slot.height * 0.1);
-    // A little resistance and eased follow-through make the glyph feel soft.
-    gsap.to(drag.item.letter, {
-      x: drag.targetX, y: drag.targetY,
-      rotation: reducedMotion.matches ? 0 : gsap.utils.clamp(-8, 8, dx * 0.035),
-      skewX: 0,
-      scaleX: Math.abs(dx) > Math.abs(dy) ? 1 + stretch : 1 - stretch * 0.3,
-      scaleY: Math.abs(dy) >= Math.abs(dx) ? 1 + stretch : 1 - stretch * 0.3,
-      duration: reducedMotion.matches ? 0 : 0.24,
-      ease: "power3.out", overwrite: true,
-    });
-  }, { passive: true });
-  window.addEventListener("pointerup", (event) => {
-    if (event.pointerId === drag?.pointerId) finishDrag();
-  }, { passive: true });
-  window.addEventListener("pointercancel", (event) => {
-    if (event.pointerId === drag?.pointerId) finishDrag(true);
-  }, { passive: true });
-  window.addEventListener("blur", () => finishDrag(true));
-  const restoreAll = () => {
-    finishDrag(true);
-    allLetters.forEach((item) => setDetached(item, false));
-    resetHovers.forEach((reset) => reset());
-  };
-  window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") restoreAll();
-  });
-  reducedMotion.addEventListener("change", restoreAll);
 }
 
 /* =========================================================
@@ -724,11 +513,12 @@ function setupFrontendProjectAnimation() {
       },
     });
 
-    tl.fromTo(
-      item.querySelector(".front-project-visual"),
-      { y: 12 * rem, rotation: -2.5, opacity: 0 },
-      { y: 0, rotation: 0, opacity: 1, ease: "power2.out" },
-    ).fromTo(item.querySelector(".front-project-info"), { x: 100, opacity: 0 }, { x: 0, opacity: 1, ease: "power2.out" }, "<0.15");
+    tl.fromTo(item.querySelector(".front-project-visual"), { y: 12 * rem, rotation: -2.5, opacity: 0 }, { y: 0, rotation: 0, opacity: 1, ease: "power2.out" }).fromTo(
+      item.querySelector(".front-project-info"),
+      { x: 100, opacity: 0 },
+      { x: 0, opacity: 1, ease: "power2.out" },
+      "<0.15",
+    );
   });
 
   gsap.fromTo(
@@ -762,6 +552,7 @@ function setupFrontendPreviewScrollIsolation() {
 
     const restoreParentScroll = () => {
       if (!isPreviewActive || isRestoring) return;
+      if (performance.now() < sectionNavigationUntil) return;
       if (Math.abs(window.scrollY - lockedScrollY) < 1) return;
 
       isRestoring = true;
@@ -779,6 +570,8 @@ function setupFrontendPreviewScrollIsolation() {
 
     const lockParentScroll = () => {
       if (isPreviewActive) return;
+      // Moving a section underneath a stationary pointer must not interrupt menu navigation.
+      if (performance.now() < sectionNavigationUntil) return;
       lockedScrollY = window.scrollY;
       isPreviewActive = true;
       if (lenis) lenis.stop();
@@ -796,6 +589,7 @@ function setupFrontendPreviewScrollIsolation() {
     preview.addEventListener("pointerleave", unlockParentScroll);
     preview.addEventListener("focus", lockParentScroll);
     preview.addEventListener("blur", unlockParentScroll);
+    window.addEventListener("portfolio:section-navigation", unlockParentScroll);
     window.addEventListener("scroll", restoreParentScroll, { passive: true });
   });
 }
@@ -803,38 +597,55 @@ function setupFrontendPreviewScrollIsolation() {
 /* =========================================================
    Vibe Project - Pinned Section Transition
 ========================================================= */
+let vibeTimeline = null;
 function setupVibeAccordion() {
   const section = document.querySelector("#sec-vibe");
   const stage = section?.querySelector(".vibe-stage");
   const slides = gsap.utils.toArray("#sec-vibe .vibe-slide");
   if (!section || !stage || slides.length < 2) return;
+  if (vibeTimeline) {
+    vibeTimeline.scrollTrigger?.kill(true);
+    vibeTimeline.kill();
+    vibeTimeline = null;
+  } else ScrollTrigger.getById("vibe-pin")?.kill(true);
+  gsap.set(stage, { clearProps: "all" });
+  gsap.set(slides, { clearProps: "all" });
+  gsap.set(section.querySelectorAll(".vibe-outer, .vibe-inner, .vibe-background, .vibe-content"), { clearProps: "all" });
+  section.classList.remove("is-static");
 
-  ScrollTrigger.getById("vibe-pin")?.kill(true);
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    slides.forEach((slide) => {
-      slide.classList.add("is-active", "is-interactive");
-      gsap.set(slide.querySelectorAll(".vibe-outer, .vibe-inner, .vibe-background, .vibe-content"), { clearProps: "all" });
-    });
+  // Pin only when every project's image, copy and actions fit the available height.
+  const stacked = window.innerWidth <= 768;
+  const needsFlow = slides.some((slide) => {
+    const content = slide.querySelector(".vibe-content");
+    const main = slide.querySelector(".vibe-main");
+    const padding = getComputedStyle(content);
+    const available = stage.clientHeight - parseFloat(padding.paddingTop) - parseFloat(padding.paddingBottom);
+    const copyHeight = slide.querySelector(".vibe-copy").offsetHeight;
+    const imageHeight = slide.querySelector(".vibe-preview").offsetHeight;
+    const needed = stacked ? copyHeight + imageHeight + parseFloat(getComputedStyle(main).rowGap) : Math.max(copyHeight, imageHeight);
+    return needed > available + 1;
+  });
+  if (reducedMotion.matches || needsFlow) {
+    section.classList.add("is-static");
+    slides.forEach((slide) => slide.classList.add("is-active", "is-interactive"));
     return;
   }
 
   const transitionCount = slides.length - 1;
-  const transitionDuration = 0.75;
-
   slides.forEach((slide, index) => {
     gsap.set(slide, { autoAlpha: 1, zIndex: index + 1 });
+    slide.classList.toggle("is-active", index === 0);
     slide.classList.toggle("is-interactive", index === 0);
-    if (index === 0) return;
-    gsap.set(slide.querySelector(".vibe-outer"), { yPercent: 100 });
-    gsap.set(slide.querySelector(".vibe-inner"), { yPercent: -100 });
-    gsap.set(slide.querySelector(".vibe-background"), { yPercent: 15 });
+    gsap.set(slide.querySelector(".vibe-outer"), { yPercent: index ? 100 : 0 });
+    gsap.set(slide.querySelector(".vibe-inner"), { yPercent: index ? -100 : 0 });
+    gsap.set(slide.querySelector(".vibe-background"), { yPercent: index ? 15 : 0 });
+    gsap.set(slide.querySelector(".vibe-content"), { autoAlpha: index ? 0 : 1, y: index ? 80 : 0 });
   });
-
-  const timeline = gsap.timeline({
+  vibeTimeline = gsap.timeline({
     onUpdate() {
       const activeIndex = Math.min(transitionCount, Math.floor(this.progress() * transitionCount + 0.5));
       slides.forEach((slide, index) => {
+        slide.classList.toggle("is-active", index === activeIndex);
         slide.classList.toggle("is-interactive", index === activeIndex);
       });
     },
@@ -842,21 +653,21 @@ function setupVibeAccordion() {
       id: "vibe-pin",
       trigger: stage,
       start: "top top",
-      end: `+=${120 * transitionCount}%`,
+      end: () => `+=${stage.clientHeight * 1.2 * transitionCount}`,
       pin: stage,
       scrub: 1,
       anticipatePin: 1,
       invalidateOnRefresh: true,
     },
   });
-
   slides.slice(1).forEach((next, index) => {
-    const start = index * transitionDuration;
-    timeline
-      .to(slides[index].querySelector(".vibe-background"), { yPercent: -15, duration: 0.5, ease: "none" }, start)
-      .to(next.querySelectorAll(".vibe-outer, .vibe-inner"), { yPercent: 0, duration: 0.5, ease: "power1.inOut" }, start)
-      .to(next.querySelector(".vibe-background"), { yPercent: 0, duration: 0.5, ease: "power1.inOut" }, start)
-      .fromTo(next.querySelector(".vibe-content"), { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, start + 0.25);
+    const start = index * 0.75;
+    vibeTimeline
+      .fromTo(slides[index].querySelector(".vibe-background"), { yPercent: 0 }, { yPercent: -15, duration: 0.5, ease: "none", immediateRender: false }, start)
+      .fromTo(next.querySelector(".vibe-outer"), { yPercent: 100 }, { yPercent: 0, duration: 0.5, ease: "power1.inOut", immediateRender: false }, start)
+      .fromTo(next.querySelector(".vibe-inner"), { yPercent: -100 }, { yPercent: 0, duration: 0.5, ease: "power1.inOut", immediateRender: false }, start)
+      .fromTo(next.querySelector(".vibe-background"), { yPercent: 15 }, { yPercent: 0, duration: 0.5, ease: "power1.inOut", immediateRender: false }, start)
+      .fromTo(next.querySelector(".vibe-content"), { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, start + 0.25);
   });
 }
 
@@ -864,22 +675,26 @@ function setupVibeAccordion() {
    Init
 ========================================================= */
 startLoadingLock();
+document.body.setAttribute("aria-busy", "true");
+const loadingScene = setupTypographyLoader({ reducedMotion });
 
-window.addEventListener("load", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   copyDividerTextOnce();
   dividerMarquee();
-  setupSectionTitleAnimation();
   setupMobileMenu();
   setupCircleTextRotation();
-  setupElasticHero();
+  setupHeroPlayground({ motionState, reducedMotion });
+  if (typeof setupPortfolioCursor === "function") setupPortfolioCursor({ motionState, reducedMotion });
   setupFrontendPreviewScrollIsolation();
-  setupVibeAccordion();
 
   await waitProjectAssets();
-  setupProjectPinAccordion();
+  setupProjectScene();
   setupFrontendProjectAnimation();
+  setupVibeAccordion();
+  pageMotionReady = true;
 
   requestAnimationFrame(() => ScrollTrigger.refresh(true));
 
-  endLoading();
+  const playHeroEntrance = setupPageReveals({ reducedMotion });
+  endLoading(playHeroEntrance);
 });

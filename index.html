@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class="is-loading">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -10,24 +10,21 @@
     <meta property="og:url" content="https://tnfh23-web.github.io/" />
     <meta property="og:image" content="https://tnfh23-web.github.io/img/thum-img/og-image.png" />
 
-    <!-- aos -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <!-- 스와이퍼 라이브러리 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <!-- 폰트어썸 불러오기 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
     <!-- 베리어블 -->
-    <link rel="stylesheet" href="variable.css" />
+    <link rel="stylesheet" href="variable.css?v=20261022-layout-balance-v1" />
     <!-- 스타일 css -->
-    <link rel="stylesheet" href="style.css?v=20261020-soft-drag" />
+    <link rel="stylesheet" href="style.css?v=20261022-deck-v3" />
   </head>
 
   <body class="is-loading">
-    <div class="loading">
-      <div class="loading-text">
-        <span class="left">Yoon</span>
-        <span class="right">Suro</span>
-      </div>
+    <div class="loading" role="status" aria-label="포트폴리오를 준비하고 있습니다">
+      <div class="loading-panel loading-panel-top" aria-hidden="true"></div>
+      <div class="loading-panel loading-panel-bottom" aria-hidden="true"></div>
+      <div class="loading-word" aria-hidden="true">Yoon Suro</div>
     </div>
     <header class="pc-top-bar top-bar">
       <nav class="container">
@@ -64,29 +61,54 @@
         </ul>
       </nav>
     </header>
-    <main>
+    <main class="page-cover">
       <!------------------------------------------------ 섹션 1 --------------------------------------------------->
       <section id="sec-hero" class="sec-hero">
         <div class="sec-hero-grid">
           <div class="text-box">
-            <h1 class="hero-title hero-name" aria-label="Yoon Suro" data-aos="fade-right" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="500"><span class="hero-word" aria-hidden="true"><span class="hero-glyph"><span class="hero-letter">Y</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span><span class="hero-glyph"><span class="hero-letter">n</span></span><span class="hero-gap"></span><span class="hero-glyph"><span class="hero-letter">S</span></span><span class="hero-glyph"><span class="hero-letter">u</span></span><span class="hero-glyph"><span class="hero-letter">r</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span></span></h1>
-            <h2 class="hero-title" aria-label="Portfolio" data-aos="fade-right" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="800"><span class="hero-word" aria-hidden="true"><span class="hero-glyph"><span class="hero-letter">P</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span><span class="hero-glyph"><span class="hero-letter">r</span></span><span class="hero-glyph"><span class="hero-letter">t</span></span><span class="hero-glyph"><span class="hero-letter">f</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span><span class="hero-glyph"><span class="hero-letter">l</span></span><span class="hero-glyph"><span class="hero-letter">i</span></span><span class="hero-glyph"><span class="hero-letter">o</span></span></span></h2>
-            <p data-aos="fade-right" data-aos-offset="100" data-aos-duration="1000" data-aos-delay="1100">
+            <h1 class="hero-title hero-name" aria-label="Yoon Suro">
+              <span class="hero-word" aria-hidden="true"
+                ><span class="hero-glyph"><span class="hero-letter">Y</span></span
+                ><span class="hero-glyph"><span class="hero-letter">o</span></span
+                ><span class="hero-glyph"><span class="hero-letter">o</span></span
+                ><span class="hero-glyph"><span class="hero-letter">n</span></span
+                ><span class="hero-gap"></span><span class="hero-glyph"><span class="hero-letter">S</span></span
+                ><span class="hero-glyph"><span class="hero-letter">u</span></span
+                ><span class="hero-glyph"><span class="hero-letter">r</span></span
+                ><span class="hero-glyph"><span class="hero-letter">o</span></span></span
+              >
+            </h1>
+            <h2 class="hero-title" aria-label="Portfolio">
+              <span class="hero-word" aria-hidden="true"
+                ><span class="hero-glyph"><span class="hero-letter">P</span></span
+                ><span class="hero-glyph"><span class="hero-letter">o</span></span
+                ><span class="hero-glyph"><span class="hero-letter">r</span></span
+                ><span class="hero-glyph"><span class="hero-letter">t</span></span
+                ><span class="hero-glyph"><span class="hero-letter">f</span></span
+                ><span class="hero-glyph"><span class="hero-letter">o</span></span
+                ><span class="hero-glyph"><span class="hero-letter">l</span></span
+                ><span class="hero-glyph"><span class="hero-letter">i</span></span
+                ><span class="hero-glyph"><span class="hero-letter">o</span></span></span
+              >
+            </h2>
+            <p>
               안녕하세요.<br />
               시안의 완성도를 넘어, 실제 사용 경험까지 구현하는 웹 퍼블리셔 윤수로입니다.<br />
               디자인 의도를 정확하게 전달하고 인터랙션과 웹 접근성, 유지보수까지 고려한 웹페이지를 만듭니다.
             </p>
           </div>
-          <div class="circle-box" data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="1300">
-            <svg class="circle-text" viewBox="0 0 200 200" aria-hidden="true">
-              <defs>
-                <path id="hero-circle-path" d="M 100,100 m -76,0 a 76,76 0 1,1 152,0 a 76,76 0 1,1 -152,0" />
-              </defs>
-              <text>
-                <textPath href="#hero-circle-path" textLength="472" lengthAdjust="spacing">WEB PUBLISHER · UI MARKUP · INTERACTION ·</textPath>
-              </text>
-            </svg>
-            <button type="button" class="circle-center" aria-label="사이트 슬로모션 켜기" aria-describedby="motion-description" aria-pressed="false">click</button>
+          <div class="circle-box">
+            <div class="hero-circle-visual">
+              <svg class="circle-text" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <path id="hero-circle-path" d="M 100,100 m -76,0 a 76,76 0 1,1 152,0 a 76,76 0 1,1 -152,0" />
+                </defs>
+                <text>
+                  <textPath href="#hero-circle-path" textLength="472" lengthAdjust="spacing">WEB PUBLISHER · UI MARKUP · INTERACTION ·</textPath>
+                </text>
+              </svg>
+              <button type="button" class="circle-center" aria-label="사이트 슬로모션 켜기" aria-describedby="motion-description" aria-pressed="false">click</button>
+            </div>
             <div class="hero-motion-caption">
               <span class="hero-motion-status" role="status" aria-live="polite" aria-atomic="true">NORMAL SPEED · 1×</span>
               <p id="motion-description">클릭하면 사이트의 움직임이 느려져요</p>
@@ -115,7 +137,7 @@
             <h2 class="split-title">ABOUT ME</h2>
           </div>
           <div class="profile-box">
-            <div class="left-box" data-aos="fade-right" data-aos-offset="200" data-aos-duration="800">
+            <div class="left-box">
               <div class="img-box">
                 <img src="img/about-img/about.png" alt="증명사진" />
                 <div class="img-text">
@@ -125,7 +147,7 @@
               </div>
             </div>
             <div class="right-box">
-              <div class="right-con right-con-1" data-aos="fade-left" data-aos-offset="200" data-aos-duration="800" data-aos-delay="0">
+              <div class="right-con right-con-1">
                 <div class="con-title-box con-1-title-box">
                   <h2>PROFILE</h2>
                 </div>
@@ -144,7 +166,7 @@
                   </div>
                 </div>
               </div>
-              <div class="right-con right-con-2" data-aos="fade-left" data-aos-offset="200" data-aos-duration="800" data-aos-delay="150">
+              <div class="right-con right-con-2">
                 <div class="con-title-box con-2-title-box">
                   <h2>SKILL</h2>
                 </div>
@@ -167,7 +189,7 @@
                   </div>
                 </div>
               </div>
-              <div class="right-con right-con-3" data-aos="fade-left" data-aos-offset="200" data-aos-duration="800" data-aos-delay="300">
+              <div class="right-con right-con-3">
                 <div class="con-title-box con-3-title-box">
                   <h2>EDUCATION</h2>
                 </div>
@@ -180,7 +202,7 @@
                   </div>
                 </div>
               </div>
-              <div class="right-con right-con-4" data-aos="fade-left" data-aos-offset="200" data-aos-duration="800" data-aos-delay="450">
+              <div class="right-con right-con-4">
                 <div class="con-title-box con-4-title-box">
                   <h2>EXPERIENCE</h2>
                 </div>
@@ -551,61 +573,77 @@
           </article>
         </div>
       </section>
-      <section id="sec-contact" class="sec-contact">
-        <div class="sec-contact-grid">
-          <div class="title-box">
-            <div class="title-1">
-              <h2 class="split-title">CONTACT</h2>
-            </div>
-            <div class="title-2">
-              <div class="contact-title-text contact-title-text-1">
-                <span>Call</span>
-                <span>010-9402-4060</span>
-              </div>
-              <div class="contact-title-text contact-title-text-2">
-                <span>Email</span>
-                <span>tnfh23@gmail.com</span>
-              </div>
-            </div>
-            <div class="title-3">
-              <div class="contact-title-text contact-title-text-1">
-                <a href="https://github.com/tnfh23-web" target="_blank">Github</a>
-                <a href="https://velog.io/@ghggh23/posts" target="_blank">Blog</a>
-              </div>
-            </div>
-          </div>
-          <div class="contact-con">
-            <div class="text-box-1">
-              <p>
-                저는 일을 시작하기 전 효율적인 흐름을 고민하며 계획하는<br />
-                것을 중요하게 생각하고 변화가 생길 때는 유연하게<br />
-                대안을 찾아 문제를 해결하는 편입니다.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
-    <footer>
-      <div class="text-box">
-        <p>상업적 목적이 아닌 개인 포트폴리오용으로 제작되었습니다.</p>
-        <p>© 2026 Yoon Suro Portfolio. All Rights Reserved.</p>
+    <div id="sec-contact" class="contact-reveal">
+      <div class="contact-dock">
+        <section class="sec-contact" aria-labelledby="contact-heading">
+          <div class="sec-contact-grid">
+            <div class="title-box">
+              <div class="title-1">
+                <div class="contact-eyebrow"><span>LET’S CONNECT</span><span>WEB PUBLISHER · YOON SURO</span></div>
+                <h2 id="contact-heading" class="split-title">CONTACT</h2>
+              </div>
+              <div class="contact-con">
+                <p class="contact-lead">좋은 웹 경험을 함께 만들고 싶습니다.</p>
+                <div class="text-box-1">
+                  <p>
+                    저는 일을 시작하기 전 효율적인 흐름을 고민하며 계획하는<br />
+                    것을 중요하게 생각하고 변화가 생길 때는 유연하게<br />
+                    대안을 찾아 문제를 해결하는 편입니다.
+                  </p>
+                </div>
+              </div>
+              <div class="title-2">
+                <div class="contact-title-text contact-title-text-1">
+                  <span>Call</span>
+                  <span>010-9402-4060</span>
+                </div>
+                <div class="contact-title-text contact-title-text-2">
+                  <span>Email</span>
+                  <span>tnfh23@gmail.com</span>
+                </div>
+              </div>
+              <div class="title-3">
+                <div class="contact-title-text contact-title-text-1">
+                  <a href="https://github.com/tnfh23-web" target="_blank">Github</a>
+                  <a href="https://velog.io/@ghggh23/posts" target="_blank">Blog</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="contact-marquee" aria-hidden="true">
+            <div class="contact-marquee-drift">
+              <div class="contact-marquee-track">
+                <span class="contact-marquee-group">LET’S WORK TOGETHER · YOON SURO ·&nbsp;</span>
+                <span class="contact-marquee-group">LET’S WORK TOGETHER · YOON SURO ·&nbsp;</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <footer>
+          <div class="text-box">
+            <p>상업적 목적이 아닌 개인 포트폴리오용으로 제작되었습니다.</p>
+            <p>© 2026 Yoon Suro Portfolio. All Rights Reserved.</p>
+          </div>
+        </footer>
       </div>
-    </footer>
-    <!-- aos -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    </div>
     <!-- 제이쿼리 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- gsap -->
-    <script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/SplitText.min.js"></script>
     <!-- 스와이퍼 js -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <!-- 스크롤 스무서  -->
     <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-    <!-- 스플릿 텍스트 -->
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/SplitText.min.js"></script>
     <!-- 스크립트 -->
-    <script src="script.js?v=20261020-soft-drag"></script>
+    <script src="loading-intro.js?v=20261022-deck-v3"></script>
+    <script src="project-deck.js?v=20261022-deck-v3"></script>
+    <script src="page-reveals.js?v=20261022-deck-v3"></script>
+    <script src="hero-playground.js?v=20261022-type-motion-v7"></script>
+    <script src="portfolio-cursor.js?v=20261022-type-motion-v7"></script>
+    <script src="script.js?v=20261022-deck-v3"></script>
   </body>
 </html>
