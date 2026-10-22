@@ -10,7 +10,7 @@ function setupPortfolioCursor({ motionState, reducedMotion }) {
   document.body.append(cursor);
   const dot = cursor.querySelector(".portfolio-cursor-dot");
   const ring = cursor.querySelector(".portfolio-cursor-ring");
-  const projectLink = "#sec-project .left-box a, .project-button, .vibe-slide a";
+  const projectLink = "#sec-project .project-media, .project-button, .vibe-slide a";
   const nativeTarget = "iframe, input, textarea, select, [contenteditable]:not([contenteditable='false']), [data-native-cursor]";
   let visible = false;
   let pressed = false;

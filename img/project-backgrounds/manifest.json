@@ -1,0 +1,50 @@
+[
+  {
+    "project": "kumu",
+    "image": "img/project-backgrounds/kumu.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 91526,
+    "generator": "built-in image_gen"
+  },
+  {
+    "project": "eatgo",
+    "image": "img/project-backgrounds/eatgo.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 95552,
+    "generator": "built-in image_gen"
+  },
+  {
+    "project": "starscape",
+    "image": "img/project-backgrounds/starscape.webp",
+    "width": 1672,
+    "height": 940,
+    "bytes": 87400,
+    "generator": "built-in image_gen"
+  },
+  {
+    "project": "kuhnil",
+    "image": "img/project-backgrounds/kuhnil.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 81458,
+    "generator": "built-in image_gen"
+  },
+  {
+    "project": "mof",
+    "image": "img/project-backgrounds/mof.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 146256,
+    "generator": "built-in image_gen"
+  },
+  {
+    "project": "mcst",
+    "image": "img/project-backgrounds/mcst.webp",
+    "width": 1672,
+    "height": 940,
+    "bytes": 104686,
+    "generator": "built-in image_gen"
+  }
+]

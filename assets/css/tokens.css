@@ -15,4 +15,10 @@
 
   --maxwidth: 164rem;
   --page-gutter: clamp(3.2rem, 3.333333vw, 6.4rem);
+  --grid-gutter: var(--page-gutter);
+  --grid-width: min(var(--maxwidth), calc(100% - 2 * var(--grid-gutter)));
+}
+
+@media (max-width: 768px) {
+  :root { --grid-gutter: 2rem; }
 }

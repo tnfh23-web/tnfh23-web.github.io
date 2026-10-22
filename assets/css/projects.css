@@ -1,0 +1,79 @@
+/* Separate generated backdrops support the real, clickable project thumbnails. */
+.sec-project { --project-frame: clamp(1.2rem, 1.6667vw, 2.4rem); position: relative; box-sizing: border-box; padding: 10.4rem 0 3rem; background: #171916; color: #f4f4ee; overflow: clip; overflow-anchor: none; }
+.sec-project .project-shell { width: 100%; max-width: none; margin: 0; padding: 0; display: block; }
+.project-heading { position: relative; z-index: 4; width: var(--grid-width); margin: 0 auto 3rem; }
+.project-heading h2 { font: 700 clamp(6.4rem, 6.7vw, 9.6rem)/1.05 "Satoshi", sans-serif; letter-spacing: -.055em; }
+.project-marquee { position: absolute; inset-inline: 0; top: 50%; z-index: 0; transform: translateY(-50%); overflow: hidden; pointer-events: none; user-select: none; }
+.project-marquee-track { display: flex; width: max-content; animation: project-marquee-drift calc(46s * var(--motion-duration-scale)) linear infinite; }
+.project-marquee span { flex: 0 0 auto; padding-right: .45em; font: 700 clamp(14rem, 17vw, 30rem)/1.05 "Satoshi", sans-serif; color: transparent; -webkit-text-stroke: 1px #737a68; letter-spacing: -.045em; white-space: nowrap; }
+@keyframes project-marquee-drift { to { transform: translateX(-50%); } }
+.project-stage { position: relative; z-index: 1; display: grid; gap: 3rem; margin-inline: var(--project-frame); isolation: isolate; }
+.project-card { position: relative; height: calc(100svh - 2 * var(--project-frame)); min-height: 58rem; box-sizing: border-box; transform-origin: 50% 50%; backface-visibility: hidden; }
+.project-backdrop { position: absolute; inset: 0; overflow: hidden; border-radius: 2.4rem; pointer-events: none; }
+.project-backdrop > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* Only a neutral photographic scrim: the scene itself is an actual generated image. */
+.project-backdrop::before { content: ""; position: absolute; inset: 0; z-index: 1; background: #000; opacity: var(--backdrop-dim, 0); }
+.project-backdrop::after { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(90deg, #0009, #0003 70%); opacity: var(--backdrop-shade, 1); } /* taste-skill-ignore: neutral scrim over actual photo, explicitly permitted for copy readability. */
+.project-card-layout { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 32fr) minmax(0, 68fr); align-items: center; gap: clamp(3.2rem, 3.3vw, 6.4rem); width: min(var(--maxwidth), calc(100% - 2 * var(--grid-gutter) + 2 * var(--project-frame))); height: 100%; margin-inline: auto; padding: 8rem 0 5rem; box-sizing: border-box; }
+.project-copy { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; min-height: 0; }
+.project-meta { display: flex; flex-wrap: wrap; gap: .8rem; font-size: clamp(1.3rem, 1.05vw, 1.6rem); line-height: 1.5; color: #d6d9d1; }
+.project-card-title { width: max-content; max-width: 100%; margin-top: 2.4rem; padding-bottom: .1em; overflow: hidden; font: 700 clamp(5.6rem, 5.4vw, 9rem)/1.12 "Satoshi", "Pretendard", sans-serif; letter-spacing: -.05em; }
+.project-card-title.is-korean { font-size: clamp(3.2rem, 2.9vw, 4.8rem); line-height: 1.3; letter-spacing: -.055em; word-break: keep-all; }
+.project-description { max-width: 38rem; margin-top: 2.4rem; font-size: clamp(1.6rem, 1.18vw, 1.9rem); line-height: 1.8; word-break: keep-all; overflow-wrap: break-word; color: #f0f1ec; }
+.project-links { display: flex; align-items: center; flex-wrap: wrap; gap: 1.2rem; padding-top: 3.2rem; }
+.project-visual { grid-column: 2; grid-row: 1; align-self: stretch; min-width: 0; min-height: 0; display: grid; place-items: center; container-type: size; perspective: 1500px; }
+/* One shared wide frame; all real screenshots fill it without letterbox strips. */
+.project-media { display: block; position: relative; width: min(100cqw, calc(100cqh * var(--project-ratio, 1.96))); aspect-ratio: var(--project-ratio, 1.96); color: #fff; border-radius: 1.6rem; overflow: hidden; isolation: isolate; }
+.project-media-inner { width: 100%; height: 100%; }
+.project-media-inner > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+#project-2 .project-media-inner > img { object-fit: cover; object-position: center top; }
+.project-media::after { content: "VIEW PROJECT"; position: absolute; right: 1.6rem; bottom: 1.6rem; z-index: 5; padding: 1.1rem 1.5rem; background: #111; color: #fff; font-size: 1.3rem; line-height: 1.2; pointer-events: none; opacity: 0; transform: translateY(8px); transition: opacity 220ms ease, transform 220ms ease; }
+.project-media:focus-visible::after { opacity: 1; transform: none; }
+.sec-project a:focus-visible { outline: 2px solid #f4f4ee; outline-offset: 5px; }
+@media (hover: hover) and (pointer: fine) {
+  .project-media { transition: transform calc(.45s * var(--motion-duration-scale)) cubic-bezier(.2,.7,.2,1); }
+  .project-card.is-interactive .project-media:hover { transform: translateY(-5px) rotateX(1.5deg) rotateY(-1deg) scale(1.015); }
+  .project-card.is-interactive .project-media:hover::after { opacity: 1; transform: none; }
+}
+.is-project-deck { height: 100svh; padding: 0; }
+.is-project-deck .project-shell { height: 100%; }
+.is-project-deck .project-heading { position: absolute; top: 10.4rem; left: max(var(--grid-gutter), calc((100% - var(--maxwidth)) / 2)); margin: 0; width: auto; pointer-events: none; }
+.is-project-deck .project-stage { display: block; height: 100%; margin: 0; perspective: 1800px; }
+.is-project-deck .project-card { position: absolute; inset: var(--project-frame); height: auto; min-height: 0; pointer-events: none; will-change: transform; }
+.is-project-deck .project-card.is-interactive { pointer-events: auto; }
+.is-project-sticky .project-stage { display: block; }
+.is-project-sticky .project-card { position: sticky; top: var(--project-sticky-top); margin-bottom: 3rem; }
+.is-project-sticky .project-card:last-child { margin-bottom: 0; }
+.is-project-sticky .project-card.is-covered { visibility: hidden; }
+.is-project-view .top-bar { color: #fff; background: rgba(13,15,12,.25); border-color: transparent; backdrop-filter: none; } /* taste-skill-ignore: disables the inherited sticky-header blur; no glass effect is introduced. */
+.is-project-view .top-bar .link-box a::before, .is-project-view .mo-top-bar .sidebar-menu-box span { background: #fff; }
+@media (min-width: 901px) and (max-height: 720px) {
+  .project-card-layout { padding-top: 7.2rem; padding-bottom: 2.8rem; }
+  .project-card-title { margin-top: 1.4rem; font-size: 6rem; }
+  .project-card-title.is-korean { font-size: 3.4rem; }
+  .project-description { margin-top: 1.6rem; font-size: 1.5rem; line-height: 1.65; }
+  .project-links { padding-top: 2rem; }
+}
+@media (max-width: 900px) {
+  .sec-project { padding-top: 8rem; }
+  .project-heading { margin-bottom: 2.4rem; }
+  .project-heading h2 { font-size: clamp(4.8rem, 9vw, 7.2rem); }
+  .project-marquee span { font-size: clamp(9rem, 19vw, 16rem); }
+  .project-card { height: auto; min-height: calc(100svh - 2 * var(--project-frame)); }
+  .project-card-layout { display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 2.4rem; min-height: inherit; padding: 8rem 0 3.2rem; }
+  .project-visual { order: -1; flex: 0 0 auto; height: clamp(20rem, 30svh, 34rem); }
+  .project-copy { flex: 0 0 auto; }
+  .project-card-title { margin-top: 1rem; font-size: clamp(4.8rem, 8vw, 6.8rem); }
+  .project-card-title.is-korean { font-size: clamp(3rem, 5vw, 4rem); }
+  .project-meta { font-size: 1.3rem; }
+  .project-description { max-width: 56rem; margin-top: 1.6rem; font-size: 1.5rem; line-height: 1.75; }
+  .project-links { padding-top: 2rem; }
+  .is-project-deck { padding: 0; }
+  .is-project-deck .project-heading { top: 8rem; }
+  .is-project-deck .project-card-layout { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-card { will-change: auto; }
+  .project-media, .project-media::after { transition: none; transform: none !important; }
+  .project-marquee-track { animation: none; }
+}

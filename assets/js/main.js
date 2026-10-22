@@ -154,7 +154,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     if (lenis) {
       lenis.start();
       lenis.scrollTo(projectPin ? projectPin.start : target, {
-        offset: href === "#sec-contact" ? 0 : -headerH,
+        offset: href === "#sec-contact" || href === "#sec-project" ? 0 : -headerH,
         duration: 2 * motionState.durationScale,
         easing: (t) => 1 - Math.pow(1 - t, 3),
         onComplete: () => {
@@ -162,7 +162,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
         },
       });
     } else {
-      if (projectPin) window.scrollTo({ top: projectPin.start - headerH, behavior: "smooth" });
+      if (projectPin) window.scrollTo({ top: projectPin.start, behavior: "smooth" });
       else target.scrollIntoView({ behavior: "smooth" });
     }
   });
@@ -322,7 +322,7 @@ async function waitProjectAssets() {
 let projectScene = null;
 function setupProjectScene() {
   projectScene?.destroy();
-  projectScene = setupProjectDeck({ reducedMotion });
+  projectScene = setupProjectShowcase({ reducedMotion });
 }
 
 function endLoading(playHeroEntrance) {
@@ -335,7 +335,7 @@ function endLoading(playHeroEntrance) {
 }
 
 /* =========================================================
-   Resize (✅ 하나로 통합 / 디바운스)
+   Resize (하나로 통합 / 디바운스)
 ========================================================= */
 let resizeTimer;
 let lastW = window.innerWidth;
@@ -347,7 +347,7 @@ let pageMotionReady = false;
 function captureResizeAnchor() {
   const y = window.scrollY;
   if (y < 2) return { type: "top" };
-  for (const [selector, cardSelector, type] of [["#sec-vibe.is-static", ".vibe-slide", "vibe-slide"], ["#sec-project.is-project-flow", ".project-list-item", "project-card"]]) {
+  for (const [selector, cardSelector, type] of [["#sec-vibe.is-static", ".vibe-slide", "vibe-slide"], ["#sec-project.is-project-flow", ".project-card", "project-card"]]) {
     const flow = document.querySelector(selector);
     if (!flow) continue;
     const projectCardIndex = type === "project-card" ? projectScene?.flowCardIndex() : null;
@@ -366,8 +366,8 @@ function captureResizeAnchor() {
     if (pin && y >= pin.start - 1 && y <= pin.end + 1) {
       // Responsive reflow can move the browser's scroll anchor before this event.
       // Preserve the visible fold rather than that already-shifted scroll position.
-      const progress = id === "proj-pin" ? pin.animation.totalProgress() : (y - pin.start) / (pin.end - pin.start);
-      return { type: "pin", id, progress: gsap.utils.clamp(0, 1, progress), cardIndex: id === "proj-pin" ? Math.max(0, Number(document.querySelector("#sec-project").dataset.activeProject) - 1) : null };
+      const progress = pin.animation.totalProgress();
+      return { type: "pin", id, progress: gsap.utils.clamp(0, 1, progress), cardIndex: id === "proj-pin" ? Math.max(0, Number(document.querySelector("#sec-project").dataset.activeProject) - 1) : Array.from(document.querySelectorAll(".vibe-slide")).findIndex((slide) => slide.classList.contains("is-active")) };
     }
   }
   if (Math.abs(y - ScrollTrigger.maxScroll(window)) < 3) return { type: "end" };
@@ -387,20 +387,21 @@ function restoreResizeAnchor(anchor) {
   if (anchor?.type === "project-card") {
     const pin = ScrollTrigger.getById("proj-pin");
     if (pin) y = pin.start + projectScene.progressForCard(anchor.index) * (pin.end - pin.start);
-    else y = window.scrollY + document.querySelectorAll("#sec-project .project-list-item")[anchor.index].getBoundingClientRect().top - headerHeight;
+    else y = (projectScene.flowTopForCard(anchor.index) ?? window.scrollY + document.querySelectorAll("#sec-project .project-card")[anchor.index].getBoundingClientRect().top) - headerHeight;
   } else if (anchor?.type === "vibe-slide") {
     const pin = ScrollTrigger.getById("vibe-pin");
     const cards = document.querySelectorAll(".vibe-slide");
-    if (pin) y = pin.start + (anchor.index / (cards.length - 1)) * (pin.end - pin.start);
+    if (pin) y = pin.start + ((vibeTimeline.labels[`vibe-ready-${anchor.index}`] || 0) / vibeTimeline.duration()) * (pin.end - pin.start);
     else y = window.scrollY + cards[anchor.index].getBoundingClientRect().top - headerHeight;
   } else if (anchor?.type === "pin") {
     const pin = ScrollTrigger.getById(anchor.id);
     if (pin) y = pin.start + anchor.progress * (pin.end - pin.start);
     else {
       const section = document.querySelector(anchor.id === "vibe-pin" ? "#sec-vibe" : "#sec-project");
-      const cards = section.querySelectorAll(anchor.id === "vibe-pin" ? ".vibe-slide" : ".project-list-item");
+      const cards = section.querySelectorAll(anchor.id === "vibe-pin" ? ".vibe-slide" : ".project-card");
       const card = cards[anchor.cardIndex ?? Math.round(anchor.progress * (cards.length - 1))] || section;
-      y = window.scrollY + card.getBoundingClientRect().top - headerHeight;
+      y = (anchor.id === "proj-pin" ? projectScene.flowTopForCard(anchor.cardIndex ?? 0) : null) ?? window.scrollY + card.getBoundingClientRect().top;
+      y -= headerHeight;
     }
   } else if (anchor?.type === "section") {
     const rect = anchor.section.getBoundingClientRect();
@@ -424,9 +425,11 @@ function handleResize() {
   const h = window.innerHeight;
   if (w === lastW && h === lastH) return;
   const smallMobileChromeChange = w === lastW && w <= 768 && Math.abs(h - lastH) < 100;
+  const overflowingProject = smallMobileChromeChange && document.querySelector("#sec-project.is-project-deck") &&
+    (h < 640 || document.querySelector("#sec-project").offsetHeight > h + 1 || Array.from(document.querySelectorAll("#sec-project .project-copy, #sec-project .project-card")).some((element) => element.scrollHeight > element.clientHeight + 1));
   lastW = w;
   lastH = h;
-  if (!pageMotionReady || smallMobileChromeChange) return;
+  if (!pageMotionReady || (smallMobileChromeChange && !overflowingProject)) return;
   resizeAnchor ||= captureResizeAnchor();
   clearTimeout(resizeTimer);
   const revision = ++resizeRevision;
@@ -598,77 +601,117 @@ function setupFrontendPreviewScrollIsolation() {
    Vibe Project - Pinned Section Transition
 ========================================================= */
 let vibeTimeline = null;
+let cleanupVibeScene = () => {};
 function setupVibeAccordion() {
   const section = document.querySelector("#sec-vibe");
   const stage = section?.querySelector(".vibe-stage");
-  const slides = gsap.utils.toArray("#sec-vibe .vibe-slide");
-  if (!section || !stage || slides.length < 2) return;
-  if (vibeTimeline) {
-    vibeTimeline.scrollTrigger?.kill(true);
-    vibeTimeline.kill();
-    vibeTimeline = null;
-  } else ScrollTrigger.getById("vibe-pin")?.kill(true);
+  const slides = Array.from(section?.querySelectorAll(".vibe-slide") || []);
+  if (!stage || slides.length < 2) return;
+  vibeTimeline?.scrollTrigger?.kill(true);
+  vibeTimeline?.kill();
+  cleanupVibeScene();
+  vibeTimeline = null;
   gsap.set(stage, { clearProps: "all" });
   gsap.set(slides, { clearProps: "all" });
   gsap.set(section.querySelectorAll(".vibe-outer, .vibe-inner, .vibe-background, .vibe-content"), { clearProps: "all" });
   section.classList.remove("is-static");
-
-  // Pin only when every project's image, copy and actions fit the available height.
-  const stacked = window.innerWidth <= 768;
+  const stacked = innerWidth <= 768;
   const needsFlow = slides.some((slide) => {
-    const content = slide.querySelector(".vibe-content");
-    const main = slide.querySelector(".vibe-main");
+    const content = slide.querySelector(".vibe-content"), main = slide.querySelector(".vibe-main");
     const padding = getComputedStyle(content);
     const available = stage.clientHeight - parseFloat(padding.paddingTop) - parseFloat(padding.paddingBottom);
     const copyHeight = slide.querySelector(".vibe-copy").offsetHeight;
     const imageHeight = slide.querySelector(".vibe-preview").offsetHeight;
-    const needed = stacked ? copyHeight + imageHeight + parseFloat(getComputedStyle(main).rowGap) : Math.max(copyHeight, imageHeight);
-    return needed > available + 1;
+    return (stacked ? copyHeight + imageHeight + parseFloat(getComputedStyle(main).rowGap) : Math.max(copyHeight, imageHeight)) > available + 1;
   });
   if (reducedMotion.matches || needsFlow) {
     section.classList.add("is-static");
-    slides.forEach((slide) => slide.classList.add("is-active", "is-interactive"));
+    slides.forEach((slide) => { slide.inert = false; slide.classList.add("is-active", "is-interactive"); });
     return;
   }
 
-  const transitionCount = slides.length - 1;
-  slides.forEach((slide, index) => {
+  // SVG clipping applies to the incoming scene; the previous scene stays beneath it.
+  // Alternating paired edges reproduce the reference's opening vertical blinds.
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.classList.add("vibe-mask-definitions");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  const defs = document.createElementNS(ns, "defs");
+  svg.append(defs); stage.append(svg);
+  const scenes = slides.map((slide, index) => {
+    const title = slide.querySelector("h3");
+    const split = new SplitText(title, { type: "chars", mask: "chars", charsClass: "showcase-title-char", aria: "auto" });
+    const scene = {
+      slide, split, chars: split.chars, meta: slide.querySelector(".vibe-kicker"),
+      description: slide.querySelector(".vibe-description"), links: slide.querySelector(".vibe-actions"),
+      visual: slide.querySelector(".vibe-visual"), outer: slide.querySelector(".vibe-outer"), rects: [],
+    };
     gsap.set(slide, { autoAlpha: 1, zIndex: index + 1 });
-    slide.classList.toggle("is-active", index === 0);
-    slide.classList.toggle("is-interactive", index === 0);
-    gsap.set(slide.querySelector(".vibe-outer"), { yPercent: index ? 100 : 0 });
-    gsap.set(slide.querySelector(".vibe-inner"), { yPercent: index ? -100 : 0 });
-    gsap.set(slide.querySelector(".vibe-background"), { yPercent: index ? 15 : 0 });
-    gsap.set(slide.querySelector(".vibe-content"), { autoAlpha: index ? 0 : 1, y: index ? 80 : 0 });
+    gsap.set(scene.chars, { yPercent: 112, rotationX: -65, transformOrigin: "50% 100%" });
+    gsap.set([scene.meta, scene.description], { opacity: 0 });
+    gsap.set([scene.links, scene.visual], { autoAlpha: 0 });
+    if (index) {
+      const clip = document.createElementNS(ns, "clipPath");
+      clip.id = `vibe-blinds-${index}`;
+      clip.setAttribute("clipPathUnits", "objectBoundingBox");
+      const count = stacked ? 12 : 24;
+      for (let column = 0; column < count; column++) {
+        const rect = document.createElementNS(ns, "rect");
+        rect.setAttribute("x", (column + (column % 2 === 0 ? 1 : 0)) / count);
+        rect.setAttribute("y", "0"); rect.setAttribute("width", "0"); rect.setAttribute("height", "1");
+        clip.append(rect); scene.rects.push(rect);
+      }
+      defs.append(clip);
+      scene.outer.style.clipPath = `url(#${clip.id})`;
+    }
+    return scene;
   });
+  const intro = 0, entrance = .78, read = .68, hold = entrance + read, turn = 1.15, step = hold + turn;
+  const total = intro + slides.length * hold + (slides.length - 1) * turn;
+  const entrances = createShowcaseEntrances(scenes, stacked, { firstVisible: true });
+  const activate = (index) => scenes.forEach(({ slide }, i) => {
+    slide.inert = i !== index;
+    slide.classList.toggle("is-active", i === index);
+    slide.classList.toggle("is-interactive", i === index);
+  });
+  activate(0);
   vibeTimeline = gsap.timeline({
     onUpdate() {
-      const activeIndex = Math.min(transitionCount, Math.floor(this.progress() * transitionCount + 0.5));
-      slides.forEach((slide, index) => {
-        slide.classList.toggle("is-active", index === activeIndex);
-        slide.classList.toggle("is-interactive", index === activeIndex);
-      });
+      const time = this.time();
+      entrances.update(time, (index) => intro + index * step);
+      let active = 0;
+      for (let i = 1; i < scenes.length; i++) if (time >= intro + hold + (i - 1) * step + turn) active = i;
+      activate(active);
     },
     scrollTrigger: {
-      id: "vibe-pin",
-      trigger: stage,
-      start: "top top",
-      end: () => `+=${stage.clientHeight * 1.2 * transitionCount}`,
-      pin: stage,
-      scrub: 1,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
+      id: "vibe-pin", trigger: stage, start: "top top", pin: stage,
+      end: () => `+=${Math.round(Math.min(innerHeight * .6, 580) * total)}`,
+      scrub: .45, anticipatePin: 1, invalidateOnRefresh: true,
     },
   });
-  slides.slice(1).forEach((next, index) => {
-    const start = index * 0.75;
-    vibeTimeline
-      .fromTo(slides[index].querySelector(".vibe-background"), { yPercent: 0 }, { yPercent: -15, duration: 0.5, ease: "none", immediateRender: false }, start)
-      .fromTo(next.querySelector(".vibe-outer"), { yPercent: 100 }, { yPercent: 0, duration: 0.5, ease: "power1.inOut", immediateRender: false }, start)
-      .fromTo(next.querySelector(".vibe-inner"), { yPercent: -100 }, { yPercent: 0, duration: 0.5, ease: "power1.inOut", immediateRender: false }, start)
-      .fromTo(next.querySelector(".vibe-background"), { yPercent: 15 }, { yPercent: 0, duration: 0.5, ease: "power1.inOut", immediateRender: false }, start)
-      .fromTo(next.querySelector(".vibe-content"), { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, start + 0.25);
+  vibeTimeline.addLabel("vibe-ready-0", intro + entrance + read * .5);
+  scenes.slice(1).forEach((scene, index) => {
+    const start = intro + hold + index * step;
+    const count = scene.rects.length;
+    vibeTimeline.to(scene.rects, {
+      attr: { x: (i) => i / count, width: 1 / count + .0004 },
+      duration: .82, stagger: { amount: turn - .82, from: "start" }, ease: "power2.inOut",
+    }, start);
+    // Content starts automatically after every strip opens, even if scrolling stops.
+    vibeTimeline.addLabel(`vibe-ready-${index + 1}`, start + turn + entrance + read * .5);
   });
+  vibeTimeline.to({}, { duration: hold }, intro + (slides.length - 1) * step);
+  cleanupVibeScene = () => {
+    entrances.destroy();
+    scenes.forEach((scene) => {
+      scene.split.revert(); scene.slide.inert = false;
+      gsap.set([scene.meta, scene.description, scene.links, scene.visual], { clearProps: "transform,opacity,visibility" });
+      scene.outer.style.removeProperty("clip-path");
+    });
+    svg.remove();
+    cleanupVibeScene = () => {};
+  };
 }
 
 /* =========================================================

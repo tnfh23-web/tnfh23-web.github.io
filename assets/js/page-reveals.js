@@ -179,13 +179,18 @@ function setupPageReveals({ reducedMotion }) {
   });
 
   setupContactScene({ reducedMotion, titleMotion, completeTitle });
-  return (onComplete) => {
+  return (onComplete, { immediate = false } = {}) => {
     heroPlayed = true;
-    finishHero = onComplete;
-    const deepLink = location.hash && location.hash !== "#sec-hero";
-    if (!heroIntro || reducedMotion.matches || deepLink || window.scrollY > hero.offsetHeight * 0.5) {
-      heroIntro?.progress(1).kill();
+    let finished = false;
+    finishHero = () => {
+      if (finished) return;
+      finished = true;
       onComplete();
+    };
+    const deepLink = location.hash && location.hash !== "#sec-hero";
+    if (immediate || !heroIntro || reducedMotion.matches || deepLink || window.scrollY > hero.offsetHeight * 0.5) {
+      heroIntro?.progress(1).kill();
+      finishHero();
     } else heroIntro.play(0);
   };
 }

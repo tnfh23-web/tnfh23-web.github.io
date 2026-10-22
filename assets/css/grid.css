@@ -1,0 +1,24 @@
+/* One alignment system; full-bleed backgrounds and marquee tracks remain intentional. */
+.sec-hero-grid,
+.sec-about-grid,
+.project-shell,
+.sec-frontend-grid,
+.vibe-content,
+.contact-dock .sec-contact-grid,
+.pc-top-bar .container,
+.mo-top-bar .container {
+  width: var(--grid-width);
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+  box-sizing: border-box;
+}
+.vibe-stage-head { width: 100%; padding-inline: max(var(--grid-gutter), calc((100% - var(--maxwidth)) / 2)); }
+.vibe-main { width: 100%; max-width: none; }
+.sec-vibe.is-static .vibe-content { padding-inline: 0; }
+.contact-dock footer { padding-inline: 0; }
+.contact-dock footer .text-box {
+  width: var(--grid-width);
+  max-width: none;
+  margin-inline: auto;
+}
