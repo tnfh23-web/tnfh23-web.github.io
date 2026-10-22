@@ -162,19 +162,6 @@ function setupPageReveals({ reducedMotion }) {
       .forEach((title) => {
         reveal(title, (tl) => titleMotion(title, tl), [title]);
       });
-    const portrait = document.querySelector("#sec-about .img-box");
-    if (portrait)
-      reveal(
-        portrait,
-        (tl) => {
-          tl.fromTo(portrait, { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.55, clearProps: "clipPath" });
-        },
-        [portrait],
-      );
-    document.querySelectorAll("#sec-about .right-con").forEach((block) => {
-      reveal(block, (tl) => tl.fromTo(block, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, clearProps: "transform,opacity" }), [block]);
-    });
-    // Project masks and text belong exclusively to the scroll-driven deck.
     return () => triggers.forEach((trigger) => trigger.kill());
   });
 
@@ -221,6 +208,7 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
   gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
     const heading = dock.querySelector("#contact-heading");
     const eyebrow = dock.querySelectorAll(".contact-eyebrow span");
+    const firstAnchor = eyebrow[0] || heading;
     const intro = dock.querySelector(".contact-con");
     const details = dock.querySelector(".title-2");
     const marquee = dock.querySelector(".contact-marquee");
@@ -230,7 +218,7 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
       { anchor: heading, targets: [heading], title: true },
       { anchor: intro, targets: Array.from(intro.querySelectorAll(".contact-lead, .text-box-1")), duration: 1.15, stagger: 0.2 },
       { anchor: details, targets: Array.from(dock.querySelectorAll(".title-2 .contact-title-text, .title-3")), duration: 1.05, stagger: 0.18 },
-    ];
+    ].filter(step => step.anchor);
     const loop = gsap.to(track, { xPercent: -50, duration: 32, repeat: -1, ease: "none", paused: true });
     const wasComplete = section.dataset.contactEntrance === "complete";
     let started = wasComplete;
@@ -253,8 +241,8 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
     const pump = () => {
       const rect = section.getBoundingClientRect();
       const onscreen = rect.top < window.innerHeight && rect.bottom > 0;
-      const passedFirst = !section.classList.contains("is-fixed") && eyebrow[0].getBoundingClientRect().bottom <= 0;
-      if (!started && onscreen && (exposed(eyebrow[0]) || passedFirst)) started = true;
+      const passedFirst = !section.classList.contains("is-fixed") && firstAnchor.getBoundingClientRect().bottom <= 0;
+      if (!started && onscreen && (exposed(firstAnchor) || passedFirst)) started = true;
       if (started && !complete) sequence.paused(!onscreen);
       const marqueeRect = marquee.getBoundingClientRect();
       const coverEdge = section.classList.contains("is-fixed") ? rect.top : 0;
@@ -314,15 +302,15 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
         scrollTrigger: {
           id: "contact-depth",
           trigger: section,
-          // Begin with the first uncovered marquee pixels; settle before the eyebrow/copy entrance.
-          start: () => `top ${section.classList.contains("is-fixed") ? Math.min(window.innerHeight, Math.ceil(marquee.getBoundingClientRect().bottom)) : window.innerHeight}px`,
-          end: "top 8%",
+          // Reverse the depth: copy rises into place as the compact footer is uncovered.
+          start: "top bottom",
+          end: "bottom bottom",
           scrub: 0.4,
           invalidateOnRefresh: true,
         },
       })
-      .fromTo(dock.querySelector(".sec-contact-grid"), { y: () => (section.classList.contains("is-fixed") ? -56 : 0) }, { y: 0, ease: "none" }, 0)
-      .fromTo(dock.querySelector(".contact-marquee-drift"), { x: () => (section.classList.contains("is-fixed") ? Math.min(100, window.innerWidth * 0.12) : 0) }, { x: 0, ease: "none" }, 0);
+      .fromTo(dock.querySelector(".sec-contact-grid"), { y: () => (section.classList.contains("is-fixed") ? 48 : 0) }, { y: 0, ease: "none" }, 0)
+      .fromTo(dock.querySelector(".contact-marquee-drift"), { x: () => (section.classList.contains("is-fixed") ? -Math.min(80, window.innerWidth * 0.08) : 0) }, { x: 0, ease: "none" }, 0);
     pump();
     return () => {
       visibility.kill();

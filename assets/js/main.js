@@ -153,7 +153,8 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 
     if (lenis) {
       lenis.start();
-      lenis.scrollTo(projectPin ? projectPin.start : target, {
+      // The hero is pinned during its exit; its transformed bounds are not the page top.
+      lenis.scrollTo(href === "#sec-hero" ? 0 : projectPin ? projectPin.start : target, {
         offset: href === "#sec-contact" || href === "#sec-project" ? 0 : -headerH,
         duration: 2 * motionState.durationScale,
         easing: (t) => 1 - Math.pow(1 - t, 3),
@@ -491,7 +492,7 @@ function setupCircleTextRotation() {
 function setupFrontendProjectAnimation() {
   const section = document.querySelector("#sec-frontend");
   const projectItems = gsap.utils.toArray("#sec-frontend .front-project-item");
-  if (!section) return;
+  if (!section || !projectItems.length) return;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     gsap.set(section.querySelectorAll(".front-project-visual, .front-project-info, .front-project-watermark"), { clearProps: "all" });
@@ -641,15 +642,15 @@ function setupVibeAccordion() {
   svg.append(defs); stage.append(svg);
   const scenes = slides.map((slide, index) => {
     const title = slide.querySelector("h3");
-    const split = new SplitText(title, { type: "chars", mask: "chars", charsClass: "showcase-title-char", aria: "auto" });
+    const split = new SplitText(title, { type: "words,chars", wordsClass: "showcase-title-word", charsClass: "showcase-title-char", aria: "auto" });
     const scene = {
       slide, split, chars: split.chars, meta: slide.querySelector(".vibe-kicker"),
-      description: slide.querySelector(".vibe-description"), links: slide.querySelector(".vibe-actions"),
+      subtitle: slide.querySelector(".project-subtitle"), description: slide.querySelector(".vibe-description"), links: slide.querySelector(".vibe-actions"),
       visual: slide.querySelector(".vibe-visual"), outer: slide.querySelector(".vibe-outer"), rects: [],
     };
     gsap.set(slide, { autoAlpha: 1, zIndex: index + 1 });
-    gsap.set(scene.chars, { yPercent: 112, rotationX: -65, transformOrigin: "50% 100%" });
-    gsap.set([scene.meta, scene.description], { opacity: 0 });
+    gsap.set(scene.chars, { yPercent: 112, rotationX: -65, opacity: 0, transformOrigin: "50% 100%" });
+    gsap.set([scene.meta, scene.subtitle, scene.description].filter(Boolean), { opacity: 0 });
     gsap.set([scene.links, scene.visual], { autoAlpha: 0 });
     if (index) {
       const clip = document.createElementNS(ns, "clipPath");
@@ -679,7 +680,12 @@ function setupVibeAccordion() {
   vibeTimeline = gsap.timeline({
     onUpdate() {
       const time = this.time();
-      entrances.update(time, (index) => intro + index * step);
+      entrances.update(time, (index) => intro + index * step, turn);
+      scenes.slice(1).forEach((scene, index) => {
+        // A finished SVG clip can leave antialiased hairlines between strips.
+        scene.outer.style.clipPath = time >= intro + (index + 1) * step - .0001
+          ? 'none' : `url(#vibe-blinds-${index + 1})`;
+      });
       let active = 0;
       for (let i = 1; i < scenes.length; i++) if (time >= intro + hold + (i - 1) * step + turn) active = i;
       activate(active);
@@ -695,7 +701,7 @@ function setupVibeAccordion() {
     const start = intro + hold + index * step;
     const count = scene.rects.length;
     vibeTimeline.to(scene.rects, {
-      attr: { x: (i) => i / count, width: 1 / count + .0004 },
+      attr: { x: (i) => i / count, width: 1 / count + .002 },
       duration: .82, stagger: { amount: turn - .82, from: "start" }, ease: "power2.inOut",
     }, start);
     // Content starts automatically after every strip opens, even if scrolling stops.
@@ -706,12 +712,22 @@ function setupVibeAccordion() {
     entrances.destroy();
     scenes.forEach((scene) => {
       scene.split.revert(); scene.slide.inert = false;
-      gsap.set([scene.meta, scene.description, scene.links, scene.visual], { clearProps: "transform,opacity,visibility" });
+      gsap.set([scene.meta, scene.subtitle, scene.description, scene.links, scene.visual].filter(Boolean), { clearProps: "transform,opacity,visibility" });
       scene.outer.style.removeProperty("clip-path");
     });
     svg.remove();
     cleanupVibeScene = () => {};
   };
+}
+
+
+function setupCircleActionLinks() {
+  document.querySelectorAll('.project-button').forEach(link => {
+    if (link.querySelector('.action-label')) return;
+    const label = document.createElement('span');
+    label.className = 'action-label'; label.textContent = link.textContent.trim();
+    link.replaceChildren(label);
+  });
 }
 
 /* =========================================================
@@ -725,6 +741,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   copyDividerTextOnce();
   dividerMarquee();
   setupMobileMenu();
+  setupCircleActionLinks();
   setupCircleTextRotation();
   setupHeroPlayground({ motionState, reducedMotion });
   if (typeof setupPortfolioCursor === "function") setupPortfolioCursor({ motionState, reducedMotion });

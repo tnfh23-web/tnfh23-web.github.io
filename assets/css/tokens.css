@@ -11,14 +11,18 @@
   --white-85: #e0e0e0;
   --white-80: #fefefe;
 
+  --body-size: 1.8rem;
+  --chapter-size: clamp(6.4rem, 9vw, 12.8rem);
+  --section-space: clamp(9rem, 9vw, 17rem);
+
   /* grid */
 
-  --maxwidth: 164rem;
+  --maxwidth: 180rem;
   --page-gutter: clamp(3.2rem, 3.333333vw, 6.4rem);
   --grid-gutter: var(--page-gutter);
   --grid-width: min(var(--maxwidth), calc(100% - 2 * var(--grid-gutter)));
 }
 
 @media (max-width: 768px) {
-  :root { --grid-gutter: 2rem; }
+  :root { --grid-gutter: 2rem; --chapter-size: clamp(4.8rem, 12vw, 8rem); --section-space: 8rem; }
 }

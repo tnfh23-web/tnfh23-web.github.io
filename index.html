@@ -17,9 +17,9 @@
     <!-- 베리어블 -->
     <link rel="stylesheet" href="assets/css/tokens.css?v=20261022-showcase-v2" />
     <!-- 스타일 css -->
-    <link rel="stylesheet" href="assets/css/main.css?v=20261022-auto-entrance-v5" />
+    <link rel="stylesheet" href="assets/css/main.css?v=20261023-about-align-v8" />
     <link rel="stylesheet" href="assets/css/grid.css?v=20261022-auto-entrance-v5" />
-    <link rel="stylesheet" href="assets/css/projects.css?v=20261022-auto-entrance-v5" />
+    <link rel="stylesheet" href="assets/css/projects.css?v=20261022-contact-about-v7" />
   </head>
 
   <body class="is-loading">
@@ -28,7 +28,9 @@
       <div class="loading-panel loading-panel-bottom" aria-hidden="true"></div>
       <div class="loading-stage" aria-hidden="true">
         <div class="loading-word">Yoon Suro</div>
-        <div class="loading-mark"><span class="loading-mark-mask"><span class="loading-mark-glyph">S</span></span></div>
+        <div class="loading-mark">
+          <span class="loading-mark-mask"><span class="loading-mark-glyph">S</span></span>
+        </div>
       </div>
       <div class="loading-notes" aria-hidden="true">
         <div class="loading-note"><span>WEB PUBLISHER</span></div>
@@ -48,9 +50,9 @@
         </div>
         <ul class="text-box">
           <li><a href="#sec-hero">HOME</a></li>
-          <li><a href="#sec-about">ABOUT ME</a></li>
-          <li><a href="#sec-project">PROJECT</a></li>
-          <li><a href="#sec-frontend">FRONT</a></li>
+          <li><a href="#sec-about">ABOUT</a></li>
+          <li><a href="#sec-project">WORKS</a></li>
+
           <li><a href="#sec-vibe">VIBE</a></li>
           <li><a href="#sec-contact">CONTACT</a></li>
         </ul>
@@ -61,16 +63,16 @@
         <div class="link-box">
           <a href="index.html">Yoon Suro</a>
         </div>
-        <div class="sidebar-menu-box">
+        <button class="sidebar-menu-box" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-navigation">
           <span></span>
           <span></span>
           <span></span>
-        </div>
-        <ul class="mo-menu">
+        </button>
+        <ul class="mo-menu" id="mobile-navigation">
           <li><a href="#sec-hero">HOME</a></li>
-          <li><a href="#sec-about">ABOUT ME</a></li>
-          <li><a href="#sec-project">PROJECT</a></li>
-          <li><a href="#sec-frontend">FRONT</a></li>
+          <li><a href="#sec-about">ABOUT</a></li>
+          <li><a href="#sec-project">WORKS</a></li>
+
           <li><a href="#sec-vibe">VIBE</a></li>
           <li><a href="#sec-contact">CONTACT</a></li>
         </ul>
@@ -146,104 +148,109 @@
         </div>
       </div>
       <!------------------------------------------------ 섹션 2 --------------------------------------------------->
-      <section id="sec-about" class="sec-about">
+      <section id="sec-about" class="sec-about editorial-about" aria-labelledby="about-heading">
         <div class="sec-about-grid">
-          <div class="title-box">
-            <h2 class="split-title">ABOUT ME</h2>
+          <div class="chapter-heading">
+            <h2 class="split-title" id="about-heading">ABOUT</h2>
           </div>
           <div class="profile-box">
             <div class="left-box">
-              <div class="img-box">
-                <img src="img/about-img/about.png" alt="증명사진" />
-                <div class="img-text">
-                  <span>윤수로</span>
-                  <span>2000.04.26</span>
-                </div>
-              </div>
+              <figure class="img-box">
+                <img src="img/about-img/about.png" alt="웹 퍼블리셔 윤수로" width="395" height="498" loading="lazy" />
+                <figcaption>2000.04.26</figcaption>
+              </figure>
             </div>
             <div class="right-box">
-              <div class="right-con right-con-1">
-                <div class="con-title-box con-1-title-box">
-                  <h2>PROFILE</h2>
-                </div>
-                <div class="con-text-box con-1-text-box">
-                  <div class="con-1-text con-1-text-1">
-                    <span>Name</span>
-                    <span>윤수로</span>
+              <div class="right-con">
+                <h3>PROFILE</h3>
+                <dl>
+                  <div class="about-row">
+                    <dt>Name</dt>
+                    <dd>윤수로</dd>
                   </div>
-                  <div class="con-1-text con-1-text-2">
-                    <span>Email</span>
-                    <span>tnfh23@gmail.com</span>
+                  <div class="about-row">
+                    <dt>Email</dt>
+                    <dd>tnfh23@gmail.com</dd>
                   </div>
-                  <div class="con-1-text con-1-text-3">
-                    <span>Call</span>
-                    <span>010-9402-4060</span>
+                  <div class="about-row">
+                    <dt>Call</dt>
+                    <dd>010-9402-4060</dd>
                   </div>
-                </div>
+                </dl>
               </div>
-              <div class="right-con right-con-2">
-                <div class="con-title-box con-2-title-box">
-                  <h2>SKILL</h2>
-                </div>
-                <div class="con-text-box con-2-text-box">
-                  <div class="con-2-text con-2-text-1">
-                    <span>Design</span>
-                    <span>illustrator</span>
-                    <span>Photoshop</span>
-                    <span>Figma</span>
+              <div class="right-con">
+                <h3>WORK EXPERIENCE</h3>
+                <dl>
+                  <div class="about-row">
+                    <dt>Work</dt>
+                    <dd><span class="about-detail">오션유아이 UI/UX팀 웹 퍼블리셔</span><span class="about-date"> 2026.06.01 – 2026.08.31 </span></dd>
                   </div>
-                  <div class="con-2-text con-2-text-2">
-                    <span>Web</span>
-                    <span>HTML</span>
-                    <span>CSS</span>
-                    <span>JavaScript</span>
-                    <span>Jquery</span>
-                    <span>React</span>
-                    <span>Three.js</span>
-                    <span>GitHub</span>
-                  </div>
-                </div>
+                </dl>
               </div>
-              <div class="right-con right-con-3">
-                <div class="con-title-box con-3-title-box">
-                  <h2>EDUCATION</h2>
-                </div>
-                <div class="con-text-box con-3-text-box">
-                  <div class="con-3-text con-3-text-1">
-                    <span>2025.05~2025.12 SBS아카데미 UI/UX 반응형 웹퍼블리셔 국비 과정</span>
+              <div class="right-con">
+                <h3>EDUCATION</h3>
+                <dl>
+                  <div class="about-row">
+                    <dt>Training</dt>
+                    <dd><span class="about-detail">SBS아카데미 UI/UX 반응형 웹퍼블리셔 국비 과정</span><span class="about-date"> 2025.05 – 2025.12 </span></dd>
                   </div>
-                  <div class="con-3-text con-3-text-2">
-                    <span>2016.03~2019.02 동대전 고등학교</span>
+                  <div class="about-row">
+                    <dt>School</dt>
+                    <dd><span class="about-detail">동대전고등학교</span><span class="about-date"> 2016.03 – 2019.02 </span></dd>
                   </div>
-                </div>
+                </dl>
               </div>
-              <div class="right-con right-con-4">
-                <div class="con-title-box con-4-title-box">
-                  <h2>EXPERIENCE</h2>
-                </div>
-                <div class="con-text-box con-4-text-box">
-                  <div class="con-4-text con-4-text-1">
-                    <span>Work</span>
-                    <span>2026.06.01~2026.08.31</span>
-                    <span>오션유아이 UI/UX팀 웹 퍼블리셔</span>
+              <div class="right-con">
+                <h3>SKILL</h3>
+                <dl>
+                  <div class="about-row">
+                    <dt>Design</dt>
+                    <dd>
+                      <span> Illustrator </span>
+                      <span> Photoshop </span>
+                      <span> Figma </span>
+                    </dd>
                   </div>
-                  <div class="con-4-text con-4-text-2">
-                    <span>Branding</span>
-                    <span>쿠무</span>
-                    <span>잇고</span>
+                  <div class="about-row">
+                    <dt>Web</dt>
+                    <dd>
+                      <span> HTML </span>
+                      <span> CSS </span>
+                      <span> JavaScript </span>
+                      <span> jQuery </span>
+                      <span> React </span>
+                      <span> Three.js </span>
+                      <span> GitHub </span>
+                    </dd>
                   </div>
-                  <div class="con-4-text con-4-text-3">
-                    <span>Redesign</span>
-                    <span>MODOO</span>
-                    <span>스타스케이프</span>
-                    <span>건일제약</span>
+                </dl>
+              </div>
+              <div class="right-con">
+                <h3>PROJECT EXPERIENCE</h3>
+                <dl>
+                  <div class="about-row">
+                    <dt>Branding</dt>
+                    <dd>
+                      <span> 쿠무 </span>
+                      <span> 잇고 </span>
+                    </dd>
                   </div>
-                  <div class="con-4-text con-4-text-4">
-                    <span>Clone</span>
-                    <span>해양수산부</span>
-                    <span>문화체육관광부</span>
+                  <div class="about-row">
+                    <dt>Redesign</dt>
+                    <dd>
+                      <span> MODOO </span>
+                      <span> 스타스케이프 </span>
+                      <span> 건일제약 </span>
+                    </dd>
                   </div>
-                </div>
+                  <div class="about-row">
+                    <dt>Clone</dt>
+                    <dd>
+                      <span> 해양수산부 </span>
+                      <span> 문화체육관광부 </span>
+                    </dd>
+                  </div>
+                </dl>
               </div>
             </div>
           </div>
@@ -253,158 +260,270 @@
       <section id="sec-project" class="sec-project" aria-labelledby="project-heading">
         <div class="project-shell">
           <div class="project-heading">
-            <h2 class="split-title" id="project-heading">PROJECT</h2>
+            <h2 class="split-title" id="project-heading">WORKS</h2>
           </div>
           <div class="project-marquee" aria-hidden="true">
             <div class="project-marquee-track">
-              <span>KUMU · EATGO · STARSCAPE · KUHNIL · MOF · MCST ·</span>
-              <span>KUMU · EATGO · STARSCAPE · KUHNIL · MOF · MCST ·</span>
+              <span>KUMU · EATGO · MODOO · STARSCAPE · KUHNIL · MOF · MCST ·</span>
+              <span>KUMU · EATGO · MODOO · STARSCAPE · KUHNIL · MOF · MCST ·</span>
             </div>
           </div>
           <ul class="project-stage">
             <li class="project-card" id="project-1" aria-labelledby="project-title-1">
-              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/kumu.webp" srcset="img/project-backgrounds/kumu-small.webp 959w, img/project-backgrounds/kumu.webp 1672w" sizes="100vw" width="1672" height="941" alt="" decoding="async" fetchpriority="high" /></div>
+              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/kumu-supplied.png" alt="" decoding="async" /></div>
               <article class="project-card-layout">
                 <div class="project-copy">
-                  <p class="project-meta"><span>Team</span><span aria-hidden="true">/</span><span>웹브랜딩</span></p>
+                  <p class="project-meta">
+                    <span> Team </span>
+                    <span aria-hidden="true"> / </span>
+                    <span> 웹브랜딩 </span>
+                  </p>
                   <h3 class="project-card-title" id="project-title-1">Kumu</h3>
-                  <p class="project-description">반려견과 보호자가 함께 머물며 편안한 시간과 특별한 경험을 나눌 수 있도록 만든 애견 카페 웹 프로젝트입니다.</p>
+                  <p class="project-description"><span class="description-line">반려견과 보호자가 함께 머무는</span> <span class="description-line">애견 동반 카페 웹 프로젝트입니다.</span></p>
+                  <p class="project-tech">Figma / Illustrator / Photoshop / HTML / CSS / JavaScript</p>
                   <div class="project-links">
-                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/kumu/" target="_blank" rel="noopener noreferrer" aria-label="Kumu Web 새 창으로 열기">Web</a>
-                    <a class="project-button project-button--light" href="https://meaningful-crimson-enbwqvvekc.edgeone.app/%E1%84%8F%E1%85%AE%E1%84%86%E1%85%AE%20%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%89%E1%85%A6%E1%84%89%E1%85%B3.pdf" target="_blank" rel="noopener noreferrer" aria-label="Kumu Process 새 창으로 열기">Process</a>
+                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/kumu/" target="_blank" rel="noopener noreferrer" aria-label="Kumu Web 새 창으로 열기"> Web </a>
+                    <a
+                      class="project-button project-button--light"
+                      href="https://meaningful-crimson-enbwqvvekc.edgeone.app/%E1%84%8F%E1%85%AE%E1%84%86%E1%85%AE%20%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%89%E1%85%A6%E1%84%89%E1%85%B3.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Kumu Process 새 창으로 열기"
+                    >
+                      Process
+                    </a>
                   </div>
                 </div>
-                <div class="project-visual"><a class="project-media" href="https://tnfh23-web.github.io/kumu/" target="_blank" rel="noopener noreferrer" aria-label="Kumu 프로젝트 새 창으로 열기">
-                  <div class="project-media-inner"><img src="img/project-img/kumu.webp" alt="Kumu 프로젝트 메인 화면" width="1905" height="930" /></div>
-                </a></div>
+                <div class="project-visual">
+                  <a class="project-media" href="https://tnfh23-web.github.io/kumu/" target="_blank" rel="noopener noreferrer" aria-label="Kumu 프로젝트 새 창으로 열기">
+                    <div class="project-media-inner">
+                      <img src="img/project-img/kumu.webp" alt="Kumu 프로젝트 메인 화면" width="1905" height="930" />
+                    </div>
+                  </a>
+                </div>
               </article>
             </li>
             <li class="project-card" id="project-2" aria-labelledby="project-title-2">
-              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/eatgo.webp" srcset="img/project-backgrounds/eatgo-small.webp 959w, img/project-backgrounds/eatgo.webp 1672w" sizes="100vw" width="1672" height="941" alt="" decoding="async" fetchpriority="low" /></div>
+              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/eatgo-supplied.png" alt="" decoding="async" /></div>
               <article class="project-card-layout">
                 <div class="project-copy">
-                  <p class="project-meta"><span>Team</span><span aria-hidden="true">/</span><span>앱브랜딩</span></p>
+                  <p class="project-meta">
+                    <span> Team </span>
+                    <span aria-hidden="true"> / </span>
+                    <span> 앱브랜딩 </span>
+                  </p>
                   <h3 class="project-card-title" id="project-title-2">EATGO</h3>
-                  <p class="project-description">잇고는 일상의 소비 데이터를 기반으로 복잡한 입력 없이 식습관 관리를 돕는 서비스입니다.</p>
+                  <p class="project-description"><span class="description-line">일상의 소비 데이터를 기반으로</span> <span class="description-line">간편한 식습관 관리를 돕는 앱입니다.</span></p>
+                  <p class="project-tech">Figma / Illustrator / Photoshop / HTML / CSS / JavaScript</p>
                   <div class="project-links">
-                    <a class="project-button project-button--light" href="https://r00neyj.github.io/Eatgo_Process/" target="_blank" rel="noopener noreferrer" aria-label="EATGO Process 새 창으로 열기">Process</a>
+                    <a class="project-button project-button--light" href="https://r00neyj.github.io/Eatgo_Process/" target="_blank" rel="noopener noreferrer" aria-label="EATGO Process 새 창으로 열기">
+                      Process
+                    </a>
                   </div>
                 </div>
-                <div class="project-visual"><a class="project-media" href="https://r00neyj.github.io/Eatgo_Process/" target="_blank" rel="noopener noreferrer" aria-label="EATGO 프로젝트 새 창으로 열기">
-                  <div class="project-media-inner"><img src="img/project-img/eatgo.webp" alt="EATGO 프로젝트 메인 화면" width="1920" height="2400" /></div>
-                </a></div>
+                <div class="project-visual">
+                  <a class="project-media" href="https://r00neyj.github.io/Eatgo_Process/" target="_blank" rel="noopener noreferrer" aria-label="EATGO 프로젝트 새 창으로 열기">
+                    <div class="project-media-inner">
+                      <img src="img/project-img/eatgo.webp" alt="EATGO 프로젝트 메인 화면" width="1920" height="2400" />
+                    </div>
+                  </a>
+                </div>
+              </article>
+            </li>
+            <li class="project-card" id="sec-frontend" aria-labelledby="modoo-title">
+              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/modoo-supplied.png" alt="" decoding="async" /></div>
+              <article class="project-card-layout">
+                <div class="project-copy">
+                  <p class="project-meta">Personal / React 리디자인</p>
+                  <h3 class="project-card-title" id="modoo-title">MODOO</h3>
+                  <p class="project-description"><span class="description-line">웹에이전시 MODOO를 재해석한</span> <span class="description-line">컴포넌트 기반 React 프로젝트입니다.</span></p>
+                  <p class="project-tech">React</p>
+                  <div class="project-links">
+                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/react-modoo/" target="_blank" rel="noopener noreferrer"> Web </a>
+                  </div>
+                </div>
+                <div class="project-visual">
+                  <a class="project-media" href="https://tnfh23-web.github.io/react-modoo/" target="_blank" rel="noopener noreferrer" aria-label="MODOO React 프로젝트 새 창으로 열기">
+                    <div class="project-media-inner">
+                      <img src="img/project-img/modoo.webp" width="1570" height="808" alt="MODOO React 프로젝트의 실제 첫 화면" />
+                    </div>
+                  </a>
+                </div>
               </article>
             </li>
             <li class="project-card" id="project-3" aria-labelledby="project-title-3">
-              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/starscape.webp" srcset="img/project-backgrounds/starscape-small.webp 960w, img/project-backgrounds/starscape.webp 1672w" sizes="100vw" width="1672" height="941" alt="" decoding="async" fetchpriority="low" /></div>
+              <div class="project-backdrop" aria-hidden="true">
+                <img
+                  src="img/project-backgrounds/starscape.webp"
+                  srcset="img/project-backgrounds/starscape-small.webp 960w, img/project-backgrounds/starscape.webp 1672w"
+                  sizes="100vw"
+                  width="1672"
+                  height="941"
+                  alt=""
+                  decoding="async"
+                  fetchpriority="low"
+                />
+              </div>
               <article class="project-card-layout">
                 <div class="project-copy">
-                  <p class="project-meta"><span>Personal</span><span aria-hidden="true">/</span><span>리디자인</span></p>
+                  <p class="project-meta">
+                    <span> Personal </span>
+                    <span aria-hidden="true"> / </span>
+                    <span> 리디자인 </span>
+                  </p>
                   <h3 class="project-card-title is-korean" id="project-title-3">스타스케이프</h3>
-                  <p class="project-description">프라이빗한 휴식 경험을 전달하기 위해 감성과 정보 구조를 정제해 스타스케이프의 고급스러움을 강화한 리디자인프로젝트입니다.</p>
+                  <p class="project-description"><span class="description-line">프라이빗한 휴식의 감성을 담아</span> <span class="description-line">정보 구조를 정돈한 리디자인입니다.</span></p>
+                  <p class="project-tech">Figma / HTML / CSS / JavaScript</p>
                   <div class="project-links">
-                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/star_251008/" target="_blank" rel="noopener noreferrer" aria-label="스타스케이프 Web 새 창으로 열기">Web</a>
+                    <a
+                      class="project-button project-button--light"
+                      href="https://tnfh23-web.github.io/star_251008/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="스타스케이프 Web 새 창으로 열기"
+                    >
+                      Web
+                    </a>
                   </div>
                 </div>
-                <div class="project-visual"><a class="project-media" href="https://tnfh23-web.github.io/star_251008/" target="_blank" rel="noopener noreferrer" aria-label="스타스케이프 프로젝트 새 창으로 열기">
-                  <div class="project-media-inner"><img src="img/project-img/starscape.webp" alt="스타스케이프 프로젝트 메인 화면" width="1905" height="952" /></div>
-                </a></div>
+                <div class="project-visual">
+                  <a class="project-media" href="https://tnfh23-web.github.io/star_251008/" target="_blank" rel="noopener noreferrer" aria-label="스타스케이프 프로젝트 새 창으로 열기">
+                    <div class="project-media-inner">
+                      <img src="img/project-img/starscape.webp" alt="스타스케이프 프로젝트 메인 화면" width="1905" height="952" />
+                    </div>
+                  </a>
+                </div>
               </article>
             </li>
             <li class="project-card" id="project-4" aria-labelledby="project-title-4">
-              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/kuhnil.webp" srcset="img/project-backgrounds/kuhnil-small.webp 959w, img/project-backgrounds/kuhnil.webp 1672w" sizes="100vw" width="1672" height="941" alt="" decoding="async" fetchpriority="low" /></div>
+              <div class="project-backdrop" aria-hidden="true">
+                <img
+                  src="img/project-backgrounds/kuhnil.webp"
+                  srcset="img/project-backgrounds/kuhnil-small.webp 959w, img/project-backgrounds/kuhnil.webp 1672w"
+                  sizes="100vw"
+                  width="1672"
+                  height="941"
+                  alt=""
+                  decoding="async"
+                  fetchpriority="low"
+                />
+              </div>
               <article class="project-card-layout">
                 <div class="project-copy">
-                  <p class="project-meta"><span>Personal</span><span aria-hidden="true">/</span><span>리디자인</span></p>
+                  <p class="project-meta">
+                    <span> Personal </span>
+                    <span aria-hidden="true"> / </span>
+                    <span> 리디자인 </span>
+                  </p>
                   <h3 class="project-card-title is-korean" id="project-title-4">건일제약</h3>
-                  <p class="project-description">의약 정보의 신뢰성과 전달력을 높이기 위해 복잡한 콘텐츠를 구조화하고 정제된 UI로 건일제약의 전문성과 기술력을 강조한 웹 리디자인프로젝트입니다.</p>
+                  <p class="project-description"><span class="description-line">의약 정보와 기업의 전문성을</span> <span class="description-line">명확하게 전달하는 리디자인입니다.</span></p>
+                  <p class="project-tech">Figma / HTML / CSS / JavaScript</p>
                   <div class="project-links">
-                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/KUHNIL/" target="_blank" rel="noopener noreferrer" aria-label="건일제약 Web 새 창으로 열기">Web</a>
+                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/KUHNIL/" target="_blank" rel="noopener noreferrer" aria-label="건일제약 Web 새 창으로 열기">
+                      Web
+                    </a>
                   </div>
                 </div>
-                <div class="project-visual"><a class="project-media" href="https://tnfh23-web.github.io/KUHNIL/" target="_blank" rel="noopener noreferrer" aria-label="건일제약 프로젝트 새 창으로 열기">
-                  <div class="project-media-inner"><img src="img/project-img/kuhnil.webp" alt="건일제약 프로젝트 메인 화면" width="1905" height="1080" /></div>
-                </a></div>
+                <div class="project-visual">
+                  <a class="project-media" href="https://tnfh23-web.github.io/KUHNIL/" target="_blank" rel="noopener noreferrer" aria-label="건일제약 프로젝트 새 창으로 열기">
+                    <div class="project-media-inner">
+                      <img src="img/project-img/kuhnil.webp" alt="건일제약 프로젝트 메인 화면" width="1905" height="1080" />
+                    </div>
+                  </a>
+                </div>
               </article>
             </li>
             <li class="project-card" id="project-5" aria-labelledby="project-title-5">
-              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/mof.webp" srcset="img/project-backgrounds/mof-small.webp 959w, img/project-backgrounds/mof.webp 1672w" sizes="100vw" width="1672" height="941" alt="" decoding="async" fetchpriority="low" /></div>
+              <div class="project-backdrop" aria-hidden="true">
+                <img
+                  src="img/project-backgrounds/mof.webp"
+                  srcset="img/project-backgrounds/mof-small.webp 959w, img/project-backgrounds/mof.webp 1672w"
+                  sizes="100vw"
+                  width="1672"
+                  height="941"
+                  alt=""
+                  decoding="async"
+                  fetchpriority="low"
+                />
+              </div>
               <article class="project-card-layout">
                 <div class="project-copy">
-                  <p class="project-meta"><span>Personal</span><span aria-hidden="true">/</span><span>클론코딩</span></p>
+                  <p class="project-meta">
+                    <span> Personal </span>
+                    <span aria-hidden="true"> / </span>
+                    <span> 클론코딩 </span>
+                  </p>
                   <h3 class="project-card-title is-korean" id="project-title-5">해양수산부</h3>
-                  <p class="project-description">웹 퍼블리싱 학습을 위해 해양수산부 공식 웹사이트를 클론코딩한 개인 프로젝트입니다.</p>
+                  <p class="project-description"><span class="description-line">해양수산부 공식 웹사이트를 구현한</span> <span class="description-line">웹 퍼블리싱 학습 프로젝트입니다.</span></p>
+                  <p class="project-tech">HTML / CSS / JavaScript</p>
                   <div class="project-links">
-                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/mof-clone/" target="_blank" rel="noopener noreferrer" aria-label="해양수산부 Web 새 창으로 열기">Web</a>
+                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/mof-clone/" target="_blank" rel="noopener noreferrer" aria-label="해양수산부 Web 새 창으로 열기">
+                      Web
+                    </a>
                   </div>
                 </div>
-                <div class="project-visual"><a class="project-media" href="https://tnfh23-web.github.io/mof-clone/" target="_blank" rel="noopener noreferrer" aria-label="해양수산부 프로젝트 새 창으로 열기">
-                  <div class="project-media-inner"><img src="img/project-img/mof.webp" alt="해양수산부 프로젝트 메인 화면" width="1425" height="900" /></div>
-                </a></div>
+                <div class="project-visual">
+                  <a class="project-media" href="https://tnfh23-web.github.io/mof-clone/" target="_blank" rel="noopener noreferrer" aria-label="해양수산부 프로젝트 새 창으로 열기">
+                    <div class="project-media-inner">
+                      <img src="img/project-img/mof.webp" alt="해양수산부 프로젝트 메인 화면" width="1425" height="900" />
+                    </div>
+                  </a>
+                </div>
               </article>
             </li>
             <li class="project-card" id="project-6" aria-labelledby="project-title-6">
-              <div class="project-backdrop" aria-hidden="true"><img src="img/project-backgrounds/mcst.webp" srcset="img/project-backgrounds/mcst-small.webp 960w, img/project-backgrounds/mcst.webp 1672w" sizes="100vw" width="1672" height="941" alt="" decoding="async" fetchpriority="low" /></div>
+              <div class="project-backdrop" aria-hidden="true">
+                <img
+                  src="img/project-backgrounds/mcst.webp"
+                  srcset="img/project-backgrounds/mcst-small.webp 960w, img/project-backgrounds/mcst.webp 1672w"
+                  sizes="100vw"
+                  width="1672"
+                  height="941"
+                  alt=""
+                  decoding="async"
+                  fetchpriority="low"
+                />
+              </div>
               <article class="project-card-layout">
                 <div class="project-copy">
-                  <p class="project-meta"><span>Personal</span><span aria-hidden="true">/</span><span>클론코딩</span></p>
+                  <p class="project-meta">
+                    <span> Personal </span>
+                    <span aria-hidden="true"> / </span>
+                    <span> 클론코딩 </span>
+                  </p>
                   <h3 class="project-card-title is-korean" id="project-title-6">문화체육관광부</h3>
-                  <p class="project-description">웹 퍼블리싱 학습을 위해 문화체육관광부 공식 웹사이트를 클론코딩한 개인 프로젝트입니다.</p>
+                  <p class="project-description"><span class="description-line">문화체육관광부 웹사이트를 구현한</span> <span class="description-line">웹 퍼블리싱 학습 프로젝트입니다.</span></p>
+                  <p class="project-tech">HTML / CSS / JavaScript</p>
                   <div class="project-links">
-                    <a class="project-button project-button--light" href="https://tnfh23-web.github.io/mcst-clone/" target="_blank" rel="noopener noreferrer" aria-label="문화체육관광부 Web 새 창으로 열기">Web</a>
+                    <a
+                      class="project-button project-button--light"
+                      href="https://tnfh23-web.github.io/mcst-clone/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="문화체육관광부 Web 새 창으로 열기"
+                    >
+                      Web
+                    </a>
                   </div>
                 </div>
-                <div class="project-visual"><a class="project-media" href="https://tnfh23-web.github.io/mcst-clone/" target="_blank" rel="noopener noreferrer" aria-label="문화체육관광부 프로젝트 새 창으로 열기">
-                  <div class="project-media-inner"><img src="img/project-img/mcst.webp" alt="문화체육관광부 프로젝트 메인 화면" width="1585" height="900" /></div>
-                </a></div>
+                <div class="project-visual">
+                  <a class="project-media" href="https://tnfh23-web.github.io/mcst-clone/" target="_blank" rel="noopener noreferrer" aria-label="문화체육관광부 프로젝트 새 창으로 열기">
+                    <div class="project-media-inner">
+                      <img src="img/project-img/mcst.webp" alt="문화체육관광부 프로젝트 메인 화면" width="1585" height="900" />
+                    </div>
+                  </a>
+                </div>
               </article>
             </li>
           </ul>
         </div>
       </section>
       <!------------------------------------------------ 프론트엔드 프로젝트 --------------------------------------------------->
-      <section id="sec-frontend" class="sec-frontend">
-        <span class="front-project-watermark" aria-hidden="true">REACT</span>
-        <div class="sec-frontend-grid">
-          <div class="title-box">
-            <h2 class="split-title">
-              FRONT<br />
-              PROJECT
-            </h2>
-          </div>
-          <ul class="front-project-list">
-            <li class="front-project-item front-project-content">
-              <div class="front-project-visual">
-                <div class="browser-bar" aria-hidden="true">
-                  <span></span><span></span><span></span>
-                  <p>tnfh23-web.github.io/react-modoo/</p>
-                </div>
-                <iframe src="https://tnfh23-web.github.io/react-modoo/" title="React Modoo 프로젝트 미리보기" loading="lazy"></iframe>
-              </div>
-              <div class="front-project-info">
-                <div class="front-project-number" aria-hidden="true"></div>
-                <div class="front-project-copy">
-                  <span>PERSONAL · REDESIGN · REACT</span>
-                  <h3>MODOO</h3>
-                  <p>웹에이전시 MODOO를 주제로 제작한 React 프로젝트입니다. 컴포넌트 기반 UI와 GSAP · Swiper 인터랙션으로 화면을 구성했습니다.</p>
-                </div>
-                <ul class="front-project-tags" aria-label="사용 기술">
-                  <li>React</li>
-                  <li>GSAP</li>
-                  <li>Swiper</li>
-                  <li>AOS</li>
-                </ul>
-                <a class="project-button project-button--light" href="https://tnfh23-web.github.io/react-modoo/" target="_blank" rel="noopener noreferrer">VIEW PROJECT</a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </section>
       <!------------------------------------------------ vibe 섹션 --------------------------------------------------->
       <section id="sec-vibe" class="sec-vibe">
         <div class="vibe-stage">
           <div class="vibe-stage-head">
-            <h2 class="split-title">VIBE PROJECT</h2>
+            <h2 class="split-title">VIBE</h2>
           </div>
 
           <article class="vibe-slide is-active is-interactive">
@@ -416,23 +535,22 @@
                   <div class="vibe-content">
                     <div class="vibe-main">
                       <div class="vibe-copy">
-                        <p class="vibe-kicker">01 · PERSONAL PROJECT</p>
-                        <h3>REFLOW · 리플로우</h3>
-                        <p class="vibe-description">
-                          웹사이트와 이미지를 저장하고,<br />
-                          필요한 구간과 메모를 프로젝트별로 정리합니다.<br />
-                          실제 사용할 수 있는 웹 서비스입니다.
-                        </p>
+                        <p class="vibe-kicker">Personal / Vibe coding</p>
+                        <h3>REFLOW</h3>
+                        <p class="project-subtitle">리플로우</p>
+                        <p class="vibe-description"><span class="description-line">웹사이트와 이미지를 저장하고,</span> <span class="description-line">구간과 메모를 프로젝트별로 정리합니다.</span></p>
                         <div class="vibe-actions">
-                          <p class="vibe-tech">Vibe Coding / React / GSAP / Cloudflare / Supabase</p>
+                          <p class="vibe-tech">React / JavaScript / Cloudflare / Supabase</p>
                           <div class="vibe-project-links">
-                            <a class="project-button project-button--light" href="https://reflow.tnfh23.workers.dev/" target="_blank" rel="noopener noreferrer">VIEW PROJECT</a>
+                            <a class="project-button project-button--light" href="https://reflow.tnfh23.workers.dev/" target="_blank" rel="noopener noreferrer">Web</a>
                           </div>
                         </div>
                       </div>
-                      <div class="vibe-visual"><a class="vibe-preview" href="https://reflow.tnfh23.workers.dev/" target="_blank" rel="noopener noreferrer" aria-label="REFLOW 리플로우 레퍼런스 수집·정리 서비스 보기">
-                        <img src="img/vibe-project-img/reflow-library.webp" alt="" />
-                      </a></div>
+                      <div class="vibe-visual">
+                        <a class="vibe-preview" href="https://reflow.tnfh23.workers.dev/" target="_blank" rel="noopener noreferrer" aria-label="REFLOW 리플로우 레퍼런스 수집·정리 서비스 보기">
+                          <img src="img/vibe-project-img/reflow-library.webp" alt="" />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -449,23 +567,23 @@
                   <div class="vibe-content">
                     <div class="vibe-main">
                       <div class="vibe-copy">
-                        <p class="vibe-kicker">02 · PERSONAL PROJECT</p>
-                        <h3>AFTERIMAGE · 잔상</h3>
-                        <p class="vibe-description">
-                          10개의 전시실과 2층 상영관을 담은<br />
-                          직접 걷고 머물며 감상하는 3D 전시입니다.
-                        </p>
+                        <p class="vibe-kicker">Personal / Vibe coding</p>
+                        <h3>AFTERIMAGE</h3>
+                        <p class="project-subtitle">잔상</p>
+                        <p class="vibe-description"><span class="description-line">10개의 전시실과 2층 상영관을</span> <span class="description-line">직접 걸으며 감상하는 3D 전시입니다.</span></p>
                         <div class="vibe-actions">
-                          <p>Vibe Coding / React / Vite / Three.js</p>
+                          <p class="vibe-tech">React / Three.js</p>
                           <div class="vibe-project-links">
-                            <a class="project-button project-button--light" href="https://tnfh23-web.github.io/afterimage/" target="_blank" rel="noopener noreferrer">VIEW PROJECT</a>
-                            <a class="project-button project-button--light" href="https://tnfh23-web.github.io/afterimage/#about" target="_blank" rel="noopener noreferrer">PROCESS</a>
+                            <a class="project-button project-button--light" href="https://tnfh23-web.github.io/afterimage/" target="_blank" rel="noopener noreferrer">Web</a>
+                            <a class="project-button project-button--light" href="https://tnfh23-web.github.io/afterimage/#about" target="_blank" rel="noopener noreferrer">Process</a>
                           </div>
                         </div>
                       </div>
-                      <div class="vibe-visual"><a class="vibe-preview" href="https://tnfh23-web.github.io/afterimage/" target="_blank" rel="noopener noreferrer" aria-label="AFTERIMAGE 잔상 3D 전시 프로젝트 보기">
-                        <img src="img/vibe-project-img/afterimage-gallery.webp" alt="" />
-                      </a></div>
+                      <div class="vibe-visual">
+                        <a class="vibe-preview" href="https://tnfh23-web.github.io/afterimage/" target="_blank" rel="noopener noreferrer" aria-label="AFTERIMAGE 잔상 3D 전시 프로젝트 보기">
+                          <img src="img/vibe-project-img/afterimage-gallery.webp" alt="" />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -482,23 +600,23 @@
                   <div class="vibe-content">
                     <div class="vibe-main">
                       <div class="vibe-copy">
-                        <p class="vibe-kicker">03 · PERSONAL PROJECT</p>
-                        <h3>CODEX · CHATGPT UPDATES</h3>
-                        <p class="vibe-description">
-                          ChatGPT와 Codex의 공식 업데이트를<br />
-                          쉽게 읽고 한눈에 확인하려고 만들었습니다.
-                        </p>
+                        <p class="vibe-kicker">Personal / Vibe coding</p>
+                        <h3>UPDATES</h3>
+                        <p class="project-subtitle">Codex · ChatGPT</p>
+                        <p class="vibe-description"><span class="description-line">ChatGPT와 Codex의 업데이트를</span> <span class="description-line">쉽게 읽고 모아 보는 아카이브입니다.</span></p>
                         <div class="vibe-actions">
-                          <p>Vibe Coding / HTML / CSS / JavaScript</p>
+                          <p class="vibe-tech">HTML / CSS / JavaScript</p>
                           <div class="vibe-project-links">
-                            <a class="project-button project-button--light" href="https://tnfh23-web.github.io/codexup/" target="_blank" rel="noopener noreferrer">VIEW PROJECT</a>
-                            <a class="project-button project-button--light" href="https://tnfh23-web.github.io/codexup/about.html" target="_blank" rel="noopener noreferrer">PROCESS</a>
+                            <a class="project-button project-button--light" href="https://tnfh23-web.github.io/codexup/" target="_blank" rel="noopener noreferrer">Web</a>
+                            <a class="project-button project-button--light" href="https://tnfh23-web.github.io/codexup/about.html" target="_blank" rel="noopener noreferrer">Process</a>
                           </div>
                         </div>
                       </div>
-                      <div class="vibe-visual"><a class="vibe-preview" href="https://tnfh23-web.github.io/codexup/" target="_blank" rel="noopener noreferrer" aria-label="Codex · ChatGPT 업데이트 소식 프로젝트 보기">
-                        <img src="img/vibe-project-img/updates-img.jpg" alt="" />
-                      </a></div>
+                      <div class="vibe-visual">
+                        <a class="vibe-preview" href="https://tnfh23-web.github.io/codexup/" target="_blank" rel="noopener noreferrer" aria-label="Codex · ChatGPT 업데이트 소식 프로젝트 보기">
+                          <img src="img/vibe-project-img/updates-img.jpg" alt="" />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -514,17 +632,12 @@
           <div class="sec-contact-grid">
             <div class="title-box">
               <div class="title-1">
-                <div class="contact-eyebrow"><span>LET’S CONNECT</span><span>WEB PUBLISHER · YOON SURO</span></div>
                 <h2 id="contact-heading" class="split-title">CONTACT</h2>
               </div>
               <div class="contact-con">
                 <p class="contact-lead">좋은 웹 경험을 함께 만들고 싶습니다.</p>
                 <div class="text-box-1">
-                  <p>
-                    저는 일을 시작하기 전 효율적인 흐름을 고민하며 계획하는<br />
-                    것을 중요하게 생각하고 변화가 생길 때는 유연하게<br />
-                    대안을 찾아 문제를 해결하는 편입니다.
-                  </p>
+                  <p>저는 일을 시작하기 전 효율적인 흐름을 고민하며 계획하는 것을 중요하게 생각합니다. 변화가 생길 때는 유연하게 대안을 찾아 문제를 해결하는 편입니다.</p>
                 </div>
               </div>
               <div class="title-2">
@@ -539,8 +652,8 @@
               </div>
               <div class="title-3">
                 <div class="contact-title-text contact-title-text-1">
-                  <a href="https://github.com/tnfh23-web" target="_blank">Github</a>
-                  <a href="https://velog.io/@ghggh23/posts" target="_blank">Blog</a>
+                  <a class="project-button" href="https://github.com/tnfh23-web" target="_blank" rel="noopener noreferrer">Github</a>
+                  <a class="project-button" href="https://velog.io/@ghggh23/posts" target="_blank" rel="noopener noreferrer">Blog</a>
                 </div>
               </div>
             </div>
@@ -548,8 +661,8 @@
           <div class="contact-marquee" aria-hidden="true">
             <div class="contact-marquee-drift">
               <div class="contact-marquee-track">
-                <span class="contact-marquee-group">LET’S WORK TOGETHER · YOON SURO ·&nbsp;</span>
-                <span class="contact-marquee-group">LET’S WORK TOGETHER · YOON SURO ·&nbsp;</span>
+                <span class="contact-marquee-group">LET’S WORK TOGETHER · LET’S WORK TOGETHER ·&nbsp;</span>
+                <span class="contact-marquee-group">LET’S WORK TOGETHER · LET’S WORK TOGETHER ·&nbsp;</span>
               </div>
             </div>
           </div>
@@ -575,9 +688,9 @@
     <!-- 스크립트 -->
     <script src="assets/js/loading-intro.js?v=20261022-showcase-v2"></script>
     <script src="assets/js/project-showcase.js?v=20261022-auto-entrance-v5"></script>
-    <script src="assets/js/page-reveals.js?v=20261022-showcase-v2"></script>
+    <script src="assets/js/page-reveals.js?v=20261022-contact-about-v7"></script>
     <script src="assets/js/hero-playground.js?v=20261022-showcase-v2"></script>
     <script src="assets/js/portfolio-cursor.js?v=20261022-project-view"></script>
-    <script src="assets/js/main.js?v=20261022-auto-entrance-v5"></script>
+    <script src="assets/js/main.js?v=20261022-type-mask-header-v6"></script>
   </body>
 </html>

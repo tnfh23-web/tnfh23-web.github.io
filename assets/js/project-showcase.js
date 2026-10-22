@@ -1,10 +1,11 @@
 /* Both showcases reveal their content only after the card/scene has arrived. */
 function addShowcaseEntrance(timeline, scene, at, compact) {
-  timeline.fromTo(scene.chars, { yPercent: 112, rotationX: -65 }, { yPercent: 0, rotationX: 0, duration: .43, stagger: { amount: .22 }, ease: 'power3.out', immediateRender: false }, at)
+  timeline.fromTo(scene.chars, { yPercent: 112, rotationX: -65, opacity: 0 }, { yPercent: 0, rotationX: 0, opacity: 1, duration: .43, stagger: { amount: .22 }, ease: 'power3.out', immediateRender: false }, at)
     .fromTo(scene.meta, { y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: .28, ease: 'power2.out', immediateRender: false }, at + .12)
-    .fromTo(scene.description, { x: compact ? 20 : 40, opacity: 0 }, { x: 0, opacity: 1, duration: .34, ease: 'power2.out', immediateRender: false }, at + .2)
+    .fromTo([scene.description, scene.tech].filter(Boolean), { x: compact ? 20 : 40, opacity: 0 }, { x: 0, opacity: 1, duration: .34, ease: 'power2.out', immediateRender: false }, at + .2)
     .fromTo(scene.links, { y: 10, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .28, ease: 'power2.out', immediateRender: false }, at + .3)
     .fromTo(scene.visual, { autoAlpha: 0, y: 24, scale: .97 }, { autoAlpha: 1, y: 0, scale: 1, duration: .5, ease: 'power2.out', immediateRender: false }, at + .1);
+  if (scene.subtitle) timeline.fromTo(scene.subtitle, { opacity: 0, y: 5 }, { opacity: 1, y: 0, duration: .28, immediateRender: false }, at + .16);
 }
 /* Arrival is scroll-driven; content runs on its own clock after arrival. */
 function createShowcaseEntrances(scenes, compact, { firstVisible = false } = {}) {
@@ -15,19 +16,26 @@ function createShowcaseEntrances(scenes, compact, { firstVisible = false } = {})
     return animation;
   });
   if (firstVisible) { animations[0].progress(1).pause(); started[0] = true; }
+  let previousTime = 0;
   return {
-    update(time, arrivalForScene) {
+    update(time, arrivalForScene, travel = 1.15) {
+      const reversing = time < previousTime - .0001;
       animations.forEach((animation, index) => {
         if (firstVisible && index === 0) return;
         const arrival = arrivalForScene(index);
-        if (time >= arrival - .001 && !started[index]) {
+        const visibleFrom = index ? arrival - travel : Math.max(0, arrival - .4);
+        if (reversing && started[index] && time >= visibleFrom) {
+          animation.progress(1).pause();
+          started[index] = true;
+        } else if (time >= arrival - .001 && !started[index]) {
           started[index] = true;
           animation.play(0);
-        } else if (time < arrival - .02 && started[index]) {
+        } else if (time < visibleFrom - .02 && started[index]) {
           started[index] = false;
           animation.pause(0);
         }
       });
+      previousTime = time;
     },
     destroy() { animations.forEach((animation) => animation.kill()); },
   };
@@ -43,7 +51,7 @@ function setupProjectShowcase({ reducedMotion }) {
   const scenes = cards.map((card) => {
     const media = card.querySelector('.project-media');
     media.style.setProperty('--project-ratio', 1.96);
-    return { card, media, backdrop: card.querySelector('.project-backdrop'), backdropImage: card.querySelector('.project-backdrop > img'), visual: card.querySelector('.project-visual'), image: card.querySelector('.project-media-inner'), pane: card.querySelector('.project-copy'), title: card.querySelector('.project-card-title'), meta: card.querySelector('.project-meta'), description: card.querySelector('.project-description'), links: card.querySelector('.project-links'), copy: Array.from(card.querySelector('.project-copy').children), inert: card.inert, split: null, chars: [] };
+    return { card, media, backdrop: card.querySelector('.project-backdrop'), backdropImage: card.querySelector('.project-backdrop > img'), visual: card.querySelector('.project-visual'), image: card.querySelector('.project-media-inner'), pane: card.querySelector('.project-copy'), title: card.querySelector('.project-card-title'), meta: card.querySelector('.project-meta'), description: card.querySelector('.project-description'), tech: card.querySelector('.project-tech'), links: card.querySelector('.project-links'), copy: Array.from(card.querySelector('.project-copy').children), inert: card.inert, split: null, chars: [] };
   });
   const intro = 1.15, entrance = .78, read = .68, turn = 1.15, hold = entrance + read, step = hold + turn;
   const total = intro + cards.length * hold + (cards.length - 1) * turn;
@@ -93,11 +101,11 @@ function setupProjectShowcase({ reducedMotion }) {
   };
   if (deck) {
     scenes.forEach((scene, index) => {
-      scene.split = new SplitText(scene.title, { type: 'chars', charsClass: 'project-title-char', aria: 'auto' });
+      scene.split = new SplitText(scene.title, { type: 'words,chars', wordsClass: 'showcase-title-word', charsClass: 'project-title-char', aria: 'auto' });
       scene.chars = scene.split.chars;
       gsap.set(scene.card, { autoAlpha: index ? 0 : 1, scale: 1, y: 0, yPercent: index ? 108 : 0, zIndex: index + 1 });
-      gsap.set(scene.chars, { yPercent: 112, rotationX: -65, transformOrigin: '50% 100%' });
-      gsap.set([scene.meta, scene.description], { opacity: 0 });
+      gsap.set(scene.chars, { yPercent: 112, rotationX: -65, opacity: 0, transformOrigin: '50% 100%' });
+      gsap.set([scene.meta, scene.description, scene.tech].filter(Boolean), { opacity: 0 });
       gsap.set(scene.links, { autoAlpha: 0 });
       gsap.set(scene.visual, { autoAlpha: 0, y: 24, scale: .97 });
     });
@@ -170,7 +178,7 @@ function setupProjectShowcase({ reducedMotion }) {
         scene.card.style.removeProperty('--project-sticky-top');
         scene.media.style.removeProperty('--project-ratio');
         scene.split?.revert();
-        gsap.set([scene.card, scene.visual, scene.image, scene.pane, scene.meta, scene.description, scene.links], { clearProps: 'transform,opacity,visibility,zIndex' });
+        gsap.set([scene.card, scene.visual, scene.image, scene.pane, scene.meta, scene.description, scene.tech, scene.links].filter(Boolean), { clearProps: 'transform,opacity,visibility,zIndex' });
         gsap.set(scene.backdrop, { clearProps: 'clipPath,--backdrop-dim' });
         gsap.set(scene.backdropImage, { clearProps: 'transform' });
       });

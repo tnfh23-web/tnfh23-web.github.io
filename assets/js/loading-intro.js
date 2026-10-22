@@ -54,6 +54,10 @@ function setupTypographyLoader({ reducedMotion }) {
     if (!loading || !word) { resolveIntro(); return; }
     if (skipRequested || reducedMotion.matches) { resolveIntro(); return; }
     const split = window.SplitText ? SplitText.create(word, { type: "chars", mask: "chars", charsClass: "loading-char", aria: "none" }) : null;
+    split?.masks.forEach(mask => {
+      mask.style.padding = '.18em .13em';
+      mask.style.margin = '-.18em -.13em';
+    });
     const chars = split?.chars || [word];
     const initial = split?.masks[0] || chars[0];
     const rest = chars.slice(1);
