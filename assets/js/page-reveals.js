@@ -216,6 +216,20 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
     const intro = dock.querySelector(".contact-con");
     const details = dock.querySelector(".title-2");
     const marquee = dock.querySelector(".contact-marquee");
+    // A separate layer owns the entrance; drift and the continuous loop keep their own transforms.
+    const marqueeReveal = marquee.querySelector('.contact-marquee-reveal');
+    let marqueeStarted = section.dataset.marqueeEntrance === 'complete';
+    let marqueeQueued = section.dataset.contactEntrance === 'complete';
+    const marqueeIntro = gsap.fromTo(marqueeReveal,
+      { yPercent: 110, autoAlpha: 0 },
+      { yPercent: 0, autoAlpha: 1, duration: .85, ease: 'power3.out', paused: true,
+        clearProps: 'transform,opacity,visibility',
+        onStart: () => { section.dataset.marqueeEntrance = 'playing'; },
+        onComplete: () => { section.dataset.marqueeEntrance = 'complete'; },
+      });
+    marqueeIntro.timeScale(1 / entranceDurationScale);
+    if (marqueeStarted) marqueeIntro.progress(1).pause();
+    else section.dataset.marqueeEntrance = 'waiting';
     const steps = [
       { anchor: eyebrow[0], targets: [eyebrow[0]], duration: 0.65 },
       { anchor: eyebrow[1], targets: [eyebrow[1]], duration: 0.75 },
@@ -250,7 +264,13 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
       if (started && !complete) sequence.paused(!onscreen);
       const marqueeRect = marquee.getBoundingClientRect();
       const coverEdge = 0;
-      loop.paused(marqueeRect.bottom <= Math.max(0, coverEdge) || marqueeRect.top >= window.innerHeight);
+      const marqueeVisible = marqueeRect.bottom > Math.max(0, coverEdge) && marqueeRect.top < window.innerHeight - 12;
+      // Start last, overlapping the preceding content instead of waiting for it to finish.
+      if (marqueeQueued && !marqueeStarted && marqueeVisible) {
+        marqueeStarted = true;
+        marqueeIntro.play(0);
+      }
+      loop.paused(!marqueeStarted || marqueeRect.bottom <= Math.max(0, coverEdge) || marqueeRect.top >= window.innerHeight);
     };
     if (!wasComplete) {
       section.dataset.contactEntrance = "waiting";
@@ -282,10 +302,17 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
           );
         }
       });
+      const lastStep = steps[steps.length - 1];
+      const lastItemStart = starts[steps.length - 1] + (lastStep.stagger || 0) * Math.max(0, lastStep.targets.length - 1);
+      sequence.call(() => {
+        marqueeQueued = true;
+        pump();
+      }, null, lastItemStart + .12);
     }
     // Keyboard users never wait for a decorative entrance to finish.
     const finishEntrance = () => {
       sequence.progress(1).pause();
+      marqueeQueued = true;
       started = complete = true;
       completeTitle(heading);
       section.dataset.contactEntrance = "complete";
@@ -320,6 +347,9 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
       depth.scrollTrigger?.kill();
       loop.kill();
       sequence.kill();
+      marqueeIntro.kill();
+      gsap.set(marqueeReveal, { clearProps: "transform,opacity,visibility" });
+      section.dataset.marqueeEntrance = "complete";
       dock.removeEventListener("focusin", finishEntrance);
       gsap.set(
         steps.flatMap((step) => step.targets),
