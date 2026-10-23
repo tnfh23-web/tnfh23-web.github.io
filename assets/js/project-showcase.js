@@ -1,3 +1,29 @@
+/* Native sticky stays on Safari's scrolling thread; GSAP only animates its contents. */
+function usesNativeShowcaseScroll() {
+  return innerWidth <= 900 || window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+function showcaseViewportHeight() {
+  return Number(document.documentElement.style.getPropertyValue('--showcase-height').replace('px', '')) || innerHeight;
+}
+function createShowcaseScrollTrack(stage, distance, background) {
+  if (!usesNativeShowcaseScroll()) return null;
+  const track = document.createElement('div');
+  track.className = 'showcase-scroll-track';
+  track.style.height = `${stage.offsetHeight + distance}px`;
+  track.style.background = background;
+  stage.before(track);
+  track.append(stage);
+  stage.classList.add('is-native-showcase');
+  return {
+    trigger: track,
+    destroy() {
+      stage.classList.remove('is-native-showcase');
+      track.before(stage);
+      track.remove();
+    },
+  };
+}
+
 /* Both showcases reveal their content only after the card/scene has arrived. */
 function addShowcaseEntrance(timeline, scene, at, compact) {
   timeline.fromTo(scene.chars, { yPercent: 112, rotationX: -65, opacity: 0 }, { yPercent: 0, rotationX: 0, opacity: 1, duration: .43, stagger: { amount: .22 }, ease: 'power3.out', immediateRender: false }, at)
@@ -47,6 +73,7 @@ function setupProjectShowcase({ reducedMotion }) {
   const cards = Array.from(stage?.children || []);
   if (!cards.length) return { destroy() {}, flowCardIndex() { return null; } };
   const timelines = [];
+  let scrollTrack = null;
   let entrances = null;
   const scenes = cards.map((card) => {
     const media = card.querySelector('.project-media');
@@ -58,13 +85,14 @@ function setupProjectShowcase({ reducedMotion }) {
   const compact = innerWidth <= 900;
   section.classList.add('is-project-deck');
   const fits = scenes.every(({ card, pane }) => pane.scrollHeight <= pane.clientHeight + 1 && card.scrollHeight <= card.clientHeight + 1);
-  const deck = !reducedMotion.matches && innerHeight >= 560 && fits;
+  const viewportHeight = showcaseViewportHeight();
+  const deck = !reducedMotion.matches && viewportHeight >= 560 && fits;
   const sticky = !deck && !reducedMotion.matches;
   section.classList.remove('is-project-deck');
   section.classList.add(deck ? 'is-project-deck' : 'is-project-flow');
   section.dataset.projectMode = deck ? 'deck' : 'flow';
   let active = -1, secondary = null, flowIndex = null;
-  const viewport = { width: innerWidth, height: innerHeight };
+  const viewportWidth = innerWidth;
   const headerHeight = () => Math.max(0, ...Array.from(document.querySelectorAll('.top-bar')).map((header) => header.offsetHeight));
   const activate = (index, other = null) => {
     if (active === index && secondary === other) return;
@@ -81,13 +109,11 @@ function setupProjectShowcase({ reducedMotion }) {
   };
   const rememberPosition = () => {
     const rect = section.getBoundingClientRect();
+    const vibeRect = document.querySelector('#sec-vibe')?.getBoundingClientRect();
+    const contactTop = document.querySelector('#sec-contact')?.getBoundingClientRect().top ?? Infinity;
     const top = headerHeight();
-    document.documentElement.classList.toggle('is-project-view', rect.top <= top && rect.bottom > top);
-    if (deck || innerWidth !== viewport.width) return;
-    if (innerHeight !== viewport.height) {
-      if (innerWidth > 768 || Math.abs(innerHeight - viewport.height) >= 100) return;
-      viewport.height = innerHeight;
-    }
+    document.documentElement.classList.toggle('is-project-view', (rect.top <= top && rect.bottom > top) || (vibeRect && vibeRect.top <= top && vibeRect.bottom > top && contactTop > top));
+    if (deck || innerWidth !== viewportWidth) return;
     let mostVisible = 0;
     flowIndex = null;
     const rectangles = cards.map((card) => card.getBoundingClientRect());
@@ -110,10 +136,12 @@ function setupProjectShowcase({ reducedMotion }) {
       gsap.set(scene.visual, { autoAlpha: 0, y: 24, scale: .97 });
     });
     const first = scenes[0];
-    const firstClip = compact ? 'inset(38% 6% round 180px)' : `inset(28% 18% round ${Math.round(innerHeight * .3)}px)`;
+    const firstClip = compact ? 'inset(38% 6% round 180px)' : `inset(28% 18% round ${Math.round(viewportHeight * .3)}px)`;
     gsap.set(first.backdrop, { clipPath: firstClip });
     gsap.set(first.backdropImage, { scale: 1.08 });
     entrances = createShowcaseEntrances(scenes, compact);
+    const scrollDistance = Math.round(Math.min(viewportHeight * .65, 620) * total);
+    scrollTrack = createShowcaseScrollTrack(section, scrollDistance, getComputedStyle(section).backgroundColor);
     const master = gsap.timeline({
       onUpdate() {
         const time = this.time(), elapsed = time - intro - hold;
@@ -127,8 +155,8 @@ function setupProjectShowcase({ reducedMotion }) {
         } else activate(Math.min(cards.length - 1, base + 1));
       },
       scrollTrigger: {
-        id: 'proj-pin', trigger: section, start: 'top top', pin: section, scrub: .45,
-        end: () => `+=${Math.round(Math.min(innerHeight * .65, 620) * total)}`,
+        id: 'proj-pin', trigger: scrollTrack?.trigger || section, start: 'top top', pin: scrollTrack ? false : section, scrub: .45,
+        end: `+=${scrollDistance}`,
         refreshPriority: 1, invalidateOnRefresh: true,
       },
     });
@@ -149,7 +177,7 @@ function setupProjectShowcase({ reducedMotion }) {
     master.to({}, { duration: hold }, intro + (cards.length - 1) * step);
     timelines.push(master);
   } else if (sticky) {
-    cards.forEach((card) => card.style.setProperty('--project-sticky-top', `min(${headerHeight() + 12}px, calc(100svh - ${card.offsetHeight}px - 24px))`));
+    cards.forEach((card) => card.style.setProperty('--project-sticky-top', `min(${headerHeight() + 12}px, calc(var(--showcase-height, 100svh) - ${card.offsetHeight}px - 24px))`));
     section.classList.add('is-project-sticky');
   }
   activate(0);
@@ -167,6 +195,7 @@ function setupProjectShowcase({ reducedMotion }) {
     destroy() {
       window.removeEventListener('scroll', rememberPosition);
       timelines.forEach((timeline) => { timeline.scrollTrigger?.kill(true); timeline.kill(); });
+      scrollTrack?.destroy();
       entrances?.destroy();
       section.classList.remove('is-project-deck', 'is-project-flow', 'is-project-sticky');
       document.documentElement.classList.remove('is-project-view');

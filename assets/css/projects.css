@@ -35,7 +35,7 @@
   .project-card.is-interactive .project-media:hover { transform: translateY(-5px) rotateX(1.5deg) rotateY(-1deg) scale(1.015); }
   .project-card.is-interactive .project-media:hover::after { opacity: 1; transform: none; }
 }
-.is-project-deck { height: 100svh; padding: 0; }
+.is-project-deck { height: var(--showcase-height, 100svh); padding: 0; }
 .is-project-deck .project-shell { height: 100%; }
 .is-project-deck .project-heading { position: absolute; top: 10.4rem; left: max(var(--grid-gutter), calc((100% - var(--maxwidth)) / 2)); margin: 0; width: auto; pointer-events: none; }
 .is-project-deck .project-stage { display: block; height: 100%; margin: 0; perspective: 1800px; }
@@ -59,9 +59,9 @@
   .project-heading { margin-bottom: 2.4rem; }
   .project-heading h2 { font-size: clamp(4.8rem, 9vw, 7.2rem); }
   .project-marquee span { font-size: clamp(9rem, 19vw, 16rem); }
-  .project-card { height: auto; min-height: calc(100svh - 2 * var(--project-frame)); }
+  .project-card { height: auto; min-height: calc(var(--showcase-height, 100svh) - 2 * var(--project-frame)); }
   .project-card-layout { display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 2.4rem; min-height: inherit; padding: 8rem 0 3.2rem; }
-  .project-visual { order: -1; flex: 0 0 auto; height: clamp(20rem, 30svh, 34rem); }
+  .project-visual { order: -1; flex: 0 0 auto; height: clamp(20rem, calc(var(--showcase-height, 100svh) * .3), 34rem); }
   .project-copy { flex: 0 0 auto; }
   .project-card-title { margin-top: 1rem; font-size: clamp(4.8rem, 8vw, 6.8rem); }
   .project-card-title.is-korean { font-size: clamp(3rem, 5vw, 4rem); }

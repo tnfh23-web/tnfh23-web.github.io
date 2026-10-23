@@ -3,7 +3,7 @@
 ========================================================= */
 gsap.registerPlugin(ScrollTrigger);
 // Resize is handled once below, after both pinned sections have been rebuilt.
-ScrollTrigger.config({ autoRefreshEvents: "visibilitychange,DOMContentLoaded,load" });
+ScrollTrigger.config({ autoRefreshEvents: "visibilitychange,DOMContentLoaded,load", ignoreMobileResize: true });
 
 /* One clock for the portfolio's GSAP animations and CSS motion. */
 const motionState = { isSlow: false, durationScale: 1 };
@@ -348,6 +348,16 @@ let resizeRevision = 0;
 let resizeAnchor = null;
 let pageMotionReady = false;
 
+function measureShowcaseViewport() {
+  // svh measures the space with Safari's toolbar expanded. Keep it until a real reflow.
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;height:100svh;';
+  document.body.append(probe);
+  const height = probe.offsetHeight || innerHeight;
+  probe.remove();
+  document.documentElement.style.setProperty('--showcase-height', `${height}px`);
+}
+
 function captureResizeAnchor() {
   const y = window.scrollY;
   if (y < 2) return { type: "top" };
@@ -428,12 +438,11 @@ function handleResize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
   if (w === lastW && h === lastH) return;
-  const smallMobileChromeChange = w === lastW && w <= 768 && Math.abs(h - lastH) < 100;
-  const overflowingProject = smallMobileChromeChange && document.querySelector("#sec-project.is-project-deck") &&
-    (h < 640 || document.querySelector("#sec-project").offsetHeight > h + 1 || Array.from(document.querySelectorAll("#sec-project .project-copy, #sec-project .project-card")).some((element) => element.scrollHeight > element.clientHeight + 1));
+  // Toolbar/keyboard height changes must never kill a scene or force scrollTo during a swipe.
+  const mobileHeightOnly = w === lastW && usesNativeShowcaseScroll();
   lastW = w;
   lastH = h;
-  if (!pageMotionReady || (smallMobileChromeChange && !overflowingProject)) return;
+  if (!pageMotionReady || mobileHeightOnly) return;
   resizeAnchor ||= captureResizeAnchor();
   clearTimeout(resizeTimer);
   const revision = ++resizeRevision;
@@ -442,6 +451,7 @@ function handleResize() {
     if (revision !== resizeRevision) return;
     const anchor = resizeAnchor;
     window.dispatchEvent(new Event("portfolio:section-navigation"));
+    measureShowcaseViewport();
     dividerMarquee();
     setupProjectScene();
     setupFrontendProjectAnimation();
@@ -678,8 +688,10 @@ function setupVibeAccordion() {
   const intro = 0, entrance = .78, read = .68, hold = entrance + read, turn = 1.15, step = hold + turn;
   const total = intro + slides.length * hold + (slides.length - 1) * turn;
   // Reserve a final hold so the foreground contact panel can cover a stationary last slide.
-  const scrollUnit = Math.min(innerHeight * .6, 580);
+  const scrollUnit = Math.min(showcaseViewportHeight() * .6, 580);
   const coverDistance = Math.ceil(contact?.querySelector('.contact-dock')?.offsetHeight || 0);
+  const scrollDistance = Math.round(scrollUnit * total) + coverDistance;
+  const scrollTrack = createShowcaseScrollTrack(stage, scrollDistance, getComputedStyle(section).backgroundColor);
   contact?.style.setProperty('--contact-overlap', `${coverDistance}px`);
   contact?.classList.add('is-overlay');
   if (contact) contact.dataset.contactLayout = 'overlay';
@@ -704,8 +716,8 @@ function setupVibeAccordion() {
       activate(active);
     },
     scrollTrigger: {
-      id: "vibe-pin", trigger: stage, start: "top top", pin: stage,
-      end: () => `+=${Math.round(scrollUnit * total) + coverDistance}`,
+      id: "vibe-pin", trigger: scrollTrack?.trigger || stage, start: "top top", pin: scrollTrack ? false : stage,
+      end: `+=${scrollDistance}`,
       scrub: .45, anticipatePin: 1, invalidateOnRefresh: true,
     },
   });
@@ -724,6 +736,7 @@ function setupVibeAccordion() {
   vibeTimeline.to({}, { duration: coverDistance / scrollUnit, ease: 'none' }, total);
   cleanupVibeScene = () => {
     entrances.destroy();
+    scrollTrack?.destroy();
     scenes.forEach((scene) => {
       scene.split.revert(); scene.slide.inert = false;
       gsap.set([scene.meta, scene.subtitle, scene.description, scene.links, scene.visual].filter(Boolean), { clearProps: "transform,opacity,visibility" });
@@ -762,6 +775,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupFrontendPreviewScrollIsolation();
 
   await waitProjectAssets();
+  measureShowcaseViewport();
   setupProjectScene();
   setupFrontendProjectAnimation();
   setupVibeAccordion();

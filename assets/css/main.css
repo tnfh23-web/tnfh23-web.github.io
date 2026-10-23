@@ -72,7 +72,7 @@ html {
   --motion-duration-scale: 1;
   font-family: "Pretendard", sans-serif;
   font-size: max(0.52083333vw, 10px);
-  overflow-x: hidden;
+  overflow-x: clip;
   scrollbar-gutter: stable;
   scroll-behavior: auto;
 }
@@ -520,6 +520,9 @@ body.is-loading footer {
 }
 .mo-top-bar .sidebar-menu-box {
   background: transparent;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
   border: 0;
   padding: 1rem;
   cursor: pointer;
@@ -1101,7 +1104,7 @@ body.is-loading footer {
 .vibe-stage {
   position: relative;
   width: 100%;
-  height: 100svh;
+  height: var(--showcase-height, 100svh);
   min-height: 0;
   overflow: hidden;
 }
@@ -1252,7 +1255,7 @@ body.is-loading footer {
 }
 @media (max-width: 768px) {
   .vibe-stage {
-    height: 100svh;
+    height: var(--showcase-height, 100svh);
     min-height: 0;
   }
   .vibe-stage-head {
@@ -1991,7 +1994,7 @@ footer .text-box p:nth-child(2) {
 
 /* Inverted ink remains legible over both the white hero and dark projects. */
 body {
-  background-color: var(--white-100);
+  background-color: var(--white-90);
 }
 .portfolio-cursor {
   display: none;
@@ -2123,6 +2126,20 @@ body {
   position: relative;
   z-index: 2;
   background: var(--white-100);
+}
+
+/* No JS-controlled fixed pin on touch screens: the track paints every reserved pixel. */
+.showcase-scroll-track {
+  position: relative;
+  overflow: visible;
+  overflow-anchor: none;
+}
+.showcase-scroll-track > .is-native-showcase {
+  position: sticky;
+  top: 0;
+}
+.sec-vibe {
+  overflow-anchor: none;
 }
 
 /* The compact contact panel rises in front of the held final VIBE scene. */
