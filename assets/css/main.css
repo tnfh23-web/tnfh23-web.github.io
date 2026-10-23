@@ -470,6 +470,11 @@ body.is-loading footer {
 .mo-top-bar .sidebar-menu-box span {
   will-change: transform, opacity;
 }
+.mo-top-bar.is-menu-open {
+  color: var(--black-100);
+  background-color: var(--white-90);
+  border-bottom-color: var(--black-40);
+}
 .mo-top-bar .mo-menu {
   position: absolute;
   left: 0;
@@ -477,7 +482,8 @@ body.is-loading footer {
   width: 100%;
   max-height: calc(100svh - 8rem);
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.9);
+  color: var(--black-100);
+  background: var(--white-90);
   border-bottom: 1px solid var(--black-100);
   opacity: 0;
   visibility: hidden;
