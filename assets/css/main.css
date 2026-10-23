@@ -2125,10 +2125,10 @@ body {
   background: var(--white-100);
 }
 
-/* A compact closing section, uncovered behind the preceding page. */
+/* The compact contact panel rises in front of the held final VIBE scene. */
 .contact-reveal {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   background: #f4f4f4;
 }
 .contact-dock {
@@ -2138,10 +2138,8 @@ body {
   min-height: 0;
   background: #f4f4f4;
 }
-.contact-reveal.is-fixed .contact-dock {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+.contact-reveal.is-overlay {
+  margin-top: calc(-1 * var(--contact-overlap, 0px));
 }
 .contact-dock .sec-contact {
   display: flex;
@@ -2674,7 +2672,7 @@ body {
     font-size: 2.4rem;
   }
   .editorial-about .about-row {
-    grid-template-columns: 8rem minmax(0, 1fr);
+    grid-template-columns: 10rem minmax(0, 1fr);
     gap: 1.4rem;
   }
   .project-button {
@@ -2755,7 +2753,7 @@ body {
     grid-template-columns: min(30%, 39.5rem) minmax(0, 1fr);
   }
   .editorial-about .about-row {
-    grid-template-columns: 8rem minmax(0, 1fr);
+    grid-template-columns: 10rem minmax(0, 1fr);
     gap: 1.4rem;
   }
 }

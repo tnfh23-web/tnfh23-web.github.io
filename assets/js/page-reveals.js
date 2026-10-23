@@ -136,7 +136,7 @@ function setupPageReveals({ reducedMotion }) {
     if (!context.conditions.motion) return;
     const triggers = [];
     let index = 0;
-    const reveal = (trigger, build, targets) => {
+    const reveal = (trigger, build, targets, start = "top 78%") => {
       if (!trigger || !targets.length || targets.every((target) => target.dataset.revealComplete)) return;
       if (trigger.getBoundingClientRect().bottom < 0) {
         targets.forEach((target) => {
@@ -147,7 +147,7 @@ function setupPageReveals({ reducedMotion }) {
       const tl = gsap
         .timeline({
           defaults: { ease: "power2.inOut" },
-          scrollTrigger: { id: `page-reveal-${index++}`, trigger, start: "top 78%", once: true },
+          scrollTrigger: { id: `page-reveal-${index++}`, trigger, start, once: true },
           onComplete: () =>
             targets.forEach((target) => {
               target.dataset.revealComplete = "true";
@@ -162,6 +162,27 @@ function setupPageReveals({ reducedMotion }) {
       .forEach((title) => {
         reveal(title, (tl) => titleMotion(title, tl), [title]);
       });
+    const portrait = document.querySelector('.editorial-about .img-box');
+    if (portrait) {
+      const image = portrait.querySelector('img');
+      const caption = portrait.querySelector('figcaption');
+      reveal(portrait, (tl) => {
+        tl.fromTo(image, { clipPath: 'inset(0% 100% 0% 0%)' }, {
+          clipPath: 'inset(0% 0% 0% 0%)', duration: 1.05,
+          ease: 'power3.inOut', clearProps: 'clipPath',
+        });
+        if (caption) tl.fromTo(caption, { opacity: 0, y: 8 }, {
+          opacity: 1, y: 0, duration: .65, clearProps: 'opacity,transform',
+        }, .3);
+      }, [image, caption].filter(Boolean), "top 86%");
+    }
+    document.querySelectorAll('.editorial-about .right-con').forEach((group) => {
+      const content = Array.from(group.querySelectorAll('h3, dl'));
+      reveal(group, (tl) => tl.fromTo(content, { opacity: 0, y: 18 }, {
+        opacity: 1, y: 0, duration: .8, stagger: .12,
+        ease: 'power3.out', clearProps: 'opacity,transform',
+      }), content, "top 92%");
+    });
     return () => triggers.forEach((trigger) => trigger.kill());
   });
 
@@ -182,29 +203,12 @@ function setupPageReveals({ reducedMotion }) {
   };
 }
 
-/* A fixed drawer must actually be uncovered before its ordered entrance can play. */
+/* Contact rises over the final VIBE scene; its content follows the visible panel. */
 function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
   const section = document.querySelector("#sec-contact");
   const dock = section?.querySelector(".contact-dock");
   const track = section?.querySelector(".contact-marquee-track");
   if (!section || !dock || !track) return;
-  const updateLayout = () => {
-    const height = Math.ceil(dock.offsetHeight);
-    const fixed = !reducedMotion.matches && height <= window.innerHeight + 1;
-    section.classList.toggle("is-fixed", fixed);
-    section.style.height = fixed ? `${height}px` : "";
-    section.dataset.contactLayout = fixed ? "reveal" : "flow";
-  };
-  updateLayout();
-  window.addEventListener("resize", updateLayout, { passive: true });
-  reducedMotion.addEventListener("change", updateLayout);
-  ScrollTrigger.addEventListener("refreshInit", updateLayout);
-  dock.addEventListener("focusin", () => {
-    if (section.classList.contains("is-fixed") && section.getBoundingClientRect().bottom > window.innerHeight + 2) {
-      section.scrollIntoView({ block: "end", behavior: "auto" });
-    }
-  });
-
   gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
     const heading = dock.querySelector("#contact-heading");
     const eyebrow = dock.querySelectorAll(".contact-eyebrow span");
@@ -225,7 +229,7 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
     let complete = wasComplete;
     const exposed = (element) => {
       const rect = element.getBoundingClientRect();
-      const coverEdge = section.classList.contains("is-fixed") ? section.getBoundingClientRect().top : 0;
+      const coverEdge = 0;
       return rect.top >= coverEdge - 1 && rect.top + Math.min(60, rect.height * 0.4) < window.innerHeight - 16 && rect.bottom > 0;
     };
     const sequence = gsap
@@ -241,11 +245,11 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
     const pump = () => {
       const rect = section.getBoundingClientRect();
       const onscreen = rect.top < window.innerHeight && rect.bottom > 0;
-      const passedFirst = !section.classList.contains("is-fixed") && firstAnchor.getBoundingClientRect().bottom <= 0;
+      const passedFirst = firstAnchor.getBoundingClientRect().bottom <= 0;
       if (!started && onscreen && (exposed(firstAnchor) || passedFirst)) started = true;
       if (started && !complete) sequence.paused(!onscreen);
       const marqueeRect = marquee.getBoundingClientRect();
-      const coverEdge = section.classList.contains("is-fixed") ? rect.top : 0;
+      const coverEdge = 0;
       loop.paused(marqueeRect.bottom <= Math.max(0, coverEdge) || marqueeRect.top >= window.innerHeight);
     };
     if (!wasComplete) {
@@ -302,15 +306,14 @@ function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
         scrollTrigger: {
           id: "contact-depth",
           trigger: section,
-          // Reverse the depth: copy rises into place as the compact footer is uncovered.
+          // Keep the marquee depth subtle; the entire panel already moves over VIBE.
           start: "top bottom",
           end: "bottom bottom",
           scrub: 0.4,
           invalidateOnRefresh: true,
         },
       })
-      .fromTo(dock.querySelector(".sec-contact-grid"), { y: () => (section.classList.contains("is-fixed") ? 48 : 0) }, { y: 0, ease: "none" }, 0)
-      .fromTo(dock.querySelector(".contact-marquee-drift"), { x: () => (section.classList.contains("is-fixed") ? -Math.min(80, window.innerWidth * 0.08) : 0) }, { x: 0, ease: "none" }, 0);
+      .fromTo(dock.querySelector(".contact-marquee-drift"), { x: () => (section.classList.contains("is-overlay") ? -Math.min(80, window.innerWidth * 0.08) : 0) }, { x: 0, ease: "none" }, 0);
     pump();
     return () => {
       visibility.kill();

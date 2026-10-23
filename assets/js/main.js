@@ -184,8 +184,10 @@ function setupMobileMenu() {
 
   if (!btn.hasAttribute("aria-expanded")) btn.setAttribute("aria-expanded", "false");
   if (!btn.hasAttribute("aria-label")) btn.setAttribute("aria-label", "메뉴 열기");
+  menu.inert = btn.getAttribute("aria-expanded") !== "true";
 
   function setExpanded(v) {
+    menu.inert = !v;
     btn.setAttribute("aria-expanded", String(v));
     btn.setAttribute("aria-label", v ? "메뉴 닫기" : "메뉴 열기");
   }
@@ -195,7 +197,8 @@ function setupMobileMenu() {
     setExpanded(true);
   }
 
-  function closeMenu() {
+  function closeMenu(returnFocus = false) {
+    if (returnFocus) btn.focus({ preventScroll: true });
     header.classList.remove("is-menu-open");
     setExpanded(false);
   }
@@ -220,7 +223,7 @@ function setupMobileMenu() {
 
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
-    if (header.classList.contains("is-menu-open")) closeMenu();
+    if (header.classList.contains("is-menu-open")) closeMenu(true);
   });
 
   window.addEventListener("resize", () => {
@@ -616,6 +619,10 @@ function setupVibeAccordion() {
   gsap.set(slides, { clearProps: "all" });
   gsap.set(section.querySelectorAll(".vibe-outer, .vibe-inner, .vibe-background, .vibe-content"), { clearProps: "all" });
   section.classList.remove("is-static");
+  const contact = document.querySelector('#sec-contact');
+  contact?.classList.remove('is-overlay');
+  contact?.style.removeProperty('--contact-overlap');
+  if (contact) contact.dataset.contactLayout = 'flow';
   const stacked = innerWidth <= 768;
   const needsFlow = slides.some((slide) => {
     const content = slide.querySelector(".vibe-content"), main = slide.querySelector(".vibe-main");
@@ -670,6 +677,12 @@ function setupVibeAccordion() {
   });
   const intro = 0, entrance = .78, read = .68, hold = entrance + read, turn = 1.15, step = hold + turn;
   const total = intro + slides.length * hold + (slides.length - 1) * turn;
+  // Reserve a final hold so the foreground contact panel can cover a stationary last slide.
+  const scrollUnit = Math.min(innerHeight * .6, 580);
+  const coverDistance = Math.ceil(contact?.querySelector('.contact-dock')?.offsetHeight || 0);
+  contact?.style.setProperty('--contact-overlap', `${coverDistance}px`);
+  contact?.classList.add('is-overlay');
+  if (contact) contact.dataset.contactLayout = 'overlay';
   const entrances = createShowcaseEntrances(scenes, stacked, { firstVisible: true });
   const activate = (index) => scenes.forEach(({ slide }, i) => {
     slide.inert = i !== index;
@@ -692,7 +705,7 @@ function setupVibeAccordion() {
     },
     scrollTrigger: {
       id: "vibe-pin", trigger: stage, start: "top top", pin: stage,
-      end: () => `+=${Math.round(Math.min(innerHeight * .6, 580) * total)}`,
+      end: () => `+=${Math.round(scrollUnit * total) + coverDistance}`,
       scrub: .45, anticipatePin: 1, invalidateOnRefresh: true,
     },
   });
@@ -708,6 +721,7 @@ function setupVibeAccordion() {
     vibeTimeline.addLabel(`vibe-ready-${index + 1}`, start + turn + entrance + read * .5);
   });
   vibeTimeline.to({}, { duration: hold }, intro + (slides.length - 1) * step);
+  vibeTimeline.to({}, { duration: coverDistance / scrollUnit, ease: 'none' }, total);
   cleanupVibeScene = () => {
     entrances.destroy();
     scenes.forEach((scene) => {
