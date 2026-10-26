@@ -31,6 +31,9 @@
 ```text
 index.html
 assets/
+  icons/
+    favicon-ys.svg      # 글꼴 없이 그린 YS 모노그램 원본
+    apple-touch-icon.png # iOS 홈 화면용 아이콘 (180px)
   css/
     tokens.css          # 색상·최대 너비·공통 여백 변수
     main.css            # 기존 섹션과 로딩 스타일
@@ -46,7 +49,10 @@ assets/
 font/                   # 로컬 폰트
 img/                    # 섹션별 이미지
 tools/open-editor.bat    # 프로젝트 폴더를 에디터로 열기
+favicon.ico             # 브라우저 호환용 16·32·48px 아이콘
 ```
+
+파비콘은 Y의 세로획과 S의 아래 곡선을 연결한 흑백 모노그램입니다. SVG를 기본으로 사용하고 ICO를 호환용으로 제공하며, iOS 홈 화면에는 180px PNG를 사용합니다. 사이트의 본문·헤더·로딩 로고와 별도로 적용합니다.
 
 공통 최대 너비는 `164rem`입니다. `tokens.css`의 `--grid-gutter`와 `--grid-width`를 `grid.css`에서 함께 사용해 HOME, ABOUT ME, PROJECT, FRONT, VIBE, CONTACT와 헤더를 정렬합니다. 배경과 마퀴는 의도적으로 전체 너비를 사용합니다.
 
