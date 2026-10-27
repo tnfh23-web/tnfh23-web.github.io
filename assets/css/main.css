@@ -1271,7 +1271,7 @@ body.is-loading footer {
     font-size: 2.4rem;
   }
   .vibe-content {
-    padding: max(14rem, calc(env(safe-area-inset-top) + 12rem)) max(2rem, env(safe-area-inset-right)) max(2.5rem, env(safe-area-inset-bottom)) max(2rem, env(safe-area-inset-left));
+    padding: var(--vibe-content-top, max(14rem, calc(env(safe-area-inset-top) + 12rem))) max(2rem, env(safe-area-inset-right)) max(2.5rem, env(safe-area-inset-bottom)) max(2rem, env(safe-area-inset-left));
   }
   .vibe-main {
     grid-template-columns: 1fr;
@@ -1305,6 +1305,27 @@ body.is-loading footer {
   }
   .vibe-background img {
     object-position: center;
+  }
+}
+
+/* Leave room for the complete portrait-phone scene with Safari's toolbar open. */
+@media (max-width: 768px) {
+  .vibe-stage.is-compact-vibe .vibe-stage-head {
+    padding-top: max(6.8rem, calc(env(safe-area-inset-top) + 6rem));
+    padding-bottom: 1.2rem;
+  }
+  .vibe-stage.is-compact-vibe .vibe-content {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+  .vibe-stage.is-compact-vibe .vibe-main {
+    row-gap: 2rem;
+  }
+  .vibe-stage.is-compact-vibe .vibe-description {
+    margin-top: 1.2rem;
+  }
+  .vibe-stage.is-compact-vibe .vibe-actions {
+    margin-top: 1.4rem;
+    gap: 1.2rem;
   }
 }
 
@@ -2142,7 +2163,7 @@ body {
 }
 .showcase-scroll-track > .is-native-showcase {
   position: sticky;
-  top: 0;
+  top: var(--showcase-sticky-top, 0px);
 }
 .sec-vibe {
   overflow-anchor: none;
@@ -2575,6 +2596,9 @@ body {
   letter-spacing: -0.065em;
 }
 .editorial-about .profile-box {
+  --about-detail-width: 40rem;
+  --about-date-width: 22rem;
+  --about-date-gap: 2.4rem;
   display: grid;
   grid-template-columns: 39.5rem minmax(0, 1fr);
   gap: clamp(6rem, 10vw, 18rem);
@@ -2618,6 +2642,12 @@ body {
     sans-serif;
   letter-spacing: -0.025em;
   margin: 0 0 1.4rem;
+}
+@media (min-width: 769px) {
+  /* Match the portrait to the title's visible capitals while keeping text inside its box. */
+  .editorial-about .profile-box .left-box {
+    padding-top: 0.8rem;
+  }
 }
 .editorial-about dl,
 .editorial-about dd {
@@ -2735,11 +2765,13 @@ body {
   height: 1px;
   background: rgba(255, 255, 255, 0.35);
 }
-/* Dates follow the main information and align on a shared trailing edge. */
+/* Dates sit beside a shared detail column instead of at the far right edge. */
 .editorial-about .about-row dd:has(.about-date) {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
-  gap: 1.6rem;
+  grid-template-columns: minmax(0, var(--about-detail-width)) var(--about-date-width);
+  column-gap: var(--about-date-gap);
+  row-gap: 0.4rem;
+  justify-content: start;
   align-items: baseline;
 }
 .editorial-about .about-date {
@@ -2748,7 +2780,8 @@ body {
   font-size: 18px;
   font-weight: 400;
   line-height: 1.6;
-  text-align: right;
+  text-align: left;
+  white-space: nowrap;
 }
 .editorial-about .about-detail {
   font-size: 20px;
@@ -2781,6 +2814,11 @@ body {
   .editorial-about .about-row {
     grid-template-columns: 10rem minmax(0, 1fr);
     gap: 1.4rem;
+  }
+}
+@media (max-width: 1100px) and (min-width: 769px) {
+  .editorial-about .about-row dd:has(.about-date) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 600px) {

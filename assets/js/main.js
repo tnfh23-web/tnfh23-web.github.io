@@ -634,6 +634,26 @@ function setupVibeAccordion() {
   contact?.style.removeProperty('--contact-overlap');
   if (contact) contact.dataset.contactLayout = 'flow';
   const stacked = innerWidth <= 768;
+  const viewportHeight = showcaseViewportHeight();
+  stage.classList.toggle('is-compact-vibe', stacked && viewportHeight <= 700 && viewportHeight >= innerWidth && !reducedMotion.matches);
+  // Keep portrait-phone transitions even when Safari's expanded toolbar leaves
+  // less room: a taller native-sticky scene can scroll fully into view first.
+  if (stacked && viewportHeight >= innerWidth && !reducedMotion.matches) {
+    const headingHeight = stage.querySelector('.vibe-stage-head').offsetHeight;
+    stage.style.setProperty('--vibe-content-top', `${headingHeight + 16}px`);
+    const neededHeight = Math.max(...slides.map((slide) => {
+      const contentStyle = getComputedStyle(slide.querySelector('.vibe-content'));
+      const mainStyle = getComputedStyle(slide.querySelector('.vibe-main'));
+      return slide.querySelector('.vibe-copy').offsetHeight
+        + slide.querySelector('.vibe-preview').offsetHeight
+        + parseFloat(mainStyle.rowGap)
+        + parseFloat(contentStyle.paddingTop)
+        + parseFloat(contentStyle.paddingBottom);
+    }));
+    const sceneHeight = Math.max(viewportHeight, Math.ceil(neededHeight) + 2);
+    stage.style.height = `${sceneHeight}px`;
+    stage.style.setProperty('--showcase-sticky-top', `${Math.min(0, viewportHeight - sceneHeight)}px`);
+  }
   const needsFlow = slides.some((slide) => {
     const content = slide.querySelector(".vibe-content"), main = slide.querySelector(".vibe-main");
     const padding = getComputedStyle(content);
@@ -716,7 +736,9 @@ function setupVibeAccordion() {
       activate(active);
     },
     scrollTrigger: {
-      id: "vibe-pin", trigger: scrollTrack?.trigger || stage, start: "top top", pin: scrollTrack ? false : stage,
+      id: "vibe-pin", trigger: scrollTrack?.trigger || stage,
+      start: scrollTrack ? `top ${parseFloat(stage.style.getPropertyValue('--showcase-sticky-top')) || 0}px` : "top top",
+      pin: scrollTrack ? false : stage,
       end: `+=${scrollDistance}`,
       scrub: .45, anticipatePin: 1, invalidateOnRefresh: true,
     },
