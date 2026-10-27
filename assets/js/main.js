@@ -83,33 +83,36 @@ window.addEventListener("wheel", _preventScroll, { passive: false, capture: true
 window.addEventListener("touchmove", _preventScroll, { passive: false, capture: true });
 
 /* =========================================================
-   header (PC 자동 숨김)
+   Header auto-hide (desktop and mobile)
 ========================================================= */
+let headerAutoHideReady = false;
 function setupAutoHideHeader() {
-  const headers = document.querySelectorAll(".pc-top-bar");
-  if (!headers.length) return;
+  const headers = document.querySelectorAll(".top-bar");
+  if (!headers.length || headerAutoHideReady) return;
+  headerAutoHideReady = true;
 
-  let lastY = 0;
+  let lastY = Math.max(0, window.scrollY);
   const delta = 8;
-  const headerH = headers[0].offsetHeight || 0;
 
   function update(y) {
+    const position = Math.max(0, Math.min(y, document.documentElement.scrollHeight - innerHeight));
+    const diff = position - lastY;
+    const changedDirection = Math.abs(diff) >= delta;
     headers.forEach((header) => {
-      if (y <= 0) {
+      if (position <= 0 || header.classList.contains('is-menu-open') || header.querySelector(':focus-visible')) {
         header.classList.remove("is-hide");
         return;
       }
-
-      const diff = y - lastY;
-      if (Math.abs(diff) < delta) return;
-
-      if (diff > 0 && y > headerH) header.classList.add("is-hide");
+      if (!changedDirection) return;
+      if (diff > 0 && position > header.offsetHeight) header.classList.add("is-hide");
       if (diff < 0) header.classList.remove("is-hide");
     });
 
-    lastY = y;
+    // Accumulate small movements instead of discarding every slow-scroll event.
+    if (position <= 0 || changedDirection) lastY = position;
   }
 
+  headers.forEach((header) => header.addEventListener('focusin', () => header.classList.remove('is-hide')));
   if (window.Lenis && lenis) {
     //  Lenis 스크롤 이벤트로 제어
     lenis.on("scroll", ({ scroll }) => update(scroll));
@@ -193,6 +196,7 @@ function setupMobileMenu() {
   }
 
   function openMenu() {
+    header.classList.remove('is-hide');
     header.classList.add("is-menu-open");
     setExpanded(true);
   }
@@ -333,9 +337,8 @@ function endLoading(playHeroEntrance) {
   loadingScene.reveal(playHeroEntrance, () => {
     endLoadingUnlock();
     document.body.setAttribute("aria-busy", "false");
-    showHeader();
     ScrollTrigger.refresh();
-  });
+  }, showHeader);
 }
 
 /* =========================================================
@@ -784,7 +787,7 @@ function setupCircleActionLinks() {
 ========================================================= */
 startLoadingLock();
 document.body.setAttribute("aria-busy", "true");
-const loadingScene = setupTypographyLoader({ reducedMotion });
+const loadingScene = setupTileGridLoader({ reducedMotion });
 
 document.addEventListener("DOMContentLoaded", async () => {
   copyDividerTextOnce();

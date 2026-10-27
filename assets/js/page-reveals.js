@@ -187,7 +187,7 @@ function setupPageReveals({ reducedMotion }) {
   });
 
   setupContactScene({ reducedMotion, titleMotion, completeTitle });
-  return (onComplete, { immediate = false } = {}) => {
+  return (onComplete, { immediate = false, compact = false } = {}) => {
     heroPlayed = true;
     let finished = false;
     finishHero = () => {
@@ -199,7 +199,10 @@ function setupPageReveals({ reducedMotion }) {
     if (immediate || !heroIntro || reducedMotion.matches || deepLink || window.scrollY > hero.offsetHeight * 0.5) {
       heroIntro?.progress(1).kill();
       finishHero();
-    } else heroIntro.play(0);
+    } else {
+      if (compact) heroIntro.timeScale(1.55 / entranceDurationScale);
+      heroIntro.play(0);
+    }
   };
 }
 
