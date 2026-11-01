@@ -7,7 +7,8 @@ ScrollTrigger.config({ autoRefreshEvents: "visibilitychange,DOMContentLoaded,loa
 
 /* One clock for the portfolio's GSAP animations and CSS motion. */
 const motionState = { isSlow: false, durationScale: 1 };
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+// Run the authored motion on every OS; the slow-motion button remains independent.
+const motionPreferences = { reduce: false };
 
 function setSiteSlowMotion(isSlow) {
   motionState.isSlow = isSlow;
@@ -330,7 +331,7 @@ async function waitProjectAssets() {
 let projectScene = null;
 function setupProjectScene() {
   projectScene?.destroy();
-  projectScene = setupProjectShowcase({ reducedMotion });
+  projectScene = setupProjectShowcase({ motionPreferences });
 }
 
 function endLoading(playHeroEntrance) {
@@ -467,14 +468,6 @@ function handleResize() {
 }
 
 window.addEventListener("resize", handleResize, { passive: true });
-reducedMotion.addEventListener("change", () => {
-  if (!pageMotionReady) return;
-  const anchor = captureResizeAnchor();
-  setupProjectScene();
-  setupVibeAccordion();
-  ScrollTrigger.refresh();
-  restoreResizeAnchor(anchor);
-});
 
 /* =========================================================
    Hero Circle Text
@@ -493,9 +486,6 @@ function setupCircleTextRotation() {
     repeat: -1,
     transformOrigin: "50% 50%",
   });
-  const syncReducedMotion = () => rotationTween.paused(reducedMotion.matches);
-  syncReducedMotion();
-  reducedMotion.addEventListener("change", syncReducedMotion);
 
   circleCenter.addEventListener("click", () => {
     setSiteSlowMotion(!motionState.isSlow);
@@ -510,7 +500,7 @@ function setupFrontendProjectAnimation() {
   const projectItems = gsap.utils.toArray("#sec-frontend .front-project-item");
   if (!section || !projectItems.length) return;
 
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (motionPreferences.reduce) {
     gsap.set(section.querySelectorAll(".front-project-visual, .front-project-info, .front-project-watermark"), { clearProps: "all" });
     return;
   }
@@ -638,10 +628,10 @@ function setupVibeAccordion() {
   if (contact) contact.dataset.contactLayout = 'flow';
   const stacked = innerWidth <= 768;
   const viewportHeight = showcaseViewportHeight();
-  stage.classList.toggle('is-compact-vibe', stacked && viewportHeight <= 700 && viewportHeight >= innerWidth && !reducedMotion.matches);
+  stage.classList.toggle('is-compact-vibe', stacked && viewportHeight <= 700 && viewportHeight >= innerWidth && !motionPreferences.reduce);
   // Keep portrait-phone transitions even when Safari's expanded toolbar leaves
   // less room: a taller native-sticky scene can scroll fully into view first.
-  if (stacked && viewportHeight >= innerWidth && !reducedMotion.matches) {
+  if (stacked && viewportHeight >= innerWidth && !motionPreferences.reduce) {
     const headingHeight = stage.querySelector('.vibe-stage-head').offsetHeight;
     stage.style.setProperty('--vibe-content-top', `${headingHeight + 16}px`);
     const neededHeight = Math.max(...slides.map((slide) => {
@@ -665,7 +655,7 @@ function setupVibeAccordion() {
     const imageHeight = slide.querySelector(".vibe-preview").offsetHeight;
     return (stacked ? copyHeight + imageHeight + parseFloat(getComputedStyle(main).rowGap) : Math.max(copyHeight, imageHeight)) > available + 1;
   });
-  if (reducedMotion.matches || needsFlow) {
+  if (motionPreferences.reduce || needsFlow) {
     section.classList.add("is-static");
     slides.forEach((slide) => { slide.inert = false; slide.classList.add("is-active", "is-interactive"); });
     return;
@@ -787,7 +777,7 @@ function setupCircleActionLinks() {
 ========================================================= */
 startLoadingLock();
 document.body.setAttribute("aria-busy", "true");
-const loadingScene = setupTileGridLoader({ reducedMotion });
+const loadingScene = setupTileGridLoader({ motionPreferences });
 
 document.addEventListener("DOMContentLoaded", async () => {
   copyDividerTextOnce();
@@ -795,8 +785,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupMobileMenu();
   setupCircleActionLinks();
   setupCircleTextRotation();
-  setupHeroPlayground({ motionState, reducedMotion });
-  if (typeof setupPortfolioCursor === "function") setupPortfolioCursor({ motionState, reducedMotion });
+  setupHeroPlayground({ motionState, motionPreferences });
+  if (typeof setupPortfolioCursor === "function") setupPortfolioCursor({ motionState, motionPreferences });
   setupFrontendPreviewScrollIsolation();
 
   await waitProjectAssets();
@@ -808,6 +798,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   requestAnimationFrame(() => ScrollTrigger.refresh(true));
 
-  const playHeroEntrance = setupPageReveals({ reducedMotion });
+  const playHeroEntrance = setupPageReveals({ motionPreferences });
   endLoading(playHeroEntrance);
 });

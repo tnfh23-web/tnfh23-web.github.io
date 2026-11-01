@@ -67,7 +67,7 @@ function createShowcaseEntrances(scenes, compact, { firstVisible = false } = {})
   };
 }
 /* Capsule and card movement follow scroll; lettering plays automatically on arrival. */
-function setupProjectShowcase({ reducedMotion }) {
+function setupProjectShowcase({ motionPreferences }) {
   const section = document.querySelector('#sec-project');
   const stage = section?.querySelector('.project-stage');
   const cards = Array.from(stage?.children || []);
@@ -86,8 +86,8 @@ function setupProjectShowcase({ reducedMotion }) {
   section.classList.add('is-project-deck');
   const fits = scenes.every(({ card, pane }) => pane.scrollHeight <= pane.clientHeight + 1 && card.scrollHeight <= card.clientHeight + 1);
   const viewportHeight = showcaseViewportHeight();
-  const deck = !reducedMotion.matches && viewportHeight >= 560 && fits;
-  const sticky = !deck && !reducedMotion.matches;
+  const deck = !motionPreferences.reduce && viewportHeight >= 560 && fits;
+  const sticky = !deck && !motionPreferences.reduce;
   section.classList.remove('is-project-deck');
   section.classList.add(deck ? 'is-project-deck' : 'is-project-flow');
   section.dataset.projectMode = deck ? 'deck' : 'flow';

@@ -1,7 +1,7 @@
 /* Entrances own inner glyphs; physics and scroll own the outer scene. */
 // Keep the requested 1.3x entrance timing; the site slow switch stays independent.
 const entranceDurationScale = 0.65;
-function setupPageReveals({ reducedMotion }) {
+function setupPageReveals({ motionPreferences }) {
   const hero = document.querySelector("#sec-hero");
   const titles = Array.from(document.querySelectorAll(".split-title"));
   const splits = new Map();
@@ -66,7 +66,7 @@ function setupPageReveals({ reducedMotion }) {
     );
   };
 
-  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+  gsap.matchMedia().add("all", () => {
     if (heroPlayed) return;
     const letters = Array.from(hero.querySelectorAll(".hero-letter"));
     const slices = [];
@@ -132,7 +132,7 @@ function setupPageReveals({ reducedMotion }) {
     };
   });
 
-  gsap.matchMedia().add({ motion: "(prefers-reduced-motion: no-preference)", desktop: "(min-width: 769px)" }, (context) => {
+  gsap.matchMedia().add({ motion: "all", desktop: "(min-width: 769px)" }, (context) => {
     if (!context.conditions.motion) return;
     const triggers = [];
     let index = 0;
@@ -186,7 +186,7 @@ function setupPageReveals({ reducedMotion }) {
     return () => triggers.forEach((trigger) => trigger.kill());
   });
 
-  setupContactScene({ reducedMotion, titleMotion, completeTitle });
+  setupContactScene({ motionPreferences, titleMotion, completeTitle });
   return (onComplete, { immediate = false, compact = false } = {}) => {
     heroPlayed = true;
     let finished = false;
@@ -196,7 +196,7 @@ function setupPageReveals({ reducedMotion }) {
       onComplete();
     };
     const deepLink = location.hash && location.hash !== "#sec-hero";
-    if (immediate || !heroIntro || reducedMotion.matches || deepLink || window.scrollY > hero.offsetHeight * 0.5) {
+    if (immediate || !heroIntro || motionPreferences.reduce || deepLink || window.scrollY > hero.offsetHeight * 0.5) {
       heroIntro?.progress(1).kill();
       finishHero();
     } else {
@@ -207,12 +207,12 @@ function setupPageReveals({ reducedMotion }) {
 }
 
 /* Contact rises over the final VIBE scene; its content follows the visible panel. */
-function setupContactScene({ reducedMotion, titleMotion, completeTitle }) {
+function setupContactScene({ motionPreferences, titleMotion, completeTitle }) {
   const section = document.querySelector("#sec-contact");
   const dock = section?.querySelector(".contact-dock");
   const track = section?.querySelector(".contact-marquee-track");
   if (!section || !dock || !track) return;
-  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+  gsap.matchMedia().add("all", () => {
     const heading = dock.querySelector("#contact-heading");
     const eyebrow = dock.querySelectorAll(".contact-eyebrow span");
     const firstAnchor = eyebrow[0] || heading;

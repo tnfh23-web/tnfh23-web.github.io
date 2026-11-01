@@ -1240,29 +1240,6 @@ body.is-loading footer {
   }
 }
 
-/* 동작 감소 환경에서는 전환 대신 모든 프로젝트를 정적으로 표시 */
-@media (prefers-reduced-motion: reduce) {
-  .vibe-stage {
-    height: auto;
-    min-height: 0;
-    overflow: visible;
-  }
-  .vibe-stage-head {
-    position: sticky;
-  }
-  .vibe-slide,
-  .vibe-slide.is-active {
-    position: relative;
-    inset: auto;
-    height: 100vh;
-    min-height: 72rem;
-    visibility: visible;
-    pointer-events: auto;
-  }
-  .vibe-slide + .vibe-slide {
-    border-top: 1px solid rgba(255, 255, 255, 0.35);
-  }
-}
 
 /* Loose type lives in hero coordinates, independently of the scroll scene. */
 #sec-hero {
@@ -1299,13 +1276,6 @@ body.is-loading footer {
   z-index: 4;
 }
 
-@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
-  .vibe-slide,
-  .vibe-slide.is-active {
-    height: 100svh;
-    min-height: 0;
-  }
-}
 
 .sec-contact-grid {
   max-width: var(--maxwidth);
@@ -1921,14 +1891,7 @@ footer .text-box p:nth-child(2) {
     font-size: 1.5rem;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .hero-letter {
-    will-change: auto;
-  }
-  .circle-center {
-    transition-duration: 0.01ms !important;
-  }
-}
+
 
 /* Inverted ink remains legible over both the white hero and dark projects. */
 body {
@@ -2026,7 +1989,7 @@ body {
 .portfolio-cursor.is-pressed .portfolio-cursor-label {
   opacity: 0;
 }
-@media (hover: hover) and (pointer: fine) and (min-width: 769px) and (prefers-reduced-motion: no-preference) {
+@media (hover: hover) and (pointer: fine) and (min-width: 769px) {
   .portfolio-cursor {
     display: block;
   }
@@ -2251,11 +2214,7 @@ body {
     gap: 0.6rem;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .contact-marquee-track {
-    transform: none !important;
-  }
-}
+
 
 /* When a docked tool or landscape viewport cannot fit a slide, all projects remain readable. */
 .sec-vibe.is-static .vibe-stage {
@@ -2393,13 +2352,7 @@ body {
     row-gap: 1rem;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .pc-top-bar,
-  .mo-top-bar,
-  .loading-skip {
-    transition: none;
-  }
-}
+
 
 /* SVG definitions do not occupy layout or cover the section heading. */
 .vibe-mask-definitions {

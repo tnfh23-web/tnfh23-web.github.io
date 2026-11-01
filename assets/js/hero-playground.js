@@ -68,7 +68,7 @@ function collideHeroBodies(a, b) {
   if (b.mode === "rest") b.mode = "flight";
 }
 
-function setupHeroPlayground({ motionState, reducedMotion }) {
+function setupHeroPlayground({ motionState, motionPreferences }) {
   const hero = document.querySelector("#sec-hero");
   const circle = hero?.querySelector(".circle-center");
   if (!hero || !circle) return;
@@ -140,7 +140,7 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
   };
   const returnLetter = (item, immediate = false) => {
     if (!item.body) return;
-    if (immediate || reducedMotion.matches) attach(item);
+    if (immediate || motionPreferences.reduce) attach(item);
     else {
       item.body.mode = "return";
       item.body.vx = item.body.vy = 0;
@@ -173,7 +173,7 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
       const home = anchor(item, stage);
       if (cancel || Math.hypot(b.x - home.x, b.y - home.y) < Math.max(26, b.height * 0.12)) {
         returnLetter(item);
-      } else if (reducedMotion.matches) {
+      } else if (motionPreferences.reduce) {
         b.mode = "rest";
         b.vx = b.vy = b.spin = 0;
         b.angle = 0;
@@ -201,12 +201,12 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
       cancelAnimationFrame(frame);
       frame = 0;
       const attached = letters.filter((item) => !item.body && item !== drag?.item).map((item) => item.letter);
-      if (attached.length) gsap.to(attached, { ...rest, duration: reducedMotion.matches ? 0 : 1.15, ease: "elastic.out(1, .42)", overwrite: true });
+      if (attached.length) gsap.to(attached, { ...rest, duration: motionPreferences.reduce ? 0 : 1.15, ease: "elastic.out(1, .42)", overwrite: true });
     };
     resetHovers.push(reset);
     const renderHover = () => {
       frame = 0;
-      if (drag || reducedMotion.matches || hero.dataset.entrance === "assembling") return;
+      if (drag || motionPreferences.reduce || hero.dataset.entrance === "assembling") return;
       const rect = title.getBoundingClientRect();
       const radius = rect.height * 1.15;
       const pullY = clamp(-rect.height * 0.3, rect.height * 0.3, (pointer.y - rect.top - rect.height * 0.7) * 0.6);
@@ -230,7 +230,7 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
     title.addEventListener(
       "pointermove",
       (event) => {
-        if (drag || reducedMotion.matches || hero.dataset.entrance === "assembling") return;
+        if (drag || motionPreferences.reduce || hero.dataset.entrance === "assembling") return;
         pointer.x = event.clientX;
         pointer.y = event.clientY;
         if (!frame) frame = requestAnimationFrame(renderHover);
@@ -310,8 +310,8 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
         gsap.to(item.letter, {
           x: drag.startX + dx * resistance,
           y: drag.startY + dy * resistance,
-          rotation: reducedMotion.matches ? 0 : clamp(-8, 8, dx * 0.035),
-          duration: reducedMotion.matches ? 0 : 0.24,
+          rotation: motionPreferences.reduce ? 0 : clamp(-8, 8, dx * 0.035),
+          duration: motionPreferences.reduce ? 0 : 0.24,
           ease: "power3.out",
           overwrite: true,
         });
@@ -345,7 +345,6 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") restoreAll();
   });
-  reducedMotion.addEventListener("change", () => restoreAll(true));
   const readHeroLayout = () => [window.innerWidth, ...Array.from(hero.querySelectorAll(".hero-title"), (title) => getComputedStyle(title).fontSize)].join("|");
   let heroLayout = readHeroLayout();
   window.addEventListener(
@@ -385,11 +384,11 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
         if (!b) return;
         b.captureDelay = Math.max(0, b.captureDelay - step);
         if (b.mode === "drag") {
-          if (reducedMotion.matches) {
+          if (motionPreferences.reduce) {
             b.x = b.targetX;
             b.y = b.targetY;
           } else spring(b, b.targetX, b.targetY, step);
-          const stretch = reducedMotion.matches ? 0 : Math.min(0.08, Math.hypot(b.targetX - b.x, b.targetY - b.y) / 900);
+          const stretch = motionPreferences.reduce ? 0 : Math.min(0.08, Math.hypot(b.targetX - b.x, b.targetY - b.y) / 900);
           b.scaleX += (1 + stretch - b.scaleX) * Math.min(1, step * 16);
           b.scaleY += (1 - stretch * 0.4 - b.scaleY) * Math.min(1, step * 16);
           b.angle += (clamp(-9, 9, b.vx * 0.02) - b.angle) * Math.min(1, step * 10);
@@ -404,7 +403,7 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
           if (Math.hypot(b.x - home.x, b.y - home.y) < 0.5 && Math.hypot(b.vx, b.vy) < 5) attach(item);
           return;
         }
-        if (reducedMotion.matches) return;
+        if (motionPreferences.reduce) return;
         const distance = Math.hypot(b.x + b.width / 2 - center.x, b.y + b.height / 2 - center.y);
         if (b.mode !== "orbit" && !b.captureDelay && distance < center.radius + b.radius + 90) orbit(b, center);
         if (b.mode === "orbit") {
@@ -417,7 +416,7 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
           b.angle += (Math.sin(b.orbitAngle) * 18 - b.angle) * Math.min(1, step * 3);
         } else if (b.mode === "flight") advanceHeroBody(b, step, bounds);
       });
-      if (!reducedMotion.matches) {
+      if (!motionPreferences.reduce) {
         const bodies = loose.filter((item) => item.body).map((item) => item.body);
         for (let a = 0; a < bodies.length; a++) for (let b = a + 1; b < bodies.length; b++) collideHeroBodies(bodies[a], bodies[b]);
       }
@@ -428,7 +427,7 @@ function setupHeroPlayground({ motionState, reducedMotion }) {
   });
 
   // Scroll the outer scene so it never competes with each letter's transforms.
-  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+  gsap.matchMedia().add("all", () => {
     gsap
       .timeline({
         scrollTrigger: { id: "hero-playground-exit", trigger: hero, start: "top top", end: () => `+=${hero.offsetHeight * 0.85}`, scrub: 0.55, invalidateOnRefresh: true },

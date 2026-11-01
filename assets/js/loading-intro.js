@@ -1,5 +1,5 @@
 /* A few seed tiles grow into a full cover; the same grid unveils the real HOME. */
-function setupTileGridLoader({ reducedMotion }) {
+function setupTileGridLoader({ motionPreferences }) {
   const loading = document.querySelector('.loading');
   const grid = loading?.querySelector('.loading-grid');
   const backdrop = loading?.querySelector('.loading-backdrop');
@@ -37,20 +37,12 @@ function setupTileGridLoader({ reducedMotion }) {
     event.preventDefault();
     requestSkip();
   };
-  const onPreference = () => {
-    if (!reducedMotion.matches) return;
-    skipSettle?.kill();
-    intro?.pause();
-    resolveIntro();
-    if (revealed) finishNow();
-  };
   skip?.addEventListener('click', requestSkip);
   document.addEventListener('keydown', onKeyDown, true);
-  reducedMotion.addEventListener('change', onPreference);
 
   const tiles = [];
   let columns = 1, rows = 1;
-  if (grid && !reducedMotion.matches) {
+  if (grid && !motionPreferences.reduce) {
     const compact = innerWidth <= 768;
     columns = Math.max(5, Math.ceil(innerWidth / (compact ? 64 : 112)));
     if (columns % 2 === 0) columns++;
@@ -102,7 +94,6 @@ function setupTileGridLoader({ reducedMotion }) {
         finished = true;
         skipSettle?.kill(); intro?.kill();
         loading?.remove();
-        reducedMotion.removeEventListener('change', onPreference);
         skip?.removeEventListener('click', requestSkip);
         document.removeEventListener('keydown', onKeyDown, true);
         background.forEach(({ node, inert }) => { node.inert = inert; });
@@ -121,7 +112,7 @@ function setupTileGridLoader({ reducedMotion }) {
         startHero(true);
         finish();
       };
-      if (!loading || reducedMotion.matches) { finishNow(); return; }
+      if (!loading || motionPreferences.reduce) { finishNow(); return; }
 
       loading.dataset.phase = 'opening';
       loading.dataset.skipped = String(skipRequested);

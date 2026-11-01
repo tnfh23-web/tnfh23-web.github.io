@@ -1,5 +1,5 @@
 /* The dot stays under the mouse; only the decorative ring has inertia. */
-function setupPortfolioCursor({ motionState, reducedMotion }) {
+function setupPortfolioCursor({ motionState, motionPreferences }) {
   const root = document.documentElement;
   const desktopMouse = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 769px)");
   const cursor = document.createElement("div");
@@ -19,7 +19,7 @@ function setupPortfolioCursor({ motionState, reducedMotion }) {
   let frame = 0, previousTime = 0;
   let scrollFrame = 0;
 
-  const enabled = () => desktopMouse.matches && !reducedMotion.matches;
+  const enabled = () => desktopMouse.matches && !motionPreferences.reduce;
   const hide = () => {
     visible = pressed = dragging = false;
     root.classList.remove("has-portfolio-cursor");
@@ -118,5 +118,4 @@ function setupPortfolioCursor({ motionState, reducedMotion }) {
     });
   }, { passive: true });
   desktopMouse.addEventListener("change", hide);
-  reducedMotion.addEventListener("change", hide);
 }

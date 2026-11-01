@@ -72,11 +72,7 @@
   .is-project-deck .project-heading { top: 8rem; }
   .is-project-deck .project-card-layout { min-height: 0; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .project-card { will-change: auto; }
-  .project-media, .project-media::after { transition: none; transform: none !important; }
-  .project-marquee-track { animation: none; }
-}
+
 
 /* Current project type scale within the published showcase. */
 .project-heading h2 { font-size:var(--chapter-size); line-height:.98; }
@@ -107,4 +103,3 @@
 .project-button:is(:hover,:focus-visible)::before { width:100%; transform:none; background:var(--action-fill,var(--white-85)); }
 .project-button:active { transform:scale(.96); }
 .project-button:focus-visible { outline:2px solid currentColor; outline-offset:5px; }
-@media(prefers-reduced-motion:reduce){.project-button,.project-button::before{transition:none;}}
