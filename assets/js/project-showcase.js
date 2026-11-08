@@ -1,6 +1,6 @@
-/* Native sticky stays on Safari's scrolling thread; GSAP only animates its contents. */
+/* The browser owns sticky positioning; GSAP only animates the scene contents. */
 function usesNativeShowcaseScroll() {
-  return innerWidth <= 900 || window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  return true;
 }
 function showcaseViewportHeight() {
   return Number(document.documentElement.style.getPropertyValue('--showcase-height').replace('px', '')) || innerHeight;
@@ -107,12 +107,34 @@ function setupProjectShowcase({ motionPreferences }) {
       else card.removeAttribute('aria-current');
     });
   };
+  let themeBounds = null, projectView = null;
+  const measureThemeBounds = () => {
+    const top = headerHeight(), y = scrollY;
+    const projectPin = ScrollTrigger.getById('proj-pin');
+    const vibePin = ScrollTrigger.getById('vibe-pin');
+    const vibe = document.querySelector('#sec-vibe');
+    const contact = document.querySelector('#sec-contact');
+    const bounds = (element, pin) => {
+      if (!element) return [Infinity, -Infinity];
+      if (pin?.pin === element) return [pin.start - top, pin.end + element.offsetHeight - top];
+      const measured = element.classList.contains('is-native-showcase') ? element.parentElement : element;
+      const rect = measured.getBoundingClientRect();
+      return [rect.top + y - top, rect.bottom + y - top];
+    };
+    themeBounds = {
+      project: bounds(section, projectPin), vibe: bounds(vibe, vibePin),
+      contact: contact ? contact.getBoundingClientRect().top + y - top : Infinity,
+    };
+  };
   const rememberPosition = () => {
-    const rect = section.getBoundingClientRect();
-    const vibeRect = document.querySelector('#sec-vibe')?.getBoundingClientRect();
-    const contactTop = document.querySelector('#sec-contact')?.getBoundingClientRect().top ?? Infinity;
-    const top = headerHeight();
-    document.documentElement.classList.toggle('is-project-view', (rect.top <= top && rect.bottom > top) || (vibeRect && vibeRect.top <= top && vibeRect.bottom > top && contactTop > top));
+    if (!themeBounds) measureThemeBounds();
+    const y = scrollY;
+    const nextView = (y >= themeBounds.project[0] && y < themeBounds.project[1])
+      || (y >= themeBounds.vibe[0] && y < themeBounds.vibe[1] && y < themeBounds.contact);
+    if (nextView !== projectView) {
+      projectView = nextView;
+      document.documentElement.classList.toggle('is-project-view', nextView);
+    }
     if (deck || innerWidth !== viewportWidth) return;
     let mostVisible = 0;
     flowIndex = null;
@@ -181,6 +203,9 @@ function setupProjectShowcase({ motionPreferences }) {
     section.classList.add('is-project-sticky');
   }
   activate(0);
+  measureThemeBounds();
+  const refreshTheme = () => { measureThemeBounds(); rememberPosition(); };
+  ScrollTrigger.addEventListener('refresh', refreshTheme);
   rememberPosition();
   window.addEventListener('scroll', rememberPosition, { passive: true });
   return {
@@ -194,6 +219,7 @@ function setupProjectShowcase({ motionPreferences }) {
     },
     destroy() {
       window.removeEventListener('scroll', rememberPosition);
+      ScrollTrigger.removeEventListener('refresh', refreshTheme);
       timelines.forEach((timeline) => { timeline.scrollTrigger?.kill(true); timeline.kill(); });
       scrollTrack?.destroy();
       entrances?.destroy();

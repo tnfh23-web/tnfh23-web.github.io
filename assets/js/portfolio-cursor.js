@@ -26,7 +26,7 @@ function setupPortfolioCursor({ motionState, motionPreferences }) {
     cursor.classList.remove("is-visible", "is-pressed");
     cancelAnimationFrame(frame);
     frame = previousTime = 0;
-    cancelAnimationFrame(scrollFrame);
+    clearTimeout(scrollFrame);
     scrollFrame = 0;
   };
   const setContext = (target) => {
@@ -112,10 +112,10 @@ function setupPortfolioCursor({ motionState, motionPreferences }) {
   }, { capture: true });
   window.addEventListener("scroll", () => {
     if (!visible || dragging || scrollFrame) return;
-    scrollFrame = requestAnimationFrame(() => {
+    scrollFrame = setTimeout(() => {
       scrollFrame = 0;
-      if (visible) setContext(document.elementFromPoint(x, y));
-    });
+      if (visible && !dragging) setContext(document.elementFromPoint(x, y));
+    }, 80);
   }, { passive: true });
   desktopMouse.addEventListener("change", hide);
 }

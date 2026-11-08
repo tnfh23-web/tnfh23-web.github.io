@@ -17,11 +17,15 @@
 ## 사용 기술
 
 - HTML · CSS · JavaScript
-- GSAP · ScrollTrigger · SplitText · Lenis
+- GSAP · ScrollTrigger · SplitText · Lenis 1.3.27 (로컬 배포)
 - Satoshi · Pretendard
 - GitHub Pages
 
 공통 최대 너비는 `180rem`, 밝은 배경은 `#f2f2f2`입니다. 공통 색상과 그리드 변수는 `assets/css/tokens.css`에서 관리합니다.
+
+## 스크롤 처리
+
+Lenis는 `smoothWheel: true`, `lerp: 0.08`과 단일 GSAP ticker를 사용합니다. 휠 크기나 방향에 따라 입력을 바꾸는 보정은 없습니다. WORKS·VIBE 고정은 CSS sticky로 처리하고, 헤더·섹션 경계는 ScrollTrigger refresh 때 측정합니다.
 
 ## 주요 기능
 

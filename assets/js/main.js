@@ -35,10 +35,7 @@ let lenis = null;
 
 if (window.Lenis) {
   lenis = new Lenis({
-    lerp: 0.06,
-    wheelMultiplier: 1.2,
-    smoothWheel: true,
-    smoothTouch: false,
+    lerp: 0.08, smoothWheel: true, syncTouch: false, respectReducedMotion: false,
   });
 
   // Lenis <-> ScrollTrigger sync
@@ -94,9 +91,17 @@ function setupAutoHideHeader() {
 
   let lastY = Math.max(0, window.scrollY);
   const delta = 8;
+  let maxScroll = 0;
+  const heights = new Map();
+  const measureHeader = () => {
+    maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    headers.forEach(header => heights.set(header, header.offsetHeight));
+  };
+  measureHeader();
+  ScrollTrigger.addEventListener('refresh', measureHeader);
 
   function update(y) {
-    const position = Math.max(0, Math.min(y, document.documentElement.scrollHeight - innerHeight));
+    const position = Math.max(0, Math.min(y, maxScroll));
     const diff = position - lastY;
     const changedDirection = Math.abs(diff) >= delta;
     headers.forEach((header) => {
@@ -105,7 +110,7 @@ function setupAutoHideHeader() {
         return;
       }
       if (!changedDirection) return;
-      if (diff > 0 && position > header.offsetHeight) header.classList.add("is-hide");
+      if (diff > 0 && position > heights.get(header)) header.classList.add("is-hide");
       if (diff < 0) header.classList.remove("is-hide");
     });
 
@@ -443,7 +448,7 @@ function handleResize() {
   const h = window.innerHeight;
   if (w === lastW && h === lastH) return;
   // Toolbar/keyboard height changes must never kill a scene or force scrollTo during a swipe.
-  const mobileHeightOnly = w === lastW && usesNativeShowcaseScroll();
+  const mobileHeightOnly = w === lastW && (w <= 900 || window.matchMedia('(hover: none) and (pointer: coarse)').matches);
   lastW = w;
   lastH = h;
   if (!pageMotionReady || mobileHeightOnly) return;
@@ -709,11 +714,16 @@ function setupVibeAccordion() {
   contact?.classList.add('is-overlay');
   if (contact) contact.dataset.contactLayout = 'overlay';
   const entrances = createShowcaseEntrances(scenes, stacked, { firstVisible: true });
-  const activate = (index) => scenes.forEach(({ slide }, i) => {
-    slide.inert = i !== index;
-    slide.classList.toggle("is-active", i === index);
-    slide.classList.toggle("is-interactive", i === index);
-  });
+  let activeVibe = -1;
+  const activate = (index) => {
+    if (activeVibe === index) return;
+    activeVibe = index;
+    scenes.forEach(({ slide }, i) => {
+      slide.inert = i !== index;
+      slide.classList.toggle("is-active", i === index);
+      slide.classList.toggle("is-interactive", i === index);
+    });
+  };
   activate(0);
   vibeTimeline = gsap.timeline({
     onUpdate() {
@@ -721,8 +731,11 @@ function setupVibeAccordion() {
       entrances.update(time, (index) => intro + index * step, turn);
       scenes.slice(1).forEach((scene, index) => {
         // A finished SVG clip can leave antialiased hairlines between strips.
-        scene.outer.style.clipPath = time >= intro + (index + 1) * step - .0001
-          ? 'none' : `url(#vibe-blinds-${index + 1})`;
+        const revealed = time >= intro + (index + 1) * step - .0001;
+        if (scene.clipRevealed !== revealed) {
+          scene.clipRevealed = revealed;
+          scene.outer.style.clipPath = revealed ? 'none' : `url(#vibe-blinds-${index + 1})`;
+        }
       });
       let active = 0;
       for (let i = 1; i < scenes.length; i++) if (time >= intro + hold + (i - 1) * step + turn) active = i;
