@@ -1,6 +1,7 @@
 /* Entrances own inner glyphs; physics and scroll own the outer scene. */
 // Keep the requested 1.3x entrance timing; the site slow switch stays independent.
 const entranceDurationScale = 0.65;
+const pageEntryStart = () => `top bottom-=${Math.min(180, innerHeight * .18)}`;
 function setupPageReveals({ motionPreferences }) {
   const hero = document.querySelector("#sec-hero");
   const titles = Array.from(document.querySelectorAll(".split-title"));
@@ -136,7 +137,7 @@ function setupPageReveals({ motionPreferences }) {
     if (!context.conditions.motion) return;
     const triggers = [];
     let index = 0;
-    const reveal = (trigger, build, targets, start = "top 78%") => {
+    const reveal = (trigger, build, targets, start = pageEntryStart) => {
       if (!trigger || !targets.length || targets.every((target) => target.dataset.revealComplete)) return;
       if (trigger.getBoundingClientRect().bottom < 0) {
         targets.forEach((target) => {
@@ -174,14 +175,13 @@ function setupPageReveals({ motionPreferences }) {
         if (caption) tl.fromTo(caption, { opacity: 0, y: 8 }, {
           opacity: 1, y: 0, duration: .65, clearProps: 'opacity,transform',
         }, .3);
-      }, [image, caption].filter(Boolean), "top 86%");
+      }, [image, caption].filter(Boolean));
     }
-    document.querySelectorAll('.editorial-about .right-con').forEach((group) => {
-      const content = Array.from(group.querySelectorAll('h3, dl'));
-      reveal(group, (tl) => tl.fromTo(content, { opacity: 0, y: 18 }, {
-        opacity: 1, y: 0, duration: .8, stagger: .12,
+    document.querySelectorAll('.editorial-about .right-con h3, .editorial-about .right-con dl').forEach((content) => {
+      reveal(content, (tl) => tl.fromTo(content, { opacity: 0, y: 18 }, {
+        opacity: 1, y: 0, duration: .8,
         ease: 'power3.out', clearProps: 'opacity,transform',
-      }), content, "top 92%");
+      }), [content]);
     });
     return () => triggers.forEach((trigger) => trigger.kill());
   });
@@ -215,14 +215,12 @@ function setupContactScene({ motionPreferences, titleMotion, completeTitle }) {
   gsap.matchMedia().add("all", () => {
     const heading = dock.querySelector("#contact-heading");
     const eyebrow = dock.querySelectorAll(".contact-eyebrow span");
-    const firstAnchor = eyebrow[0] || heading;
     const intro = dock.querySelector(".contact-con");
     const details = dock.querySelector(".title-2");
     const marquee = dock.querySelector(".contact-marquee");
     // A separate layer owns the entrance; drift and the continuous loop keep their own transforms.
     const marqueeReveal = marquee.querySelector('.contact-marquee-reveal');
     let marqueeStarted = section.dataset.marqueeEntrance === 'complete';
-    let marqueeQueued = section.dataset.contactEntrance === 'complete';
     const marqueeIntro = gsap.fromTo(marqueeReveal,
       { yPercent: 110, autoAlpha: 0 },
       { yPercent: 0, autoAlpha: 1, duration: .85, ease: 'power3.out', paused: true,
@@ -241,95 +239,46 @@ function setupContactScene({ motionPreferences, titleMotion, completeTitle }) {
       { anchor: details, targets: Array.from(dock.querySelectorAll(".title-2 .contact-title-text, .title-3")), duration: 1.05, stagger: 0.18 },
     ].filter(step => step.anchor);
     const loop = gsap.to(track, { xPercent: -50, duration: 32, repeat: -1, ease: "none", paused: true });
+    const entrances = [];
     const wasComplete = section.dataset.contactEntrance === "complete";
-    let started = wasComplete;
-    let complete = wasComplete;
-    const exposed = (element) => {
-      const rect = element.getBoundingClientRect();
-      const coverEdge = 0;
-      return rect.top >= coverEdge - 1 && rect.top + Math.min(60, rect.height * 0.4) < window.innerHeight - 16 && rect.bottom > 0;
-    };
-    const sequence = gsap
-      .timeline({
-        paused: true,
+    section.dataset.contactEntrance = wasComplete ? 'complete' : 'waiting';
+    const units = steps.flatMap(step => step.targets.map(target => ({...step, target})));
+    let completed = 0;
+    units.forEach((step, index) => {
+      const timeline = gsap.timeline({paused: true,
+        onStart: () => { section.dataset.contactEntrance = String(index + 1); },
         onComplete: () => {
-          complete = true;
-          section.dataset.contactEntrance = "complete";
-          pump();
+          completed++;
+          if (completed === units.length) section.dataset.contactEntrance = 'complete';
         },
-      })
-      .timeScale(1 / entranceDurationScale);
-    const pump = () => {
-      const rect = section.getBoundingClientRect();
-      const onscreen = rect.top < window.innerHeight && rect.bottom > 0;
-      const passedFirst = firstAnchor.getBoundingClientRect().bottom <= 0;
-      if (!started && onscreen && (exposed(firstAnchor) || passedFirst)) started = true;
-      if (started && !complete) sequence.paused(!onscreen);
-      const marqueeRect = marquee.getBoundingClientRect();
-      const coverEdge = 0;
-      const marqueeVisible = marqueeRect.bottom > Math.max(0, coverEdge) && marqueeRect.top < window.innerHeight - 12;
-      // Start last, overlapping the preceding content instead of waiting for it to finish.
-      if (marqueeQueued && !marqueeStarted && marqueeVisible) {
-        marqueeStarted = true;
-        marqueeIntro.play(0);
-      }
-      loop.paused(!marqueeStarted || marqueeRect.bottom <= Math.max(0, coverEdge) || marqueeRect.top >= window.innerHeight);
-    };
-    if (!wasComplete) {
-      section.dataset.contactEntrance = "waiting";
-      // Ordered starts overlap every 65-78ms instead of waiting for prior tweens to end.
-      const starts = [0, 0.1, 0.2, 0.32, 0.44];
-      steps.forEach((step, index) => {
-        const start = starts[index];
-        sequence.call(
-          () => {
-            section.dataset.contactEntrance = String(index + 1);
-          },
-          null,
-          start,
-        );
-        if (step.title) {
-          titleMotion(heading, sequence, start);
-        } else {
-          sequence.fromTo(
-            step.targets,
-            { clipPath: "inset(0% 100% 0% 0%)" },
-            {
-              clipPath: "inset(0% 0% 0% 0%)",
-              duration: step.duration,
-              stagger: step.stagger || 0,
-              ease: "power2.inOut",
-              clearProps: "clipPath",
-            },
-            start,
-          );
-        }
+      }).timeScale(1 / entranceDurationScale);
+      if (step.title) titleMotion(heading, timeline, 0);
+      else timeline.fromTo(step.target, {clipPath: 'inset(0% 100% 0% 0%)'}, {
+        clipPath: 'inset(0% 0% 0% 0%)', duration: step.duration,
+        ease: 'power2.inOut', clearProps: 'clipPath',
       });
-      const lastStep = steps[steps.length - 1];
-      const lastItemStart = starts[steps.length - 1] + (lastStep.stagger || 0) * Math.max(0, lastStep.targets.length - 1);
-      sequence.call(() => {
-        marqueeQueued = true;
-        pump();
-      }, null, lastItemStart + .12);
-    }
-    // Keyboard users never wait for a decorative entrance to finish.
+      const trigger = ScrollTrigger.create({
+        trigger: step.target, start: pageEntryStart, once: true,
+        onEnter: () => timeline.play(),
+      });
+      if (wasComplete) timeline.progress(1).pause();
+      entrances.push({timeline, trigger});
+    });
     const finishEntrance = () => {
-      sequence.progress(1).pause();
-      marqueeQueued = true;
-      started = complete = true;
+      entrances.forEach(({timeline}) => timeline.progress(1).pause());
+      marqueeStarted = true;
+      marqueeIntro.progress(1).pause();
       completeTitle(heading);
-      section.dataset.contactEntrance = "complete";
-      pump();
+      section.dataset.contactEntrance = 'complete';
     };
-    dock.addEventListener("focusin", finishEntrance);
+    dock.addEventListener('focusin', finishEntrance);
+    const marqueeEntry = ScrollTrigger.create({
+      trigger: marquee, start: () => `clamp(${pageEntryStart()})`, once: true,
+      onEnter: () => { marqueeStarted = true; marqueeIntro.play(); loop.play(); },
+    });
     const visibility = ScrollTrigger.create({
-      id: "contact-entrance",
-      trigger: section,
-      start: "top bottom",
-      end: "bottom top",
-      onUpdate: pump,
-      onRefresh: pump,
-      onToggle: pump,
+      id: 'contact-entrance', trigger: marquee, start: 'top bottom', end: 'bottom top',
+      onToggle: self => loop.paused(!marqueeStarted || !self.isActive),
     });
     const depth = gsap
       .timeline({
@@ -344,12 +293,12 @@ function setupContactScene({ motionPreferences, titleMotion, completeTitle }) {
         },
       })
       .fromTo(dock.querySelector(".contact-marquee-drift"), { x: () => (section.classList.contains("is-overlay") ? -Math.min(80, window.innerWidth * 0.08) : 0) }, { x: 0, ease: "none" }, 0);
-    pump();
     return () => {
       visibility.kill();
       depth.scrollTrigger?.kill();
       loop.kill();
-      sequence.kill();
+      marqueeEntry.kill();
+      entrances.forEach(({timeline, trigger}) => {trigger.kill();timeline.kill();});
       marqueeIntro.kill();
       gsap.set(marqueeReveal, { clearProps: "transform,opacity,visibility" });
       section.dataset.marqueeEntrance = "complete";

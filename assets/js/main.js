@@ -521,7 +521,7 @@ function setupFrontendProjectAnimation() {
       scrollTrigger: {
         id: `frontend-item-${index}`,
         trigger: item,
-        start: "top 78%",
+        start: pageEntryStart,
         end: "top 28%",
         scrub: 1,
         invalidateOnRefresh: true,
